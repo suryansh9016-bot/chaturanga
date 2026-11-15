@@ -1,10 +1,22 @@
 /* Chaturanga service worker: cache the site's own files so the installed
    app opens fast and works offline. Only same-origin files listed below are
    cached; Lichess/Stockfish requests always go to the network. */
-var CACHE = 'chaturanga-v6';
+var CACHE = 'chaturanga-v7';
 var FILES = [
   "index.html",
   "manifest.json",
+  "assets/manifest-green.json",
+  "assets/manifest-blue.json",
+  "assets/manifest-brown.json",
+  "assets/manifest-grey.json",
+  "assets/manifest-dark.json",
+  "assets/manifest-white.json",
+  "assets/manifest-ultra.json",
+  "assets/manifest-lavender.json",
+  "assets/manifest-cherry.json",
+  "assets/manifest-vines.json",
+  "assets/manifest-techno.json",
+  "assets/manifest-technoultra.json",
   "icon-192.png",
   "icon-512.png",
   "icon-maskable-512.png",

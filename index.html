@@ -264,7 +264,7 @@
   /* ---------- app shell: phone-app layout, bottom tab bar, two views ---------- */
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   body{background:#0b0d10;height:100dvh;overflow:hidden}
-  .wrap{max-width:480px;padding:0;background:var(--bg);height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  .wrap{max-width:480px;padding:0;padding-top:env(safe-area-inset-top);background:var(--bg);height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden}
   @media (min-width:520px){ .wrap{border-left:1px solid var(--line);border-right:1px solid var(--line)} }
   .scroll-area{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 12px 24px}
   .js-play{display:none}
@@ -1703,9 +1703,11 @@
      top bar take the theme colour, so Lavender shows light lavender at
      the very top, Cherry Blossom light pink, and nothing stays
      beige/yellow unless the theme itself is Bamboo / Ultra. The
+     phone's system bars take the tab bar's colour too: the
      theme-color meta is set in applyBoardTheme() from the tab bar's
-     own background, so the phone's system bar under the tabs takes
-     the bar's colour and blends with it in every theme. */
+     own background, and the manifest link is swapped to a per-theme
+     manifest with the same colour, because an installed app reads
+     its navigation-bar colour from the manifest, not the meta. */
   html{background:#eadfc4}
   .screen-top1,.bot-topbar,.game-top,.pack-head{background:var(--bg)}
   .eng-panel[hidden]{display:none !important}
@@ -4519,13 +4521,31 @@ function applyBoardTheme(){
   // background, so Lavender is light lavender at the top, Cherry
   // Blossom light pink, and beige/yellow appears only when the theme
   // itself is Bamboo / Ultra.
-  // The theme-color meta instead takes the TAB BAR's own background.
-  // That meta is what Android tints the phone's system bar with — the
-  // strip holding the back / home buttons under the app — so the strip
-  // now carries the tab bar's theme colour and the bar reads as one
-  // piece with the phone's buttons sitting on the theme, the way the
-  // Chess.com app's bar blends in, instead of the bar stopping above a
-  // plain white strip.
+  // The phone's own system bars — the status bar at the top and the
+  // Android navigation bar at the bottom, the strip holding the back /
+  // home / recents buttons — are painted by Android, not by the page,
+  // and a web page cannot hide them or make them transparent the way a
+  // native app can. What the page CAN hand Android is a colour, on two
+  // channels, and both are set from the TAB BAR's own background so the
+  // system strip under the tabs carries the theme colour and reads as
+  // one piece with the app, the way the Chess.com app's bar blends in:
+  //   1. The theme-color meta — colours the bars while the site runs
+  //      in a browser tab, and supporting browsers follow it live.
+  //   2. The web app manifest — an installed (Add to Home Screen) app
+  //      takes its system-bar colour from the manifest's theme_color,
+  //      NOT from the meta (inside an installed window the meta never
+  //      reaches the navigation bar, which is why it used to stay the
+  //      phone's plain white or black). Each theme therefore ships its
+  //      own manifest file whose theme_color is that theme's tab-bar
+  //      colour, and the link is swapped to match the live theme;
+  //      Chrome picks the new manifest up and re-colours the installed
+  //      app's bars to match.
+  // Edge-to-edge is already prepared for as well: the viewport uses
+  // viewport-fit=cover, the tab bar paints its background through the
+  // bottom safe-area inset and the shell leaves room for the top
+  // inset, so on phones where Android does run the bars transparent
+  // (gesture navigation) the theme colour shows through underneath
+  // instead of a white or black strip.
   try {
     var bgc = window.getComputedStyle(document.body).backgroundColor;
     if (bgc && bgc !== "transparent" && bgc !== "rgba(0, 0, 0, 0)"){
@@ -4538,6 +4558,13 @@ function applyBoardTheme(){
     if (navc && navc !== "transparent" && navc !== "rgba(0, 0, 0, 0)"){
       var mtc = document.getElementById("metaThemeColor");
       if (mtc) mtc.setAttribute("content", navc);
+    }
+    var manLink = document.getElementById("appManifest");
+    if (manLink){
+      var manFile = (settings.board && settings.board !== "bamboo")
+        ? "assets/manifest-" + settings.board + ".json"
+        : "data:application/json;base64,eyJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsImRlc2NyaXB0aW9uIjoiQ2hlc3MgcHV6emxlcywgb3BlbmluZ3MgYW5kIGdhbWVzIHdpdGggYSBjb2FjaC4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImljb25zIjpbeyJwdXJwb3NlIjoiYW55Iiwic2l6ZXMiOiIxOTJ4MTkyIiwic3JjIjoiaWNvbi0xOTIucG5nIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsicHVycG9zZSI6ImFueSIsInNpemVzIjoiNTEyeDUxMiIsInNyYyI6Imljb24tNTEyLnBuZyIsInR5cGUiOiJpbWFnZS9wbmcifSx7InB1cnBvc2UiOiJtYXNrYWJsZSIsInNpemVzIjoiNTEyeDUxMiIsInNyYyI6Imljb24tbWFza2FibGUtNTEyLnBuZyIsInR5cGUiOiJpbWFnZS9wbmcifV0sImxhbmciOiJlbiIsIm5hbWUiOiJDaGF0dXJhbmdhIiwib3JpZW50YXRpb24iOiJwb3J0cmFpdCIsInNjb3BlIjoiLi4vIiwic2hvcnRfbmFtZSI6IkNoYXR1cmFuZ2EiLCJzdGFydF91cmwiOiIuLi9pbmRleC5odG1sIiwidGhlbWVfY29sb3IiOiIjZTZkNWFjIn0=";
+      if (manLink.getAttribute("href") !== manFile) manLink.setAttribute("href", manFile);
     }
   } catch(e){}
 }
