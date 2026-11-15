@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="dark" />
 <meta name="theme-color" id="metaThemeColor" content="#eadfc4" />
-<link rel="manifest" href="data:application/json;base64,eyJiYWNrZ3JvdW5kX2NvbG9yIjoiI2VhZGZjNCIsImRlc2NyaXB0aW9uIjoiQ2hlc3MgcHV6emxlcywgb3BlbmluZ3MgYW5kIGdhbWVzIHdpdGggYSBjb2FjaC4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImljb25zIjpbeyJwdXJwb3NlIjoiYW55Iiwic2l6ZXMiOiIxOTJ4MTkyIiwic3JjIjoiaWNvbi0xOTIucG5nIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsicHVycG9zZSI6ImFueSIsInNpemVzIjoiNTEyeDUxMiIsInNyYyI6Imljb24tNTEyLnBuZyIsInR5cGUiOiJpbWFnZS9wbmcifSx7InB1cnBvc2UiOiJtYXNrYWJsZSIsInNpemVzIjoiNTEyeDUxMiIsInNyYyI6Imljb24tbWFza2FibGUtNTEyLnBuZyIsInR5cGUiOiJpbWFnZS9wbmcifV0sImxhbmciOiJlbiIsIm5hbWUiOiJDaGF0dXJhbmdhIiwib3JpZW50YXRpb24iOiJwb3J0cmFpdCIsInNjb3BlIjoiLi4vIiwic2hvcnRfbmFtZSI6IkNoYXR1cmFuZ2EiLCJzdGFydF91cmwiOiIuLi9pbmRleC5odG1sIiwidGhlbWVfY29sb3IiOiIjZWFkZmM0In0=" />
+<link rel="manifest" href="manifest.json" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Chaturanga" />
@@ -9288,6 +9288,11 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
     }
   });
 })();
+</script>
+<script>
+/* Register the service worker so the installed app works offline. Guarded:
+   if registration fails the page keeps working exactly as before. */
+if ('serviceWorker' in navigator) { window.addEventListener('load', function () { try { navigator.serviceWorker.register('./sw.js').catch(function () {}); } catch (e) {} }); }
 </script>
 </body>
 </html>
