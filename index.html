@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="dark" />
-<meta name="theme-color" id="metaThemeColor" content="#eadfc4" />
+<meta name="theme-color" id="metaThemeColor" content="#e6d5ac" />
 <link rel="manifest" href="manifest.json" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1703,8 +1703,9 @@
      top bar take the theme colour, so Lavender shows light lavender at
      the very top, Cherry Blossom light pink, and nothing stays
      beige/yellow unless the theme itself is Bamboo / Ultra. The
-     theme-color meta is updated from the same palette in
-     applyBoardTheme(), which is what colours the shell header. */
+     theme-color meta is set in applyBoardTheme() from the tab bar's
+     own background, so the phone's system bar under the tabs takes
+     the bar's colour and blends with it in every theme. */
   html{background:#eadfc4}
   .screen-top1,.bot-topbar,.game-top,.pack-head{background:var(--bg)}
   .eng-panel[hidden]{display:none !important}
@@ -4514,16 +4515,29 @@ function applyBoardTheme(){
   try { if (typeof botView !== "undefined") for (var bi = 0; bi < 64; bi++){ if (botView[bi]) botView[bi].el.style.backgroundImage = pieceImg(botView[bi].code); } } catch(e){}
   try { renderOuterCoords(); } catch(e){}
   // The very top of the screen (the shell header / outer frame) takes
-  // the theme colour too: the html background and the theme-color meta
-  // follow the body's themed background, so Lavender is light lavender
-  // at the top, Cherry Blossom light pink, and beige/yellow appears
-  // only when the theme itself is Bamboo / Ultra.
+  // the theme colour too: the html background follows the body's themed
+  // background, so Lavender is light lavender at the top, Cherry
+  // Blossom light pink, and beige/yellow appears only when the theme
+  // itself is Bamboo / Ultra.
+  // The theme-color meta instead takes the TAB BAR's own background.
+  // That meta is what Android tints the phone's system bar with — the
+  // strip holding the back / home buttons under the app — so the strip
+  // now carries the tab bar's theme colour and the bar reads as one
+  // piece with the phone's buttons sitting on the theme, the way the
+  // Chess.com app's bar blends in, instead of the bar stopping above a
+  // plain white strip.
   try {
     var bgc = window.getComputedStyle(document.body).backgroundColor;
     if (bgc && bgc !== "transparent" && bgc !== "rgba(0, 0, 0, 0)"){
       document.documentElement.style.backgroundColor = bgc;
+    }
+    var navc = "";
+    var tbEl = document.querySelector(".tabbar");
+    if (tbEl) navc = window.getComputedStyle(tbEl).backgroundColor;
+    if (!navc || navc === "transparent" || navc === "rgba(0, 0, 0, 0)") navc = bgc;
+    if (navc && navc !== "transparent" && navc !== "rgba(0, 0, 0, 0)"){
       var mtc = document.getElementById("metaThemeColor");
-      if (mtc) mtc.setAttribute("content", bgc);
+      if (mtc) mtc.setAttribute("content", navc);
     }
   } catch(e){}
 }
