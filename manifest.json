@@ -4,7 +4,7 @@
   "description": "Chess puzzles, openings and games with a coach.",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#eadfc4",
+  "background_color": "#ffffff",
   "theme_color": "#eadfc4",
   "scope": "./",
   "start_url": "./index.html",
