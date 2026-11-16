@@ -1698,7 +1698,7 @@
   .fx-glow.fx-lav{background:radial-gradient(circle,rgba(150,110,230,.55) 0%,rgba(150,110,230,0) 70%)}
   .fx-glow.fx-che{background:radial-gradient(circle,rgba(244,140,175,.50) 0%,rgba(244,140,175,0) 70%)}
   .fx-glow.fx-vin{background:radial-gradient(circle,rgba(140,190,90,.50) 0%,rgba(140,190,90,0) 70%)}
-  .fx-petal{position:absolute;width:12px;height:9px;border-radius:85% 15% 85% 15%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 1px 2px rgba(90,60,120,.18)}
+  .fx-petal{position:absolute;width:12px;height:9px;border-radius:85% 15% 85% 15%;transform:translate(-50%,-50%);pointer-events:none}
   .fx-petal.fx-leaf{border-radius:100% 6% 100% 6%;width:11px;height:8px}
   /* Stockfish analysis panel: score, eval bar, best move + arrow */
   .eng-panel{margin-top:10px;background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;padding:10px 12px}
@@ -3635,6 +3635,12 @@
         board is NOT removed: it stays in Settings > Board as
         "Space Classic" (bs-spaceclassic), and the new board can be
         picked in any theme as "Deep Blue Nebula" (bs-deepblue).
+        BRIGHTER + FADED TEXTURE (Suryansh's reference screenshot):
+        the squares are a brighter, bluer steel blue / navy than
+        the first cut (#6590c2 light, #1d3357 dark), and every
+        star speck, sparkle and the galaxy spiral sit at 80% of
+        their old opacity — the texture faded by a fifth, so the
+        board reads bright blue first and spacey second.
      2) TEXTURE STAYS: picking a board used to flatten the squares
         (background-image:none), wiping the theme's own texture —
         Lavender lost its leaves. bs-flat now changes only the two
@@ -3643,9 +3649,9 @@
         and Space 2 keeps its faint ringed planet under a picked
         board too. */
   body.theme-space:not(.bs-flat):not(.bs-nebula):not(.bs-deepblue):not(.bs-spaceclassic):not(.bs-space2planet) .board .sq.dark,
-  body[class].bs-deepblue .board .sq.dark{background-color:#0e1a30;background-image:linear-gradient(160deg,rgba(96,150,225,.10),rgba(0,0,0,.20)),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='%23ffffff'><circle cx='14' cy='18' r='1.3' fill-opacity='.75'/><circle cx='38' cy='66' r='1' fill-opacity='.45'/><circle cx='62' cy='12' r='1.1' fill-opacity='.6'/><circle cx='84' cy='44' r='1.4' fill-opacity='.8'/><circle cx='26' cy='88' r='1' fill-opacity='.4'/><circle cx='52' cy='38' r='.8' fill-opacity='.35'/><circle cx='92' cy='84' r='1' fill-opacity='.5'/><circle cx='70' cy='76' r='.8' fill-opacity='.3'/></g><path d='M46 24 l1 2.8 2.8 1 -2.8 1 -1 2.8 -1 -2.8 -2.8 -1 2.8 -1 Z' fill='%23bfe6ff' fill-opacity='.75'/></svg>");background-size:auto,100% 100%}
+  body[class].bs-deepblue .board .sq.dark{background-color:#1d3357;background-image:linear-gradient(160deg,rgba(96,150,225,.10),rgba(0,0,0,.20)),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='%23ffffff'><circle cx='14' cy='18' r='1.3' fill-opacity='.6'/><circle cx='38' cy='66' r='1' fill-opacity='.36'/><circle cx='62' cy='12' r='1.1' fill-opacity='.48'/><circle cx='84' cy='44' r='1.4' fill-opacity='.64'/><circle cx='26' cy='88' r='1' fill-opacity='.32'/><circle cx='52' cy='38' r='.8' fill-opacity='.28'/><circle cx='92' cy='84' r='1' fill-opacity='.4'/><circle cx='70' cy='76' r='.8' fill-opacity='.24'/></g><path d='M46 24 l1 2.8 2.8 1 -2.8 1 -1 2.8 -1 -2.8 -2.8 -1 2.8 -1 Z' fill='%23bfe6ff' fill-opacity='.6'/></svg>");background-size:auto,100% 100%}
   body.theme-space:not(.bs-flat):not(.bs-nebula):not(.bs-deepblue):not(.bs-spaceclassic):not(.bs-space2planet) .board .sq.light,
-  body[class].bs-deepblue .board .sq.light{background-color:#54749d;background-image:linear-gradient(160deg,rgba(255,255,255,.16),rgba(6,16,38,.10)),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='%23ffffff'><circle cx='14' cy='18' r='1.3' fill-opacity='.34'/><circle cx='38' cy='66' r='1' fill-opacity='.22'/><circle cx='62' cy='12' r='1.1' fill-opacity='.28'/><circle cx='84' cy='44' r='1.4' fill-opacity='.36'/><circle cx='26' cy='88' r='1' fill-opacity='.2'/><circle cx='52' cy='38' r='.8' fill-opacity='.16'/><circle cx='92' cy='84' r='1' fill-opacity='.24'/><circle cx='70' cy='76' r='.8' fill-opacity='.14'/></g><path d='M46 24 l1 2.8 2.8 1 -2.8 1 -1 2.8 -1 -2.8 -2.8 -1 2.8 -1 Z' fill='%23dff2ff' fill-opacity='.34'/></svg>");background-size:auto,100% 100%}
+  body[class].bs-deepblue .board .sq.light{background-color:#6590c2;background-image:linear-gradient(160deg,rgba(255,255,255,.16),rgba(6,16,38,.10)),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='%23ffffff'><circle cx='14' cy='18' r='1.3' fill-opacity='.27'/><circle cx='38' cy='66' r='1' fill-opacity='.18'/><circle cx='62' cy='12' r='1.1' fill-opacity='.22'/><circle cx='84' cy='44' r='1.4' fill-opacity='.29'/><circle cx='26' cy='88' r='1' fill-opacity='.16'/><circle cx='52' cy='38' r='.8' fill-opacity='.13'/><circle cx='92' cy='84' r='1' fill-opacity='.19'/><circle cx='70' cy='76' r='.8' fill-opacity='.11'/></g><path d='M46 24 l1 2.8 2.8 1 -2.8 1 -1 2.8 -1 -2.8 -2.8 -1 2.8 -1 Z' fill='%23dff2ff' fill-opacity='.27'/></svg>");background-size:auto,100% 100%}
   body.theme-space:not(.bs-flat):not(.bs-nebula):not(.bs-deepblue):not(.bs-spaceclassic):not(.bs-space2planet) .board .sq.dark .coord,
   body[class].bs-deepblue .board .sq.dark .coord{color:#b9d2f2}
   body.theme-space:not(.bs-flat):not(.bs-nebula):not(.bs-deepblue):not(.bs-spaceclassic):not(.bs-space2planet) .board .sq.light .coord,
@@ -3653,7 +3659,7 @@
   /* the galaxy spiral: one faint watermark across the middle of the
      board, under the pieces (pieces layer is z-index 5) */
   body.theme-space:not(.bs-flat):not(.bs-nebula):not(.bs-deepblue):not(.bs-spaceclassic):not(.bs-space2planet) .board::after,
-  body[class].bs-deepblue .board::after{content:"";position:absolute;left:50%;top:50%;width:66%;aspect-ratio:1/1;transform:translate(-50%,-52%);background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'><defs><radialGradient id='g' cx='50%25' cy='50%25' r='50%25'><stop offset='0%25' stop-color='%236ee7d8' stop-opacity='.20'/><stop offset='55%25' stop-color='%237db8f0' stop-opacity='.08'/><stop offset='100%25' stop-color='%237db8f0' stop-opacity='0'/></radialGradient></defs><circle cx='200' cy='200' r='150' fill='url(%23g)'/><g fill='none' stroke='%23a9c8f5'><circle cx='200' cy='200' r='42' stroke-opacity='.16' stroke-width='1.4'/><circle cx='200' cy='200' r='74' stroke-opacity='.13' stroke-width='1.4'/><circle cx='200' cy='200' r='106' stroke-opacity='.10' stroke-width='1.4'/><circle cx='200' cy='200' r='138' stroke-opacity='.08' stroke-width='1.4'/></g><g fill='none' stroke='%239fd8ff'><circle cx='200' cy='200' r='58' stroke-opacity='.18' stroke-width='5' stroke-dasharray='120 245'/><circle cx='200' cy='200' r='90' stroke-opacity='.14' stroke-width='6' stroke-dasharray='180 385'/><circle cx='200' cy='200' r='122' stroke-opacity='.11' stroke-width='6' stroke-dasharray='240 526'/></g><circle cx='200' cy='272' r='17' fill='%236ee7d8' fill-opacity='.14'/><circle cx='200' cy='272' r='6.5' fill='%236ee7d8' fill-opacity='.9'/><ellipse cx='200' cy='272' rx='19' ry='6' transform='rotate(-18 200 272)' fill='none' stroke='%239be8ff' stroke-opacity='.8' stroke-width='1.7'/></svg>") center/contain no-repeat;z-index:2;pointer-events:none}
+  body[class].bs-deepblue .board::after{content:"";position:absolute;left:50%;top:50%;width:66%;aspect-ratio:1/1;transform:translate(-50%,-52%);background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'><defs><radialGradient id='g' cx='50%25' cy='50%25' r='50%25'><stop offset='0%25' stop-color='%236ee7d8' stop-opacity='.16'/><stop offset='55%25' stop-color='%237db8f0' stop-opacity='.06'/><stop offset='100%25' stop-color='%237db8f0' stop-opacity='0'/></radialGradient></defs><circle cx='200' cy='200' r='150' fill='url(%23g)'/><g fill='none' stroke='%23a9c8f5'><circle cx='200' cy='200' r='42' stroke-opacity='.13' stroke-width='1.4'/><circle cx='200' cy='200' r='74' stroke-opacity='.10' stroke-width='1.4'/><circle cx='200' cy='200' r='106' stroke-opacity='.08' stroke-width='1.4'/><circle cx='200' cy='200' r='138' stroke-opacity='.06' stroke-width='1.4'/></g><g fill='none' stroke='%239fd8ff'><circle cx='200' cy='200' r='58' stroke-opacity='.14' stroke-width='5' stroke-dasharray='120 245'/><circle cx='200' cy='200' r='90' stroke-opacity='.11' stroke-width='6' stroke-dasharray='180 385'/><circle cx='200' cy='200' r='122' stroke-opacity='.09' stroke-width='6' stroke-dasharray='240 526'/></g><circle cx='200' cy='272' r='17' fill='%236ee7d8' fill-opacity='.11'/><circle cx='200' cy='272' r='6.5' fill='%236ee7d8' fill-opacity='.72'/><ellipse cx='200' cy='272' rx='19' ry='6' transform='rotate(-18 200 272)' fill='none' stroke='%239be8ff' stroke-opacity='.64' stroke-width='1.7'/></svg>") center/contain no-repeat;z-index:2;pointer-events:none}
   /* Space Classic: the old Space board, kept as a pickable board */
   body[class].bs-spaceclassic .board .sq.dark{background-color:#1e1850;background-image:linear-gradient(160deg,rgba(255,255,255,.05),rgba(3,0,24,.20)),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23231a5c'/><circle cx='58' cy='128' r='62' fill='%234b32d6' fill-opacity='.55'/><circle cx='58' cy='128' r='62' fill='none' stroke='%23a78bfa' stroke-opacity='.85' stroke-width='2.5'/><circle cx='44' cy='120' r='46' fill='%237c5cff' fill-opacity='.16'/><path d='M24 18 l1.8 5.2 5.2 1.8 -5.2 1.8 -1.8 5.2 -1.8 -5.2 -5.2 -1.8 5.2 -1.8 Z' fill='%23c4b5fd' fill-opacity='.95'/><path d='M78 10 l1.2 3.4 3.4 1.2 -3.4 1.2 -1.2 3.4 -1.2 -3.4 -3.4 -1.2 3.4 -1.2 Z' fill='%23d6ccff' fill-opacity='.7'/><g fill='%23ffffff'><circle cx='64' cy='32' r='1.2' fill-opacity='.5'/><circle cx='10' cy='44' r='1' fill-opacity='.4'/><circle cx='90' cy='40' r='1.1' fill-opacity='.45'/></g></svg>");background-size:auto,100% 100%;background-position:0 0,0 0}
   body[class].bs-spaceclassic .board .sq.light{background-color:#e8e3f8;background-image:radial-gradient(ellipse 88% 72% at 20% 14%,rgba(196,141,255,.22),rgba(196,141,255,0) 62%),radial-gradient(ellipse 78% 62% at 84% 86%,rgba(244,114,182,.14),rgba(244,114,182,0) 62%),radial-gradient(ellipse 62% 52% at 70% 24%,rgba(147,197,253,.18),rgba(147,197,253,0) 64%),linear-gradient(155deg,rgba(255,255,255,.5),rgba(148,140,205,.12))}
@@ -4000,6 +4006,172 @@
      with it and the bigger coach never covers the bubble or board. */
   .mascot.coach-mascot{zoom:var(--coach-zoom,1)}
 </style>
+<style id="marine-size-heroes-and-calm-space">
+  /* ===== Marine-size aliens everywhere + bare title bars + a calmer Space sky =====
+     1) THE ALIEN IS THE SAME SIZE IN EVERY THEME. In Marine (and
+        Space, Space 2 and Jungle, which copied it) the drawn heroes
+        — Zorp the alien, Orbi, Nova, Trio, Octo and Moss — stand in
+        a 103x103 box as a 103x92 picture with NO frame and NO
+        margins, so they look naturally big and close. Every other
+        theme showed the same hero as a picture file squeezed into
+        the small framed mascot box (62px wide in the Text box
+        layout, 96px in Bubbles), and the picture file's own canvas
+        margins shrank him further — the "a lot of margin or
+        padding" Suryansh saw in Bamboo and the older themes. Those
+        themes now use Marine's exact recipe: the SAME inline hero
+        artwork Marine shows, at the SAME 103x92, in the SAME
+        103x103 frameless box, bobbing the same way. Marine, Space,
+        Space 2 and Jungle are excluded — their own final rules
+        already do exactly this. Human coaches keep their framed
+        portrait, untouched. The Settings coach-size slider (zoom)
+        still scales the box in every theme alike.
+     2) NO BACKGROUND BEHIND ANY TOP TITLE. The pack screen's title
+        bar (the "Ghost Buster" bar) and the game screens' second
+        title row still carried the flat theme background from the
+        old shared rule, so the pack name sat inside a dark strip
+        in Jungle and any other theme whose --bg differs from the
+        page behind it. Every top bar now sits directly on the
+        theme's own background — plain text, no strip, no box —
+        exactly like the top-middle Chaturanga word, which stays
+        visible at the top of the Play and Puzzle screens in every
+        theme.
+     3) SPACE LAG: the Space sky kept a full-screen star layer
+        pulsing (an opacity animation across the whole fixed sky,
+        which makes the phone repaint the entire screen non-stop),
+        three dozen extra faint stars each running its own twinkle,
+        and wind streaks sweeping the full width of the screen over
+        the rocks. All of that is stilled: the stars stay (drawn,
+        at their faint levels), the streaks are gone, and what
+        still moves in Space is small and local — the hero's bob,
+        the little plants swaying on their rocks, a rare meteor.
+        Space 2's sky was already still (its star layers are off);
+        its small local animations (vines, the lizard) stay. */
+  /* --- 1) drawn heroes at Marine size in the framed themes --- */
+  body[data-coach="alien"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .mascot.coach-mascot,
+  body[data-coach="orbi"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .mascot.coach-mascot,
+  body[data-coach="nova"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .mascot.coach-mascot,
+  body[data-coach="trio"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .mascot.coach-mascot,
+  body[data-coach="octopus"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .mascot.coach-mascot,
+  body[data-coach="moss"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .mascot.coach-mascot{width:103px !important;height:103px !important;flex:none}
+  body[data-coach="alien"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-zorp,
+  body[data-coach="orbi"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-mono,
+  body[data-coach="nova"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-nova,
+  body[data-coach="trio"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-trio{display:block !important;width:103px;height:92px;overflow:visible;pointer-events:none;animation:alienBob 3.4s ease-in-out infinite alternate}
+  body[data-coach="octopus"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .octo-svg{display:block !important;width:103px;height:92px;overflow:visible;pointer-events:none;animation:octoBob 3.2s ease-in-out infinite alternate}
+  body[data-coach="moss"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .moss-svg{display:block !important;width:103px;height:92px;overflow:visible;pointer-events:none;animation:mossBob 3.6s ease-in-out infinite alternate}
+  body[data-coach="alien"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot img.coach-face,
+  body[data-coach="alien"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .moss-svg,
+  body[data-coach="alien"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .octo-svg,
+  body[data-coach="alien"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-mono,
+  body[data-coach="alien"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-nova,
+  body[data-coach="alien"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-trio,
+  body[data-coach="orbi"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot img.coach-face,
+  body[data-coach="orbi"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .moss-svg,
+  body[data-coach="orbi"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .octo-svg,
+  body[data-coach="orbi"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-zorp,
+  body[data-coach="orbi"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-nova,
+  body[data-coach="orbi"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-trio,
+  body[data-coach="nova"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot img.coach-face,
+  body[data-coach="nova"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .moss-svg,
+  body[data-coach="nova"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .octo-svg,
+  body[data-coach="nova"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-zorp,
+  body[data-coach="nova"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-mono,
+  body[data-coach="nova"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-trio,
+  body[data-coach="trio"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot img.coach-face,
+  body[data-coach="trio"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .moss-svg,
+  body[data-coach="trio"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .octo-svg,
+  body[data-coach="trio"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-zorp,
+  body[data-coach="trio"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-mono,
+  body[data-coach="trio"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-nova,
+  body[data-coach="octopus"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot img.coach-face,
+  body[data-coach="octopus"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .moss-svg,
+  body[data-coach="octopus"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-zorp,
+  body[data-coach="octopus"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-mono,
+  body[data-coach="octopus"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-nova,
+  body[data-coach="octopus"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-trio,
+  body[data-coach="moss"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot img.coach-face,
+  body[data-coach="moss"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .octo-svg,
+  body[data-coach="moss"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-zorp,
+  body[data-coach="moss"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-mono,
+  body[data-coach="moss"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-nova,
+  body[data-coach="moss"]:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .coach-mascot .ghost-trio{display:none !important}
+  /* --- 2) every top title bar sits on the theme background --- */
+  .pack-head,.game-top,.bot-topbar{background:transparent !important}
+  /* --- 3) the Space sky, stilled --- */
+  body.theme-space .space-sky .stars{animation:none}
+  body.theme-space .space-sky .faint-stars i{animation:none;opacity:var(--o,.15)}
+  body.theme-space .space-rocks .wind-streak{display:none}
+</style>
+<style id="branch-coachpos-boardlock">
+  /* --- Play from here: the branch button in the move-nav rows ---
+     Shown only while browsing an old position (the nav UI unhides
+     it). Tapping it cuts the line at the viewed move and makes that
+     position the live one, so a different move can be played. */
+  .mv-branch-btn{flex:none;background:var(--accent);border:1px solid var(--accent);color:#fff;font-weight:800;font-size:13px;border-radius:999px;padding:8px 14px;min-height:38px;cursor:pointer}
+  .mv-branch-btn[hidden]{display:none}
+  .mv-branch-btn:active{filter:brightness(1.12)}
+  .bot-moves .mv-branch-btn{margin-left:8px}
+  /* --- Coach position sliders (Settings > Coach) ---
+     --coach-shift-x / --coach-shift-y are set from the sliders and
+     simply push the mascot: sideways into the speech bubble or off
+     the edge of the screen, down close to (or over) the board, or
+     up far away from it. Pure offset — the layout never moves. */
+  .mascot.coach-mascot{transform:translate(var(--coach-shift-x,0px),var(--coach-shift-y,0px))}
+  /* --- Board hold lock (Settings > Screen layout) ---
+     Default (no .board-scroll-on on body): a touch that starts on a
+     board or its slot can never scroll anything — holding or
+     dragging on the board only moves pieces, and the page and the
+     move list stay still. With the setting on, the board scrolls
+     the page up and down like normal content again. */
+  body:not(.board-scroll-on) .board,body:not(.board-scroll-on) .board *,body:not(.board-scroll-on) .board-slot,body:not(.board-scroll-on) .bot-board-slot{touch-action:none !important}
+  body.board-scroll-on .board{touch-action:pan-y}
+</style>
+<style id="coach-free-size">
+  /* ===== Bubbles keep their size (Settings > Coach toggle) =====
+     Off (default, no class): the coach-size slider works through
+     zoom, so the mascot's layout box grows with him — in the flex
+     coach row that takes room away from the speech bubble beside
+     him, and the bubble shrinks. That is the behaviour Suryansh
+     called "too bad".
+     On (body.coach-free-size): zoom is switched off and the size
+     becomes a pure paint scale on top of the position sliders'
+     shift. The mascot's layout box never changes, so the bubble
+     keeps exactly the size it has at 100% — the coach simply grows
+     over the space around him (over the bubble's edge, over the
+     board) instead of pushing the bubble smaller, no matter how
+     big he becomes. He is lifted above the bubble (z-index) so the
+     growth stays fully visible, and he grows from his feet
+     (transform-origin bottom) so he never sinks into the board. */
+  body.coach-free-size .mascot.coach-mascot{zoom:1;position:relative;z-index:8;transform:translate(var(--coach-shift-x,0px),var(--coach-shift-y,0px)) scale(var(--coach-zoom,1));transform-origin:50% 100%}
+</style>
+<style id="recent-puzzles">
+  /* ===== Recent puzzles (home + pack screen) =====
+     The puzzles the player opened last, as compact rows. Solved
+     puzzles sit on top — solving one sends it straight up to the
+     first row (see renderRecents). Colours ride the theme
+     variables, with the light themes (Bamboo, Ultra, Lavender,
+     Cherry) getting the same card colours as their pack rows. */
+  .recent-note{color:var(--ink-soft);font-size:12.5px;margin:0 2px 8px}
+  .recent-list{display:flex;flex-direction:column;gap:8px}
+  #recentSec{margin-bottom:4px}
+  #packRecentSec{margin:2px 0 12px}
+  .recent-pack-head{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--accent-strong);margin:0 2px 8px}
+  .recent-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line-strong);border-radius:14px;padding:10px 13px;color:var(--ink);min-height:56px}
+  .recent-row:active{background:var(--surface2)}
+  .recent-row .main{flex:1;min-width:0}
+  .recent-row .nm{font-size:14.5px;font-weight:800;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .recent-row .sub{font-size:12px;color:var(--ink-soft);display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .recent-row .done{flex:none;font-size:11.5px;font-weight:800;color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--accent);border-radius:999px;padding:3px 10px}
+  .recent-row .chev{flex:none;font-size:18px;color:var(--ink-soft);line-height:1}
+  body.theme-bamboo .recent-row{background:#f3ead2}
+  body.theme-bamboo .recent-row:active{background:#ead9ae}
+  body.theme-ultra .recent-row{background:#cec09c;border-color:#7d6742}
+  body.theme-ultra .recent-row:active{background:#b3a077}
+  body.theme-lavender .recent-row{background:linear-gradient(120deg,#fdfcff,#f0e8fd);border-color:#c4b0ec;color:#38255f}
+  body.theme-lavender .recent-row .sub{color:#7563a6}
+  body.theme-cherry .recent-row{background:linear-gradient(120deg,#fffbfc,#fbeaf1);border-color:#eab6ca;color:#55293c}
+  body.theme-cherry .recent-row .sub{color:#a1768a}
+</style>
 </head>
 <body data-view="home">
 <div class="wrap">
@@ -4037,6 +4209,13 @@
   </header>
 
   <div id="packsPanel" class="js-home">
+    <section id="recentSec" aria-labelledby="recentH" hidden>
+      <div class="sec-head row-head">
+        <h2 id="recentH"><span>Recent puzzles</span></h2>
+      </div>
+      <p class="recent-note">The puzzles you opened last — solve one and it goes to the top.</p>
+      <div id="recentList" class="recent-list"></div>
+    </section>
     <section aria-labelledby="catH">
       <div class="sec-head row-head">
         <h2 id="catH"><span>Puzzle Packs</span></h2>
@@ -4178,6 +4357,7 @@
         <button id="btnMvStart" type="button" aria-label="Go to the start position"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14"/><path d="m18 6-7 6 7 6"/></svg></button>
         <span class="mv-label live" id="mvNavLabel">Live position</span>
         <button id="btnMvEnd" type="button" aria-label="Back to the live position"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14"/><path d="m6 6 7 6-7 6"/></svg></button>
+        <button class="mv-branch-btn" id="btnMvBranch" type="button" hidden>Play from here</button>
       </div>
       <div class="pz-turnwrap"><div class="bot-turn" id="pzTurnText">Your move.</div></div>
       <div class="bot-matrow pz-matrow"><span class="bm-label">Material</span><span id="pzMat"></span></div>
@@ -4221,7 +4401,7 @@
         <div class="eval-bar"><div class="eval-fill" id="botEngFill"></div></div>
         <div class="eng-best" id="botEngBest">Best move: —</div>
       </div>
-      <div class="bot-moves"><button class="bot-nav-arrow" id="botMvBack" type="button" aria-label="One move back" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg></button><span id="botMoveList">No moves yet</span><button class="bot-nav-arrow" id="botMvFwd" type="button" aria-label="One move forward" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></button></div>
+      <div class="bot-moves"><button class="bot-nav-arrow" id="botMvBack" type="button" aria-label="One move back" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg></button><span id="botMoveList">No moves yet</span><button class="bot-nav-arrow" id="botMvFwd" type="button" aria-label="One move forward" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></button><button class="mv-branch-btn" id="botBranchBtn" type="button" hidden>Play from here</button></div>
       <div class="bot-controls">
         <div class="play-toggles" role="group" aria-label="Auto hint and engine switches">
           <button id="tglAutoHint" type="button" aria-pressed="true">Auto hint · On</button>
@@ -4310,6 +4490,10 @@
     <p class="pack-sub" id="packSub"></p>
     <div class="pack-progress"><i id="packProg" style="width:0%"></i></div>
     <p class="pack-note" id="packNote">Loading from Lichess…</p>
+    <div id="packRecentSec" hidden>
+      <div class="recent-pack-head">Recent puzzles</div>
+      <div id="packRecentList" class="recent-list"></div>
+    </div>
     <div class="pack-filter-row">
       <button class="pack-filter-btn" id="btnPackFilter" type="button" aria-expanded="false" aria-controls="packFilterPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M7 12h10"/><path d="M10 19h4"/></svg><span>Filter</span></button>
       <span class="pack-filter-info" id="packFilterInfo"></span>
@@ -4544,6 +4728,8 @@
         <button type="button" data-controls-style="full" aria-pressed="false">Full</button>
       </div>
       <div class="set-hint">Compact: one row only — Options, Resign, Hint, Undo — with everything else under Options, like the Marine, Space and Space 2 themes. Full: the Auto hint and Engine switches, the New game button and every button in two rows, like the other themes.</div>
+      <div class="set-subhead">Holding the board</div>
+      <button class="set-opt" type="button" id="setBoardScrollToggle" aria-pressed="false"><span class="main"><span class="nm">Scroll the page from the board</span><span class="sub">Off: holding or dragging on the board only moves pieces — the page and the move list stay still. On: holding the board scrolls the page up and down like normal. Turn it on only if the fixed board causes a problem.</span></span><span class="set-check"></span></button>
     </div>
       </div>
     </div>
@@ -4560,6 +4746,18 @@
         <button class="vol-test" type="button" id="coachSizeReset">Reset</button>
       </div>
       <div class="set-hint">Slide to make your coach bigger or smaller next to the board — the portrait coaches, the Space aliens, Marine's octopus and Jungle's Moss all follow it, in Play and in puzzles. Saved on this device.</div>
+      <button class="set-opt" type="button" id="setCoachFreeSizeToggle" aria-pressed="false"><span class="main"><span class="nm">Bubbles keep their size</span><span class="sub">On: no matter how big the alien or coach becomes, the speech bubbles stay the same size — he grows over the space beside them instead of making them smaller. Off: a bigger coach takes more room and the bubbles shrink.</span></span><span class="set-check"></span></button>
+      <div class="set-subhead">Coach position — push him around the board</div>
+      <div class="vol-row">
+        <label for="coachShiftXRange">Left / right<span id="coachShiftXVal">0px</span></label>
+        <input type="range" id="coachShiftXRange" min="-90" max="90" step="2" value="0" aria-label="Coach left or right shift, in pixels">
+      </div>
+      <div class="vol-row">
+        <label for="coachShiftYRange">Up / down<span id="coachShiftYVal">0px</span></label>
+        <input type="range" id="coachShiftYRange" min="-90" max="130" step="2" value="0" aria-label="Coach up or down shift, in pixels — down is closer to the board">
+        <button class="vol-test" type="button" id="coachPosReset">Reset</button>
+      </div>
+      <div class="set-hint">Slide right to push your coach into the speech bubbles, slide left to push him off the side of the screen. Slide down to bring him right down close to the board — even over it — or slide up to keep him far away from it. Works in every theme, in Play and in puzzles. Saved on this device.</div>
     </div>
       </div>
     </div>
@@ -6312,7 +6510,7 @@ var MOVE_SOUND_STYLES = [
   { id:"lichess",  name:"Lichess",   sub:"The real Lichess sounds — free and open." },
   { id:"silent",   name:"Silent",    sub:"No move sound at all." }
 ];
-var settings = { board:"bamboo", sound:true, volume:"normal", moveVolume:70, pieces:"simple", character:"grandmaster", moveSound:"chesscom", soundStyle:"chesscom", moveSoundAll:null, soundStyleWins:true, themeSounds:{}, boardFx:{}, playMode:"coach", sfLevel:"hard", botSide:"w", botElo:null, sfOn:true, autoHint:true, showEngine:true, pieceSpeed:"normal", moveFx:"theme", boardStyle:"theme", boardTexture:"keep", coachStyle:"auto", controlsStyle:"auto", piecesV2:true, piecesV3:true, piecesV4:true, soundV5:true, grassV6:true, soundV7:true, soundV8:true, helmet:false, coachSize:100 };
+var settings = { board:"bamboo", sound:true, volume:"normal", moveVolume:70, pieces:"simple", character:"grandmaster", moveSound:"chesscom", soundStyle:"chesscom", moveSoundAll:null, soundStyleWins:true, themeSounds:{}, boardFx:{}, playMode:"coach", sfLevel:"hard", botSide:"w", botElo:null, sfOn:true, autoHint:true, showEngine:true, pieceSpeed:"normal", moveFx:"theme", boardStyle:"theme", boardTexture:"keep", coachStyle:"auto", controlsStyle:"auto", piecesV2:true, piecesV3:true, piecesV4:true, soundV5:true, grassV6:true, soundV7:true, soundV8:true, helmet:false, coachSize:100, coachShiftX:0, coachShiftY:0, boardScroll:false, coachFreeSize:false };
 try {
   var savedSettings = JSON.parse(localStorage.getItem("chessrank-settings") || "null");
   if (savedSettings){
@@ -6395,6 +6593,10 @@ try {
     if (typeof savedSettings.sfOn === "boolean") settings.sfOn = savedSettings.sfOn;
     if (typeof savedSettings.helmet === "boolean") settings.helmet = savedSettings.helmet;
     if (typeof savedSettings.coachSize === "number" && isFinite(savedSettings.coachSize)) settings.coachSize = Math.max(60, Math.min(160, Math.round(savedSettings.coachSize)));
+    if (typeof savedSettings.coachShiftX === "number" && isFinite(savedSettings.coachShiftX)) settings.coachShiftX = Math.max(-90, Math.min(90, Math.round(savedSettings.coachShiftX)));
+    if (typeof savedSettings.coachShiftY === "number" && isFinite(savedSettings.coachShiftY)) settings.coachShiftY = Math.max(-90, Math.min(130, Math.round(savedSettings.coachShiftY)));
+    if (typeof savedSettings.boardScroll === "boolean") settings.boardScroll = savedSettings.boardScroll;
+    if (typeof savedSettings.coachFreeSize === "boolean") settings.coachFreeSize = savedSettings.coachFreeSize;
     if (typeof savedSettings.autoHint === "boolean") settings.autoHint = savedSettings.autoHint;
     if (typeof savedSettings.showEngine === "boolean") settings.showEngine = savedSettings.showEngine;
     if (["off","slow","normal","fast"].indexOf(savedSettings.pieceSpeed) >= 0) settings.pieceSpeed = savedSettings.pieceSpeed;
@@ -6748,6 +6950,9 @@ function renderSettingsUI(){
   try { syncMoveFxUI(); syncMoveFoldLabel(); } catch(e){}
   syncVolumeUI();
   try { syncCoachSizeUI(); } catch(e){}
+  try { syncCoachPosUI(); } catch(e){}
+  try { syncBoardScrollUI(); } catch(e){}
+  try { syncCoachFreeSizeUI(); } catch(e){}
   var t = $("setSoundToggle");
   if (t) t.setAttribute("aria-pressed", soundOn ? "true" : "false");
   // the closed Settings rows show the current pick, so the page reads clean at a glance
@@ -6928,6 +7133,7 @@ var revealed = false;
 var mistakesThisPuzzle = 0;
 var hintUsed = false;
 var pzSnaps = [];            // one position snapshot per ply played (index 0 = the start) — powers the move back / forward arrows
+var pzFeedByPly = {};        // ply index -> the feed <li> that ply added, so Play from here can drop the abandoned line's feed rows
 var pzBrowse = -1;           // -1 = the live position; otherwise the snapshot index being viewed
 var pzLive = null;           // the live state / captures / lastMove, kept safe while an old position is being viewed
 var solvedIds = {};          // id -> true (clean solve)
@@ -6939,6 +7145,7 @@ var stats = { solved:0, streak:0, attempts:0, firstTry:0 };
    so a solved puzzle stays solved after the page is closed and opened
    again: the "Solved" tag on its tile, the "X of N done" count on its
    pack card and the Puzzles Solved number all come back. */
+var recentPuzzles = [];      // puzzles opened last: {id, rating, theme, moves, packKey, packName, num, solved, ts, solvedTs} — saved with the progress below
 var PROGRESS_KEY = "chessrank-progress";
 function storeProgress(){
   try {
@@ -6947,7 +7154,8 @@ function storeProgress(){
       packSolvedCounts: packSolvedCounts,
       packIdCache: packIdCache,
       stats: stats,
-      dailyPuzzleId: dailyPuzzleId
+      dailyPuzzleId: dailyPuzzleId,
+      recentPuzzles: recentPuzzles
     }));
   } catch(e){}
 }
@@ -6964,8 +7172,92 @@ function storeProgress(){
       });
     }
     if (typeof s.dailyPuzzleId === "string") dailyPuzzleId = s.dailyPuzzleId;
+    if (Array.isArray(s.recentPuzzles)) recentPuzzles = s.recentPuzzles.filter(function(e){ return e && typeof e.id === "string"; }).slice(0, 10);
   } catch(e){}
 })();
+/* ================= recent puzzles =================
+   Every puzzle the player opens joins this list (newest first,
+   ten kept). Solving a puzzle sends it straight to the top of the
+   list as shown: renderRecents always puts the solved ones first,
+   latest solve first, then the still-unsolved ones in the order
+   they were opened. The list shows on the home Puzzles tab and on
+   the pack screen, and tapping a row reopens that puzzle. */
+function packNameForKey(key){
+  var nm = null;
+  if (!key) return null;
+  PACKS.forEach(function(p){ if ((p.id || p.angle) === key) nm = p.name; });
+  return nm;
+}
+function noteRecent(p, solvedNow){
+  if (!p || p.isOpening || !p.id) return;
+  var now = Date.now();
+  var key = p.fromPack || (p.daily ? "daily" : packKey) || null;
+  var entry = null;
+  recentPuzzles.forEach(function(e){ if (e.id === p.id) entry = e; });
+  if (!entry){ entry = { id: p.id }; recentPuzzles.unshift(entry); }
+  if (typeof p.rating === "number") entry.rating = p.rating;
+  if (p.themes && p.themes.length) entry.theme = themeLabel(primaryTheme(p.themes));
+  if (p.moves && p.moves.length) entry.moves = Math.ceil(p.moves.length / 2);
+  if (key) entry.packKey = key;
+  var nm = packNameForKey(entry.packKey) || (p.daily ? "Puzzle of the Day" : null) || (entry.packKey && entry.packKey === packKey ? packName : null);
+  if (nm) entry.packName = nm;
+  var pos = -1;
+  packList.forEach(function(e2, i){ if (e2.id === p.id) pos = i; });
+  if (pos >= 0) entry.num = pos + 1;
+  if (solvedIds[p.id]) entry.solved = true;
+  if (solvedNow){ entry.solved = true; entry.solvedTs = now; }
+  entry.ts = now;
+  recentPuzzles.sort(function(a, b){ return (b.ts || 0) - (a.ts || 0); });
+  if (recentPuzzles.length > 10) recentPuzzles = recentPuzzles.slice(0, 10);
+  storeProgress();
+  renderRecents();
+}
+function renderRecents(){
+  var listHome = $("recentList"), listPack = $("packRecentList");
+  if (!listHome && !listPack) return;
+  var sorted = recentPuzzles.slice().sort(function(a, b){
+    if (!!a.solved !== !!b.solved) return a.solved ? -1 : 1;   // solved puzzles go up, above everything unsolved
+    var ta = a.solved ? (a.solvedTs || a.ts || 0) : (a.ts || 0);
+    var tb = b.solved ? (b.solvedTs || b.ts || 0) : (b.ts || 0);
+    return tb - ta;
+  }).slice(0, 8);
+  var html = sorted.map(function(e){
+    var title = (e.packName || "Lichess puzzle") + (e.num ? " · #" + e.num : "");
+    var sub = "Rating " + (e.rating || "—")
+      + (e.theme ? " · " + e.theme : "")
+      + (e.moves ? " · " + e.moves + " move" + (e.moves > 1 ? "s" : "") : "");
+    return '<button class="recent-row" type="button" data-recent="' + escAttr(e.id) + '">'
+      + '<span class="main"><span class="nm">' + escHtml(title) + '</span>'
+      + '<span class="sub">' + escHtml(sub) + '</span></span>'
+      + (e.solved ? '<span class="done">Solved</span>' : '<span class="chev" aria-hidden="true">›</span>')
+      + '</button>';
+  }).join("");
+  if (listHome) listHome.innerHTML = html;
+  if (listPack) listPack.innerHTML = html;
+  var homeSec = $("recentSec"); if (homeSec) homeSec.hidden = !sorted.length;
+  var packSec = $("packRecentSec"); if (packSec) packSec.hidden = !sorted.length;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-recent]"), function(b){
+    b.addEventListener("click", function(){ openRecent(b.getAttribute("data-recent")); });
+  });
+}
+function openRecent(id){
+  var entry = null;
+  recentPuzzles.forEach(function(e){ if (e.id === id) entry = e; });
+  var pk = entry ? (entry.packKey || packKey) : packKey;
+  if (detailCache[id]){ detailCache[id].fromPack = pk; startPuzzle(detailCache[id]); showView("play"); return; }
+  setListStatus("Loading puzzle from Lichess…");
+  lzFetch("https://lichess.org/api/puzzle/" + encodeURIComponent(id)).then(function(data){
+    var p = buildPuzzle(data);
+    p.fromPack = pk;
+    if (entry && entry.packKey === "daily") p.daily = true;
+    detailCache[p.id] = p;
+    setListStatus("");
+    startPuzzle(p);
+    showView("play");
+  }).catch(function(){
+    setListStatus("Could not load that puzzle from Lichess. Check your connection and tap it again.");
+  });
+}
 var view = new Array(64).fill(null);  // square idx -> {code, el} piece element on the board
 var capturedBy = { w:[], b:[] };      // piece codes each side has captured this puzzle
 var VAL = { P:1, N:3, B:3, R:5, Q:9, K:0 };
@@ -7574,7 +7866,7 @@ function setStatus(){
    "Your move." line, a Material row and a move-list bar with a copy button. */
 function renderPuzzleInfo(){
   var tt = $("pzTurnText");
-  if (tt) tt.textContent = pzBrowse >= 0 ? ("Viewing move " + pzBrowse + " of " + playedSans.length + " — tap the board or › to return to the live position.") : !cur ? "Your move." : finished ? (revealed ? "Solution shown." : "Puzzle solved ✓") : busy ? "Opponent is replying…" : "Your move.";
+  if (tt) tt.textContent = pzBrowse >= 0 ? ("Viewing move " + pzBrowse + " of " + playedSans.length + " — tap Play from here or one of your pieces to change the line from here; › returns to the live position.") : !cur ? "Your move." : finished ? (revealed ? "Solution shown." : "Puzzle solved ✓") : busy ? "Opponent is replying…" : "Your move.";
   pzNavUI();
   var ml = $("pzMoveList");
   if (ml){
@@ -7870,6 +8162,7 @@ function startPuzzle(p){
   clearDragVisual();
   cur = p;
   puzzleActive = true;
+  try { noteRecent(cur, false); } catch(e){}   // opening a puzzle puts it in Recent puzzles
   state = parseFEN(cur.fen);
   flipped = state.turn === "b";   // your pieces start at the bottom, White or Black
   ply = 0; selected = null; legalSel = []; hintSquares = []; wrongSq = null;
@@ -7878,6 +8171,7 @@ function startPuzzle(p){
   playedSans = [];
   clearReviewLog("pz");
   pzMarks = []; pzMarkToken++;
+  pzFeedByPly = {};
   lastMove = null;
   if (cur.lastUci && cur.lastUci.length >= 4)
     lastMove = { from:nameIdx(cur.lastUci.slice(0,2)), to:nameIdx(cur.lastUci.slice(2,4)) };
@@ -7932,6 +8226,10 @@ function finishPuzzle(){
     if (mistakesThisPuzzle===0 && !hintUsed) stats.firstTry++;
     stats.streak++;
     storeProgress();
+    try { noteRecent(cur, true); } catch(e){}   // solved — this puzzle goes to the top of Recent puzzles
+  }
+  else if (!revealed && solvedIds[cur.id]){
+    try { noteRecent(cur, true); } catch(e){}   // solved again — back to the top of Recent puzzles
   }
   $("summaryTitle").textContent = cur.isOpening ? "Line complete ✓" : (revealed ? "The Lichess solution" : "Puzzle solved ✓");
   $("summaryText").textContent = cur.isOpening
@@ -8004,6 +8302,7 @@ function playPly(uci, actor, isSolution){
   renderPuzzleInfo();
   renderBranchBar();
   pzSnaps[playedSans.length] = { state: cloneState(state), capW: capturedBy.w.slice(), capB: capturedBy.b.slice(), last: { from: mv.from, to: mv.to } };
+  pzFeedByPly[playedSans.length - 1] = lastFeedLi;
   pzNavUI();
 }
 function opponentReply(){
@@ -8023,8 +8322,15 @@ function opponentReply(){
   }, 500);
 }
 function attemptUserMove(from, to, promoChoice){
+  if (pzBrowse >= 0){
+    // A move attempted from a browsed position plays from here: cut
+    // the line at the viewed move first, then judge this move in the
+    // new line. If it is the opponent's turn at that point, its reply
+    // is already coming and this attempt goes nowhere.
+    if (!pzBranch() || busy || finished) return;
+    if (cur.moves[ply] && cur.moves[ply].actor !== "you") return;
+  }
   if (busy || finished) return;
-  if (pzBrowse >= 0) return;   // viewing an old position — look, don't move
   pzMarkToken++;
   syncViewToState();         // never move from a desynced board
   var legal = legalMoves(state, from);
@@ -8249,7 +8555,21 @@ boardEl.addEventListener("pointerdown", function(e){
   if (dragPointerId !== null && e.pointerId !== undefined && e.pointerId !== dragPointerId && drag && drag.el) return;
   clearDragVisual();               // kill any ghost from a pointerup the phone swallowed
   if (promoPickerTap("pz", e)) return;   // an open promotion picker owns this tap
-  if (pzBrowse >= 0){ pzExitBrowse(); return; }   // viewing an old position: a tap on the board jumps straight back to the live position — browsing can never trap the board
+  if (pzBrowse >= 0){
+    // Viewing an old position: tapping one of your own pieces PLAYS
+    // FROM HERE — the line is cut at the viewed move and this tap
+    // goes on to select / drag that piece in the new line. Tapping
+    // anywhere else jumps straight back to the live position, so
+    // browsing can never trap the board.
+    var bIdx = boardSquareAt(e.clientX, e.clientY);
+    var bp = (bIdx !== null && state) ? state.b[bIdx] : null;
+    var myCol = cur ? (cur.playerColor || (flipped ? "b" : "w")) : null;
+    if (bp && myCol && bp[0] === myCol){
+      if (!pzBranch()){ pzExitBrowse(); return; }
+      if (busy || finished || !state) return;   // opponent to move from here — its reply is already coming
+      // fall through: the rest of this handler selects / drags the piece
+    } else { pzExitBrowse(); return; }
+  }
   if (busy || finished || !state) return;
   var idx = boardSquareAt(e.clientX, e.clientY);
   if (idx === null) return;
@@ -8435,11 +8755,15 @@ function stepPack(d){
 function goNextPuzzle(){ stepPack(1); }
 function goPrevPuzzle(){ stepPack(-1); }
 /* Move arrows on the puzzle board: step back and forward through the
-   moves played so far and look at any old position. Viewing never
-   changes the game — the live state is kept aside and restored whole
-   when you jump back to the end. A tap on the board while viewing
-   jumps straight back to the live position (see the board's
-   pointerdown handler), so viewing can never trap the board. */
+   moves played so far and look at any old position. Viewing alone
+   never changes the game — the live state is kept aside and restored
+   whole when you jump back to the end. But the viewed position can
+   be PLAYED from: the Play from here button, or tapping one of your
+   own pieces, cuts the line at the viewed move (pzBranch) and the
+   game continues from there with a different move. A tap anywhere
+   else on the board while viewing jumps straight back to the live
+   position (see the board's pointerdown handler), so viewing can
+   never trap the board. */
 /* Move-strip scrolling: while you are at the live position the
    › arrow slides the strip itself right to the later moves (it
    used to be disabled there, so the list could never move);
@@ -8466,10 +8790,12 @@ function pzNavUI(){
   var lab = $("mvNavLabel");
   if (lab){
     lab.textContent = browsing
-      ? "Move " + pzBrowse + " of " + n + " — viewing only"
+      ? "Move " + pzBrowse + " of " + n + " — viewing"
       : (n ? "Live position · " + n + (n === 1 ? " move" : " moves") + " played" : "Live position");
     lab.classList.toggle("live", !browsing);
   }
+  var bb = $("btnMvBranch");
+  if (bb) bb.hidden = !browsing;
   function dis(id, off){ var b = $(id); if (b) b.disabled = !!off; }
   dis("btnMvStart", !n || (browsing && pzBrowse <= 0));
   dis("btnMvBack", !n || (browsing && pzBrowse <= 0));
@@ -8492,6 +8818,48 @@ function pzGoTo(k){
   selected = null; legalSel = []; hintSquares = []; wrongSq = null;
   renderBoard(); resetView(); renderPlayerBars(); renderPuzzleInfo();
 }
+/* Play from here: while browsing, make the viewed position the live
+   one. The line is cut at the viewed move — the moves after it, their
+   coach entries, feed rows and marks are dropped — and play continues
+   from this position, so a different move can be played instead.
+   Browsing right after your own move means the opponent is to move:
+   its reply is triggered, exactly as in the live line. */
+function pzBranch(){
+  if (pzBrowse < 0 || !cur || busy) return false;
+  var k = pzBrowse;
+  if (k >= playedSans.length){ pzExitBrowse(); return false; }
+  var s = pzSnaps[k];
+  if (!s){ pzExitBrowse(); return false; }
+  pzBrowse = -1; pzLive = null;
+  state = s.state;
+  capturedBy = { w: s.capW.slice(), b: s.capB.slice() };
+  lastMove = s.last ? { from: s.last.from, to: s.last.to } : null;
+  ply = k;
+  playedSans = playedSans.slice(0, k);
+  pzSnaps = pzSnaps.slice(0, k + 1);
+  pzMarks = pzMarks.slice(0, k); pzMarkToken++;
+  Object.keys(pzFeedByPly).forEach(function(key){
+    if (+key >= k){ var fl = pzFeedByPly[key]; if (fl && fl.parentNode) fl.parentNode.removeChild(fl); delete pzFeedByPly[key]; }
+  });
+  Object.keys(pzLogEls).forEach(function(key){
+    if (+key >= k){ var e2 = pzLogEls[key]; if (e2 && e2.parentNode) e2.parentNode.removeChild(e2); delete pzLogEls[key]; }
+  });
+  finished = false;
+  var sb = $("summaryBox"); if (sb) sb.classList.remove("show");
+  selected = null; legalSel = []; hintSquares = []; wrongSq = null;
+  renderBoard(); resetView(); renderPlayerBars(); renderPuzzleInfo(); pzNavUI();
+  try { renderBranchBar(); } catch(e){}
+  playSound("move");
+  var step = cur.moves[ply];
+  if (step && step.actor === "opp"){
+    setFeedback("think", "Playing from here — the moves after this point are gone. Opponent replies…");
+    opponentReply();
+  } else {
+    setFeedback("think", "Playing from here — the moves after this point are gone. Your move.");
+    setStatus();
+  }
+  return true;
+}
 function pzExitBrowse(){
   if (pzBrowse < 0){ pzNavUI(); return; }
   pzBrowse = -1;
@@ -8508,6 +8876,7 @@ $("btnMvFwd").addEventListener("click", function(){
 });
 $("pzMoveList").addEventListener("scroll", function(){ pzNavUI(); });
 $("btnMvEnd").addEventListener("click", function(){ pzExitBrowse(); });
+$("btnMvBranch").addEventListener("click", function(){ pzBranch(); });
 var prevView = "home";
 /* Where each tab takes you, exactly:
    - Puzzles tab: back to the puzzle you are doing (puzzleActive) —
@@ -9902,16 +10271,22 @@ function spawnMoveFx(board, toIdx, disp){
     var W = board.clientWidth || 320, sq = W / 8;
     var cx = (disp.c + .5) * sq, cy = (disp.r + .5) * sq;
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var glow = document.createElement("div");
-    glow.className = "fx-glow " + (theme === "lavender" ? "fx-lav" : theme === "vines" ? "fx-vin" : "fx-che");
-    glow.style.width = glow.style.height = (sq * 1.9) + "px";
-    glow.style.left = cx + "px"; glow.style.top = cy + "px";
-    layer.appendChild(glow);
-    if (glow.animate){ try { glow.animate([{ opacity:.85, transform:"translate(-50%,-50%) scale(.55)" }, { opacity:0, transform:"translate(-50%,-50%) scale(1.25)" }], { duration:650, easing:"ease-out" }); } catch(e){} }
-    setTimeout(function(){ if (glow.parentNode) glow.parentNode.removeChild(glow); }, 720);
+    /* NO GLOW FLASH in these three themes any more: the burst used
+       to open with a big soft glow (1.9 squares wide, up to .85
+       opacity) pulsing over the landing square while the piece was
+       still gliding in — on Lavender's and Cherry's light boards
+       that wash of colour sat right on top of the arriving piece
+       and read as the piece blinking / glitching, the same
+       complaint the Marine / Space double burst caused before it
+       was gated. The petals alone are the decoration now, fewer
+       of them, shorter-lived, and they start a beat AFTER the
+       move (110ms delay) so they burst around the settled piece
+       instead of flashing across its glide. The picked-effect
+       puffs (moveFxPuffs) already decorate both squares in these
+       themes, so nothing is lost. */
     if (reduced) return;
     var colors = theme === "lavender" ? ["#b79ced", "#9a7bd8", "#cdbbf4", "#8a68cc"] : theme === "vines" ? ["#f2a0b5", "#e2543e", "#a8cc7f", "#f7c3d2"] : ["#f8bfd2", "#f49bbb", "#fbd9e6", "#f18fb4"];
-    var count = theme === "lavender" ? 7 : theme === "vines" ? 10 : 11;
+    var count = theme === "lavender" ? 5 : theme === "vines" ? 6 : 6;
     for (var i = 0; i < count; i++){
       var p = document.createElement("div");
       var leaf = (theme === "lavender" || theme === "vines") && i % 3 === 2;
@@ -9924,17 +10299,17 @@ function spawnMoveFx(board, toIdx, disp){
       var dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - sq * .25;
       var fall = theme === "cherry" ? sq * (.7 + Math.random() * .8) : theme === "vines" ? sq * .6 : sq * .45;
       var rot = (Math.random() * 260 - 130) + "deg";
-      var dur = theme === "cherry" ? 950 + Math.random() * 450 : 800 + Math.random() * 300;
+      var dur = theme === "cherry" ? 700 + Math.random() * 250 : 620 + Math.random() * 220;
       if (p.animate){
         try {
           p.animate([
             { transform:"translate(-50%,-50%) rotate(0deg)", opacity:1 },
             { transform:"translate(calc(-50% + " + dx + "px), calc(-50% + " + dy + "px)) rotate(" + rot + ")", opacity:1, offset:.45 },
             { transform:"translate(calc(-50% + " + (dx * 1.15) + "px), calc(-50% + " + (dy + fall) + "px)) rotate(" + rot + ")", opacity:0 }
-          ], { duration:dur, easing:"ease-out" });
+          ], { duration:dur, delay:110, easing:"ease-out" });
         } catch(e){}
       }
-      (function(el, d){ setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, d + 60); })(p, dur);
+      (function(el, d){ setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, d + 200); })(p, dur);
     }
   } catch(e){}
 }
@@ -10951,6 +11326,7 @@ function botReply(){
   }
 }
 function attemptBotUserMove(from, to, promoChoice){
+  if (botBrowse >= 0){ if (!botBranch()) return; }   // a move attempted from a browsed position plays from here — cut the game at the viewed move first
   if (botBusy || botOver || !botState || !botHumanTurn()) return;
   botMarkToken++;
   syncBotViewToState();      // never move from a desynced board
@@ -11061,7 +11437,21 @@ botBoardEl.addEventListener("pointerdown", function(e){
   if (botPointerId !== null && e.pointerId !== undefined && e.pointerId !== botPointerId && botDrag && botDrag.el) return;
   clearBotDragVisual();      // kill any ghost from a pointerup the phone swallowed
   if (promoPickerTap("bot", e)) return;   // an open promotion picker owns this tap
-  if (botBrowse >= 0){ botExitBrowse(); return; }   // viewing an old position: a tap on the board jumps straight back to the live position (same as the puzzle board)
+  if (botBrowse >= 0){
+    // Viewing an old position: tapping one of your own pieces PLAYS
+    // FROM HERE — the game is cut at the viewed move and this tap
+    // goes on to select / drag that piece in the new line. Tapping
+    // anywhere else jumps straight back to the live position, so
+    // browsing can never trap the board (same as the puzzle board).
+    var bIdx = botSquareAt(e.clientX, e.clientY);
+    var bp = (bIdx !== null && botState) ? botState.b[bIdx] : null;
+    var myCol = botState ? ((botFreeMode() || botRetryActive) ? botState.turn : botHumanColor()) : null;
+    if (bp && myCol && bp[0] === myCol){
+      if (!botBranch()){ botExitBrowse(); return; }
+      if (botBusy || botOver || !botState || !botHumanTurn()) return;   // bot to move from here — its reply is already coming
+      // fall through: the rest of this handler selects / drags the piece
+    } else { botExitBrowse(); return; }
+  }
   if (botBusy || botOver || !botState || !botHumanTurn()) return;
   var idx = botSquareAt(e.clientX, e.clientY);
   if (idx === null) return;
@@ -11347,9 +11737,12 @@ $("botResignBtn").addEventListener("click", function(){
 });
 /* Move arrows on the Play board (the small ‹ › beside the move list,
    Chess.com Marine style): step back and forward through the moves
-   played so far and look at any old position. Viewing never changes
-   the game — the live state is kept aside and restored whole when
-   you step back to the end, exactly like the puzzle board's arrows. */
+   played so far and look at any old position. Viewing alone never
+   changes the game — the live state is kept aside and restored whole
+   when you step back to the end, exactly like the puzzle board's
+   arrows. But the viewed position can be PLAYED from: the Play from
+   here button, or tapping one of your own pieces, cuts the game at
+   the viewed move (botBranch) and play continues from there. */
 /* Same strip fix as the puzzle board: at the live position ›
    slides the Play move list right to the later moves; while
    browsing it steps forward through positions as before. */
@@ -11371,6 +11764,8 @@ function botNavUI(){
   function dis(id, off){ var b = $(id); if (b) b.disabled = !!off; }
   dis("botMvBack", !n || (browsing && botBrowse <= 0));
   dis("botMvFwd", !browsing && !botStripCanRight());
+  var bb = $("botBranchBtn");
+  if (bb) bb.hidden = !browsing;
 }
 function botGoTo(k){
   if (!botState || botBusy || !botSnaps.length) return;
@@ -11388,8 +11783,59 @@ function botGoTo(k){
   botSelected = null; botLegalSel = []; botHintSq = [];
   clearBestArrow("bot");
   resetBotView(); renderBotSquares(); renderBotInfo();
-  botSetTurn("Viewing move " + k + " of " + n + " — tap the board or › to return to the live position.");
+  botSetTurn("Viewing move " + k + " of " + n + " — tap Play from here or one of your pieces to change the line from here; › returns to the live position.");
   botNavUI();
+}
+/* Play from here: while browsing, make the viewed position the live
+   one. The game is cut at the viewed move — later moves, their coach
+   entries, marks and undo entries are dropped — and play continues
+   from this position, so a different move can be played instead.
+   Works in every Play mode: against the bot (its reply is triggered
+   when the cut leaves it to move), Two People and Analysis. */
+function botBranch(){
+  if (botBrowse < 0 || !botState || botBusy) return false;
+  var k = botBrowse;
+  if (k >= botSans.length){ botExitBrowse(); return false; }
+  var s = botSnaps[k];
+  if (!s){ botExitBrowse(); return false; }
+  botBrowse = -1; botLive = null;
+  botState = s.state;
+  botCaptured = { w: s.capW.slice(), b: s.capB.slice() };
+  botLastMove = s.last ? { from: s.last.from, to: s.last.to } : null;
+  botSans = botSans.slice(0, k);
+  botUcis = botUcis.slice(0, k);
+  botMarks = botMarks.slice(0, k); botMarkToken++;
+  botSnaps = botSnaps.slice(0, k + 1);
+  botHistory = botHistory.filter(function(h){ return h.sansLen < k; });
+  Object.keys(botLogEls).forEach(function(key){
+    if (+key >= k){ var e2 = botLogEls[key]; if (e2 && e2.parentNode) e2.parentNode.removeChild(e2); delete botLogEls[key]; }
+  });
+  botOver = false; botResult = "*";
+  var rl = $("botResignLabel"); if (rl) rl.textContent = "Resign";
+  botSelected = null; botLegalSel = []; botHintSq = [];
+  pendingUserPart = "";
+  clearBestArrow("bot");
+  resetBotView(); renderBotSquares(); renderBotInfo(); botNavUI();
+  playSound("move");
+  if (botGameEndCheck()){ try { runEnginePanel("bot"); } catch(e){} return true; }
+  if (botFreeMode() || botRetryActive){
+    botSay("Playing from here — the old moves after this point are gone.");
+    botSetTurn(botState.turn === "w" ? "White to move." : "Black to move.");
+  } else if (botState.turn === botHumanColor()){
+    botSay("Playing from here — the old moves after this point are gone. Your move.");
+    botSetTurn("Your move.");
+  } else {
+    botSay("Playing from here — the old moves after this point are gone. My move.");
+    botSetTurn("Bot is thinking…");
+    botBusy = true; armBotBusyGuard();
+    var seqB = botSeq;
+    setTimeout(function(){
+      if (seqB !== botSeq) return;
+      try { playBotReply(); } catch(e){ botBusy = false; if (!botOver) botSetTurn("Your move."); }
+    }, 450);
+  }
+  try { runEnginePanel("bot"); } catch(e){}
+  return true;
 }
 function botExitBrowse(){
   if (botBrowse < 0){ botNavUI(); return; }
@@ -11408,6 +11854,7 @@ $("botMvFwd").addEventListener("click", function(){
   if (ml) ml.scrollBy({ left: Math.max(60, Math.round(ml.clientWidth * 0.8)), behavior: "smooth" });
 });
 $("botMoveList").addEventListener("scroll", function(){ botNavUI(); });
+$("botBranchBtn").addEventListener("click", function(){ botBranch(); });
 /* ================= coach history — inside the bubble =================
    There is no log box outside the coach bubble. Every coach
    response is kept as an entry INSIDE the bubble itself, in order:
@@ -12287,6 +12734,107 @@ function syncCoachSizeUI(){
     syncCoachSizeUI();
   });
 })();
+/* Coach position sliders (Settings > Coach): two offsets that push
+   the coach mascot around — left/right into the speech bubbles or
+   off the side of the screen, up/down far from the board or right
+   down close to (even over) it. Applied through the --coach-shift-x
+   / --coach-shift-y variables the branch-coachpos-boardlock style
+   block reads; saved with the rest of the settings and applied at
+   once while sliding. */
+function coachShiftClamp(){
+  var x = typeof settings.coachShiftX === "number" && isFinite(settings.coachShiftX) ? settings.coachShiftX : 0;
+  var y = typeof settings.coachShiftY === "number" && isFinite(settings.coachShiftY) ? settings.coachShiftY : 0;
+  return { x: Math.max(-90, Math.min(90, x)), y: Math.max(-90, Math.min(130, y)) };
+}
+function applyCoachPos(){
+  var p = coachShiftClamp();
+  document.body.style.setProperty("--coach-shift-x", p.x + "px");
+  document.body.style.setProperty("--coach-shift-y", p.y + "px");
+}
+function syncCoachPosUI(){
+  var p = coachShiftClamp();
+  var xr = $("coachShiftXRange"), xv = $("coachShiftXVal");
+  var yr = $("coachShiftYRange"), yv = $("coachShiftYVal");
+  if (xr && document.activeElement !== xr) xr.value = p.x;
+  if (xv) xv.textContent = (p.x > 0 ? "+" : "") + p.x + "px";
+  if (yr && document.activeElement !== yr) yr.value = p.y;
+  if (yv) yv.textContent = (p.y > 0 ? "+" : "") + p.y + "px";
+}
+(function bindCoachPosSliders(){
+  applyCoachPos();
+  var xr = $("coachShiftXRange"), yr = $("coachShiftYRange");
+  if (xr) xr.addEventListener("input", function(){
+    settings.coachShiftX = Math.max(-90, Math.min(90, parseInt(xr.value, 10) || 0));
+    saveSettings(); applyCoachPos(); syncCoachPosUI();
+  });
+  if (yr) yr.addEventListener("input", function(){
+    settings.coachShiftY = Math.max(-90, Math.min(130, parseInt(yr.value, 10) || 0));
+    saveSettings(); applyCoachPos(); syncCoachPosUI();
+  });
+  var rs = $("coachPosReset");
+  if (rs) rs.addEventListener("click", function(){
+    settings.coachShiftX = 0; settings.coachShiftY = 0;
+    saveSettings(); applyCoachPos(); syncCoachPosUI();
+  });
+})();
+/* Board hold lock (Settings > Screen layout > Scroll the page from
+   the board): off (the default) means holding or dragging on a
+   board only moves pieces — the touch can never scroll the page or
+   shift the move list. The CSS in the branch-coachpos-boardlock
+   style block sets touch-action on the boards and their slots; the
+   non-passive touchmove guard below is the second lock, for any
+   overlay or wrapper inside the board area a theme may add. On
+   means the board scrolls the page like normal content again. */
+function syncBoardScrollUI(){
+  var t = $("setBoardScrollToggle");
+  if (t) t.setAttribute("aria-pressed", settings.boardScroll ? "true" : "false");
+}
+function applyBoardScroll(){
+  document.body.classList.toggle("board-scroll-on", !!settings.boardScroll);
+  syncBoardScrollUI();
+}
+(function bindBoardScroll(){
+  applyBoardScroll();
+  var t = $("setBoardScrollToggle");
+  if (t) t.addEventListener("click", function(){
+    settings.boardScroll = !settings.boardScroll;
+    saveSettings();
+    applyBoardScroll();
+  });
+  function lockEl(elm){
+    if (!elm) return;
+    elm.addEventListener("touchmove", function(e){
+      if (!settings.boardScroll) e.preventDefault();
+    }, { passive: false });
+  }
+  lockEl(boardEl);
+  lockEl(botBoardEl);
+  if (boardEl && boardEl.parentElement) lockEl(boardEl.parentElement);
+  if (botBoardEl && botBoardEl.parentElement) lockEl(botBoardEl.parentElement);
+})();
+/* Bubbles keep their size (Settings > Coach toggle): when on, the
+   coach-size slider stops touching the layout — the CSS in the
+   coach-free-size style block swaps the mascot's zoom for a pure
+   paint scale, so the speech bubbles keep their size no matter how
+   big the alien or coach becomes. Saved with the rest of the
+   settings, applied at once when tapped. */
+function syncCoachFreeSizeUI(){
+  var t = $("setCoachFreeSizeToggle");
+  if (t) t.setAttribute("aria-pressed", settings.coachFreeSize ? "true" : "false");
+}
+function applyCoachFreeSize(){
+  document.body.classList.toggle("coach-free-size", !!settings.coachFreeSize);
+  syncCoachFreeSizeUI();
+}
+(function bindCoachFreeSize(){
+  applyCoachFreeSize();
+  var t = $("setCoachFreeSizeToggle");
+  if (t) t.addEventListener("click", function(){
+    settings.coachFreeSize = !settings.coachFreeSize;
+    saveSettings();
+    applyCoachFreeSize();
+  });
+})();
 $("setSoundToggle").addEventListener("click", function(){
   soundOn = !soundOn;
   applySettings(false);
@@ -12337,6 +12885,7 @@ buildBoardFrames();
 renderCategories();
 renderOpenings();
 renderPicker();
+try { renderRecents(); } catch(e){}
 cur = null;
 /* ================= backup: download / load (Settings) =================
    Everything Chaturanga saves on this device lives in localStorage
