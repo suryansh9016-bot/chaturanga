@@ -3977,18 +3977,18 @@
         octopus, Moss or a human portrait — stands full and square
         beside the clouds in every theme. The Text box layout is
         untouched (its row is short, so the strip never formed).
-     2) ONE "CHATURANGA" AT THE TOP OF THE GAME SCREENS: the Play
-        and Puzzle screens each carried their own centred
-        "Chaturanga" title in their top bar, directly under the
-        app bar that already shows the name — so the word appeared
-        twice, stacked. The in-page title span is hidden on those
-        two screens only (the back and settings buttons at the
-        sides stay and work exactly as before); the Home screen
-        keeps its name, as asked for before. */
+     2) "CHATURANGA" AT THE TOP OF THE GAME SCREENS: an earlier
+        version of this block hid the Play and Puzzle screens' own
+        top-bar title because the word seemed to appear twice. It
+        does not — the game screens have no other name at the top —
+        and Suryansh asked for the word back: plain text at the top
+        middle, with NO background, strip or box behind it, on the
+        game screens too, in every theme. The picks-win block above
+        already forces exactly that (transparent bar, centred word),
+        so this block no longer hides the title anywhere. */
   body.coach-bubbles:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .bot-coach,
   body.coach-bubbles:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .pz-coach{align-items:center}
   body.coach-bubbles:not(.theme-marine):not(.theme-space):not(.theme-space2):not(.theme-jungle) .mascot.coach-mascot{width:96px;height:96px;flex:none;align-self:center}
-  .js-bot .screen-top1 .screen-title,.js-play .screen-top1 .screen-title{display:none !important}
 </style>
 <style id="coach-size">
   /* ===== Coach & alien size (Settings > Coach slider) =====
@@ -7450,10 +7450,25 @@ function undoView(undo){
    changes. renderBoard() runs several times per move (and on
    selection and drag events); rewriting all 64 squares every time
    forced the phone to repaint every textured tile mid-glide,
-   which is what made piece movement stutter and feel laggy. */
+   which is what made piece movement stutter and feel laggy.
+   Even a "changed" render now updates IN PLACE: a move only
+   changes a few squares (the last-move highlight, a badge, the
+   selection), so only those square elements get a new class or
+   inner markup and the other sixty keep their painted tiles —
+   the browser never re-rasterises the whole board mid-glide.
+   That repaint was worst in the themes whose dark squares carry
+   a big tiled picture (Marine's waves, the Space star tiles,
+   Jungle, Vines, Cherry, Lavender): the board flashed under the
+   moving piece, which read as the piece blinking, and the glide
+   stuttered. Flat-colour themes (Bamboo, Green, Blue...) repaint
+   cheaply, which is why they always felt smooth. A full rebuild
+   still happens whenever the square ORDER changes (a flip) or
+   the layer's children do not line up with the new cells. */
 var lastSqHTML = "";
+var lastSqCells = null;
 function renderSquares(){
   var html = "";
+  var cells = [];
   var ranks = flipped ? [1,2,3,4,5,6,7,8] : [8,7,6,5,4,3,2,1];
   var files = flipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
   ranks.forEach(function(rank, ri){
@@ -7480,10 +7495,29 @@ function renderSquares(){
         var pmk = mkIdx >= 0 ? pzMarks[mkIdx] : null;
         if (pmk && pmk.glyph) inner += '<span class="mv-badge ' + pmk.cls + '">' + pmk.glyph + '</span>';
       }
+      cells.push({ idx: idx, cls: cls, inner: inner });
       html += '<div class="'+cls+'" data-sq="'+idx+'">'+inner+'</div>';
     });
   });
-  if (html !== lastSqHTML){ lastSqHTML = html; sqLayer.innerHTML = html; }
+  if (html === lastSqHTML) return;
+  lastSqHTML = html;
+  var kids = sqLayer.children;
+  var inPlace = !!(lastSqCells && kids.length === 64 && cells.length === 64);
+  if (inPlace){
+    for (var qi = 0; qi < 64; qi++){
+      if (!kids[qi] || kids[qi].getAttribute("data-sq") !== String(cells[qi].idx)){ inPlace = false; break; }
+    }
+  }
+  if (inPlace){
+    for (var qj = 0; qj < 64; qj++){
+      var kid = kids[qj], cell = cells[qj], prev = lastSqCells[qj];
+      if (!prev || prev.cls !== cell.cls) kid.className = cell.cls;
+      if (!prev || prev.inner !== cell.inner) kid.innerHTML = cell.inner;
+    }
+  } else {
+    sqLayer.innerHTML = html;
+  }
+  lastSqCells = cells;
 }
 function renderCoords(){ /* coordinates are drawn inside the board squares */ }
 function renderBoard(){ renderSquares(); renderCoords(); renderOuterCoords(); }
@@ -9838,9 +9872,23 @@ setInterval(function(){
    Blossom shows a soft pink glow with blossom petals that burst out
    and fall. Theme-only: spawnMoveFx returns at once in every other
    theme. The layer is pointer-events:none and every particle removes
-   itself, so it can never block the board or slow a move. */
+   itself, so it can never block the board or slow a move.
+   THE PICK WINS: these bursts are the THEME DEFAULT decoration only.
+   When the player picks a specific effect in Settings > Piece
+   movement (Grass, Bubbles, Hit, Sparkle, Petals — or None), this
+   function returns at once in EVERY theme: the picked effect already
+   plays on its own through moveFxPuffs() inside the move code, so a
+   pick is never buried under the theme's own burst. Before this
+   gate, Marine always bubbled and Space always showered stars on
+   top of whatever was picked, so in those themes the Piece movement
+   pick looked impossible to change — and the double burst (up to
+   two dozen animated particles plus a big glow flash over the
+   landing square, every move) is also what made pieces look like
+   they blinked and the board lag in Marine and the Space themes,
+   where Bamboo and the plain themes stayed smooth. */
 function spawnMoveFx(board, toIdx, disp){
   try {
+    if (settings.moveFx && settings.moveFx !== "theme") return;
     var theme = settings.board;
     if (theme === "marine" || theme === "space" || theme === "space2"){
       if (!board || !disp) return;
@@ -10622,8 +10670,10 @@ function botMoveView(from, to){
   }
 }
 var lastBotSqHTML = "";
+var lastBotSqCells = null;   // per-square cache: same in-place update as renderSquares — only the squares that changed are touched, so textured boards never repaint whole mid-glide
 function renderBotSquares(){
   var html = "";
+  var cells = [];
   var ranks = botFlipped ? [1,2,3,4,5,6,7,8] : [8,7,6,5,4,3,2,1];
   var files = botFlipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
   for (var ri = 0; ri < 8; ri++){
@@ -10649,10 +10699,29 @@ function renderBotSquares(){
         var bmk = botMarks[botSans.length - 1];
         if (bmk && bmk.glyph) inner += '<span class="mv-badge ' + bmk.cls + '">' + bmk.glyph + '</span>';
       }
+      cells.push({ idx: idx, cls: cls, inner: inner });
       html += '<div class="' + cls + '" data-sq="' + idx + '">' + inner + '</div>';
     }
   }
-  if (html !== lastBotSqHTML){ lastBotSqHTML = html; botSqLayer.innerHTML = html; }
+  if (html === lastBotSqHTML) return;
+  lastBotSqHTML = html;
+  var kids = botSqLayer.children;
+  var inPlace = !!(lastBotSqCells && kids.length === 64 && cells.length === 64);
+  if (inPlace){
+    for (var qi = 0; qi < 64; qi++){
+      if (!kids[qi] || kids[qi].getAttribute("data-sq") !== String(cells[qi].idx)){ inPlace = false; break; }
+    }
+  }
+  if (inPlace){
+    for (var qj = 0; qj < 64; qj++){
+      var kid = kids[qj], cell = cells[qj], prev = lastBotSqCells[qj];
+      if (!prev || prev.cls !== cell.cls) kid.className = cell.cls;
+      if (!prev || prev.inner !== cell.inner) kid.innerHTML = cell.inner;
+    }
+  } else {
+    botSqLayer.innerHTML = html;
+  }
+  lastBotSqCells = cells;
 }
 function botMoveListText(){
   var out = [];
