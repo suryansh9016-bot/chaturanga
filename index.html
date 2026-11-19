@@ -2867,6 +2867,44 @@
   body.ctl-full .bot-newbtn{display:block !important}
   body.ctl-full .bot-controls .bot-btnrow ~ .bot-btnrow{display:flex !important}
 </style>
+<style id="puzzle-compact-like">
+  /* ===== Puzzle screen: Compact buttons + the Like (love) button =====
+     The Compact buttons pick (Settings > Screen layout) used to
+     restyle only the Play screen — on the puzzle screen nothing
+     changed, so Compact felt broken there. Now the puzzle screen
+     gets the same treatment as Play: one row only — Options,
+     Hint, Like, Retry — and everything else (Solution, Flip,
+     Save, the Auto hint / Engine switches, Prev / Next and the
+     start / end jump row) moves under the Options button, which
+     opens the puzzle Options sheet. Full buttons keeps the whole
+     set, exactly as before. The Like button is an outline heart
+     that fills red while the puzzle in front of you is one of
+     your liked puzzles (Save tab > Liked puzzles). */
+  #pzOptionsBtn{display:none}
+  body.ctl-compact #pzOptionsBtn{display:flex;order:1}
+  body.ctl-compact #btnHint{order:2}
+  body.ctl-compact #btnLike{order:3}
+  body.ctl-compact #btnReset{order:4}
+  /* All four in ONE row, like the Play screen's compact row: a
+     generic rule (body[class] .game-box .action-row button) gives
+     every action button flex:1 1 30% with wrapping — three per
+     row, made for the six-button full set — which left Retry
+     alone on a second row. These selectors match that rule's
+     weight and come later, so in Compact the four visible
+     buttons share the row evenly instead and never wrap. */
+  body.ctl-compact .game-box .action-row{flex-wrap:nowrap}
+  body.ctl-compact .game-box .action-row button{flex:1 1 0;min-width:0}
+  body.ctl-compact #btnSolution,
+  body.ctl-compact #btnFlip,
+  body.ctl-compact #btnSavePuzzle{display:none !important}
+  body.ctl-compact .pz-toggles{display:none !important}
+  body.ctl-compact .pn-row{display:none !important}
+  body.ctl-compact .mv-nav{display:none !important}
+  body.ctl-full #pzOptionsBtn{display:none}
+  #btnLike.liked{border-color:#e5484d}
+  #btnLike.liked span{color:#e5484d}
+  #btnLike.liked svg path{fill:#e5484d;stroke:#e5484d}
+</style>
 
 <style id="puzzle-moves-first">
   /* ===== Puzzle screen: moves hug the board, Prev / Next right under them =====
@@ -4144,6 +4182,40 @@
      (transform-origin bottom) so he never sinks into the board. */
   body.coach-free-size .mascot.coach-mascot{zoom:1;position:relative;z-index:8;transform:translate(var(--coach-shift-x,0px),var(--coach-shift-y,0px)) scale(var(--coach-zoom,1));transform-origin:50% 100%}
 </style>
+<style>
+  /* ===== Focus mode (Settings > Screen layout > Focus mode) =====
+     When the switch is on and the phone is turned sideways on a
+     puzzle (data-view="play") or a game (data-view="bot"), the JS
+     adds body.focus-live: the board fills the screen and stays
+     fixed, every other thing on the board screen is hidden, and
+     only four small boxes stay — a vertical rail down the right
+     side with Hint, one move back, one move forward and exit
+     focus mode. Portrait never enters it, and leaving the board
+     screens never enters it either. */
+  #focusRail{display:none}
+  body.focus-live{overflow:hidden}
+  body.focus-live .tabbar{display:none !important}
+  body.focus-live[data-view="play"] .scroll-area,
+  body.focus-live[data-view="bot"] .scroll-area{overflow:hidden !important;padding:6px !important}
+  /* puzzle screen: only the board slot survives */
+  body.focus-live[data-view="play"] .js-play{display:flex !important;flex-direction:column;height:100%}
+  body.focus-live .trainer{display:flex !important;flex-direction:column;flex:1;min-height:0;width:100%;max-width:none !important}
+  body.focus-live #gameBox{display:flex !important;flex-direction:column;flex:1;min-height:0;background:transparent !important;border:none !important;box-shadow:none !important;padding:0 !important;border-radius:0;overflow:visible}
+  body.focus-live #gameBox > *:not(.board-slot){display:none !important}
+  /* play screen: only the board slot survives */
+  body.focus-live[data-view="bot"] .bot-wrap{display:flex;flex-direction:column;flex:1;min-height:0;height:100%}
+  body.focus-live[data-view="bot"] .bot-wrap > *:not(.bot-board-slot){display:none !important}
+  /* the board itself: as big as the sideways screen allows,
+     centred in the space left of the rail, and fixed there */
+  body.focus-live .board-slot,
+  body.focus-live .bot-board-slot{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:0 64px 0 0 !important}
+  body.focus-live .board{width:min(calc(100dvh - 14px),calc(100vw - 92px)) !important;min-width:0 !important;max-width:none !important;margin:0 !important;flex:none}
+  /* the rail: four small boxes in one vertical line, right side */
+  body.focus-live #focusRail{display:flex;position:fixed;top:50%;right:calc(10px + env(safe-area-inset-right));transform:translateY(-50%);flex-direction:column;gap:8px;z-index:120}
+  #focusRail button{width:48px;height:48px;flex:none;display:flex;align-items:center;justify-content:center;padding:0;border-radius:10px;background:var(--surface);border:1px solid var(--line-strong);color:var(--ink);box-shadow:var(--shadow);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  #focusRail button svg{width:24px;height:24px}
+  #focusRail button:active{transform:scale(.93)}
+</style>
 </head>
 <body data-view="home">
 <div class="wrap">
@@ -4219,11 +4291,13 @@
       <h2 id="saveH">Saved</h2>
       <span style="width:42px;flex:none"></span>
     </div>
-    <p class="saved-empty" id="savedEmpty">Nothing saved yet — play a game and tap Save, or save a puzzle.</p>
+    <p class="saved-empty" id="savedEmpty">Nothing saved yet — play a game and tap Save, save a puzzle, or tap Like on a puzzle you love.</p>
     <div class="set-sec" id="savedGamesHead">Saved Games</div>
     <div id="savedGames"></div>
     <div class="set-sec" id="savedPuzzlesHead">Saved Puzzles</div>
     <div id="savedPuzzles"></div>
+    <div class="set-sec" id="likedPuzzlesHead">Liked Puzzles</div>
+    <div id="likedPuzzles"></div>
   </section>
 
   <section class="js-play" aria-labelledby="trainH">
@@ -4293,7 +4367,7 @@
           <div class="eng-best" id="pzEngBest">Best move: —</div>
         </div>
         <p class="auto-note" id="autoNote"></p>
-        <p class="review-hintline" id="reviewHint">Tap Review for the full review.</p>
+        <p class="review-hintline" id="reviewHint">Tap Solution to watch the full review.</p>
       </div>
       <div class="branch-bar" id="branchBar" hidden>
         <div class="bb-title">What if they play something else?</div>
@@ -4305,8 +4379,9 @@
         <button id="pzTglEngine" type="button" aria-pressed="true">Engine · Shown</button>
       </div>
       <div class="action-row">
+        <button id="pzOptionsBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg><span>Options</span></button>
         <button id="btnHint" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg><span>Hint</span></button>
-        <button id="btnReview" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg><span>Review</span></button>
+        <button id="btnLike" type="button" aria-pressed="false" aria-label="Like this puzzle — saved in the Save tab under Liked puzzles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>Like</span></button>
         <button id="btnSolution" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg><span>Solution</span></button>
         <button id="btnReset" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Retry</span></button>
         <button id="btnFlip" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v13"/><path d="m4 13 3 3 3-3"/><path d="M17 21V8"/><path d="m14 11 3-3 3 3"/></svg><span>Flip</span></button>
@@ -4398,10 +4473,31 @@
         <button id="optFlip" type="button">Flip board</button>
         <button id="optAutoHint" type="button" aria-pressed="true">Auto hint · On</button>
         <button id="optEngine" type="button" aria-pressed="true">Engine panel · Shown</button>
+        <button id="optFocusMode" type="button" aria-pressed="false">Focus mode · Off</button>
         <button id="optSettings" type="button">Settings</button>
       </div>
       <div class="play-setup-actions">
         <button class="ps-keep" id="botOptionsClose" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="play-setup-overlay" id="pzOptionsOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="pzOptionsTitle">
+    <div class="play-setup-sheet">
+      <h2 id="pzOptionsTitle">Puzzle options</h2>
+      <div class="opt-list">
+        <button id="optPzSolution" type="button">See the solution</button>
+        <button id="optPzFlip" type="button">Flip board</button>
+        <button id="optPzSave" type="button">Save puzzle</button>
+        <button id="optPzPrev" type="button">Previous puzzle</button>
+        <button id="optPzNext" type="button">Next puzzle</button>
+        <button id="optPzAutoHint" type="button" aria-pressed="true">Auto hint · On</button>
+        <button id="optPzEngine" type="button" aria-pressed="true">Engine panel · Shown</button>
+        <button id="optPzFocusMode" type="button" aria-pressed="false">Focus mode · Off</button>
+        <button id="optPzSettings" type="button">Settings</button>
+      </div>
+      <div class="play-setup-actions">
+        <button class="ps-keep" id="pzOptionsClose" type="button">Close</button>
       </div>
     </div>
   </div>
@@ -4680,13 +4776,15 @@
         <button type="button" data-coach-style="box" aria-pressed="false">Text box</button>
       </div>
       <div class="set-hint">Bubbles: every coach line is its own speech cloud, like the Marine theme. Text box: all the lines sit in one box, like the other themes. Theme default keeps what your theme already does — Marine, Space and Space 2 use bubbles, the rest use the text box.</div>
-      <div class="set-subhead">Play screen buttons — compact row or the full set, in any theme</div>
-      <div class="seg-row" role="group" aria-label="Play screen buttons style">
+      <div class="set-subhead">Play &amp; puzzle buttons — compact row or the full set, in any theme</div>
+      <div class="seg-row" role="group" aria-label="Play and puzzle buttons style">
         <button type="button" data-controls-style="auto" aria-pressed="true">Theme default</button>
         <button type="button" data-controls-style="compact" aria-pressed="false">Compact</button>
         <button type="button" data-controls-style="full" aria-pressed="false">Full</button>
       </div>
-      <div class="set-hint">Compact: one row only — Options, Resign, Hint, Undo — with everything else under Options, like the Marine, Space and Space 2 themes. Full: the Auto hint and Engine switches, the New game button and every button in two rows, like the other themes.</div>
+      <div class="set-hint">Compact: one row only — Options, Resign, Hint, Undo on the Play screen, and Options, Hint, Like, Retry on the puzzle screen — with everything else under Options, like the Marine, Space and Space 2 themes. Full: the Auto hint and Engine switches, the New game button and every button in two rows, like the other themes.</div>
+      <div class="set-subhead">Focus mode — board only, phone sideways</div>
+      <button class="set-opt" type="button" id="setFocusModeToggle" aria-pressed="false"><span class="main"><span class="nm">Focus mode</span><span class="sub">On: open a puzzle or a game, turn your phone sideways, and the board fills the screen and stays fixed — nothing else stays on screen except four small boxes down the right side: Hint, one move back, one move forward, and exit focus mode. Turn the phone upright again to leave it.</span></span><span class="set-check"></span></button>
       <div class="set-subhead">Holding the board</div>
       <button class="set-opt" type="button" id="setBoardScrollToggle" aria-pressed="false"><span class="main"><span class="nm">Scroll the page from the board</span><span class="sub">Off: holding or dragging on the board only moves pieces — the page and the move list stay still. On: holding the board scrolls the page up and down like normal. Turn it on only if the fixed board causes a problem.</span></span><span class="set-check"></span></button>
     </div>
@@ -6538,7 +6636,7 @@ var MOVE_SOUND_STYLES = [
   { id:"lichess",  name:"Lichess",   sub:"The real Lichess sounds — free and open." },
   { id:"silent",   name:"Silent",    sub:"No move sound at all." }
 ];
-var settings = { board:"bamboo", sound:true, volume:"normal", moveVolume:70, pieces:"simple", character:"grandmaster", moveSound:"chesscom", soundStyle:"chesscom", moveSoundAll:null, soundStyleWins:true, themeSounds:{}, boardFx:{}, playMode:"coach", sfLevel:"hard", botSide:"w", botElo:null, sfOn:true, autoHint:true, showEngine:true, pieceSpeed:"normal", moveFx:"theme", boardStyle:"theme", boardTexture:"keep", coachStyle:"auto", controlsStyle:"auto", piecesV2:true, piecesV3:true, piecesV4:true, soundV5:true, grassV6:true, soundV7:true, soundV8:true, helmet:false, coachSize:100, coachShiftX:0, coachShiftY:0, boardScroll:false, coachFreeSize:false };
+var settings = { board:"bamboo", sound:true, volume:"normal", moveVolume:70, pieces:"simple", character:"grandmaster", moveSound:"chesscom", soundStyle:"chesscom", moveSoundAll:null, soundStyleWins:true, themeSounds:{}, boardFx:{}, playMode:"coach", sfLevel:"hard", botSide:"w", botElo:null, sfOn:true, autoHint:true, showEngine:true, pieceSpeed:"normal", moveFx:"theme", boardStyle:"theme", boardTexture:"keep", coachStyle:"auto", controlsStyle:"auto", piecesV2:true, piecesV3:true, piecesV4:true, soundV5:true, grassV6:true, soundV7:true, soundV8:true, helmet:false, coachSize:100, coachShiftX:0, coachShiftY:0, boardScroll:false, coachFreeSize:false, focusMode:false };
 try {
   var savedSettings = JSON.parse(localStorage.getItem("chessrank-settings") || "null");
   if (savedSettings){
@@ -6625,6 +6723,7 @@ try {
     if (typeof savedSettings.coachShiftY === "number" && isFinite(savedSettings.coachShiftY)) settings.coachShiftY = Math.max(-90, Math.min(130, Math.round(savedSettings.coachShiftY)));
     if (typeof savedSettings.boardScroll === "boolean") settings.boardScroll = savedSettings.boardScroll;
     if (typeof savedSettings.coachFreeSize === "boolean") settings.coachFreeSize = savedSettings.coachFreeSize;
+    if (typeof savedSettings.focusMode === "boolean") settings.focusMode = savedSettings.focusMode;
     if (typeof savedSettings.autoHint === "boolean") settings.autoHint = savedSettings.autoHint;
     if (typeof savedSettings.showEngine === "boolean") settings.showEngine = savedSettings.showEngine;
     if (["off","slow","normal","fast"].indexOf(savedSettings.pieceSpeed) >= 0) settings.pieceSpeed = savedSettings.pieceSpeed;
@@ -8183,7 +8282,7 @@ function startPuzzle(p){
   setFeedback("think", cur.isOpening ? "Your move — play the next move of the line." : "Find the best move.");
   var gb = $("gameBox"); if (gb) gb.classList.remove("review-on");
   document.body.classList.remove("reviewing");
-  var rv = $("btnReview"); if (rv && rv.querySelector("span")) rv.querySelector("span").textContent = "Review";
+  syncLikeBtn();
   renderBranchBar();
   renderBoard(); resetView(); renderPlayerBars(); setStatus(); renderPicker();
   setAutoNote(packDescribePosition(state));
@@ -8660,16 +8759,17 @@ $("btnHint").addEventListener("click", function(){
     renderBoard();
   }
 });
-$("btnReview").addEventListener("click", function(){
-  if (!cur) return;
-  var on = $("gameBox").classList.toggle("review-on");
-  document.body.classList.toggle("reviewing", on);
-  $("btnReview").querySelector("span").textContent = on ? "Hide" : "Review";
-  if (on){
-    if (lastReviewText) setAutoNote(lastReviewText);
-    else setAutoNote(packDescribePosition(state));
-    try { runEnginePanel("pz"); } catch(e){}
+$("btnLike").addEventListener("click", function(){
+  if (!cur){ setFeedback("think", "Load a puzzle first — then tap Like to keep the ones you love."); return; }
+  if (isLiked(cur.id)){
+    savedStore.liked = savedStore.liked.filter(function(p){ return p.id !== cur.id; });
+    storeSaved(); syncLikeBtn();
+    setFeedback("think", "Taken out of Liked puzzles.");
+    return;
   }
+  savedStore.liked.unshift(puzzleRecord(null));
+  storeSaved(); syncLikeBtn();
+  setFeedback("ok", "Liked — find it any time in the Save tab, in the Liked puzzles folder.");
 });
 $("btnReset").addEventListener("click", function(){ if (cur) startPuzzle(cur); });
 $("btnFlip").addEventListener("click", function(){
@@ -8713,7 +8813,6 @@ $("btnSolution").addEventListener("click", function(){
   $("gameBox").classList.add("review-on");
   document.body.classList.add("reviewing");
   setFeedback("think", "Watch the solution play out…");
-  $("btnReview").querySelector("span").textContent = "Hide";
   $("hintBox").classList.remove("show");
   addFeed("note", "", "The Lichess solution plays out below — the algorithm reviews each step as it lands. Reset and try it yourself after watching.", "opp");
   var seqS = puzzleSeq;   // a Reset / Next during playback must stop this playback, not corrupt the new puzzle
@@ -12331,9 +12430,12 @@ var SAVE_KEY = "chessrank-saved";
 var savedStore = (function(){
   try {
     var s = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
-    if (s && Array.isArray(s.games) && Array.isArray(s.puzzles)) return s;
+    if (s && Array.isArray(s.games) && Array.isArray(s.puzzles)){
+      if (!Array.isArray(s.liked)) s.liked = [];   // liked puzzles (the heart button) — older saves gain the list empty
+      return s;
+    }
   } catch(e){}
-  return { games: [], puzzles: [] };
+  return { games: [], puzzles: [], liked: [] };
 })();
 function storeSaved(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify(savedStore)); } catch(e){} }
 /* Which folder a saved puzzle belongs in: the pack or category it was
@@ -12467,8 +12569,7 @@ function openSavedGame(rec){
     } else botSetTurn(botFreeMode() ? (botState.turn === "w" ? "White to move." : "Black to move.") : "Your move.");
   }
 }
-function saveCurrentPuzzle(note){
-  if (!cur){ setFeedback("think", "Load a puzzle first — then tap Save to keep it."); return; }
+function puzzleRecord(note){
   var rec = {
     id: cur.id, dateISO: new Date().toISOString(),
     note: (typeof note === "string" && note) ? note : null,
@@ -12484,10 +12585,32 @@ function saveCurrentPuzzle(note){
     intro: cur.intro || null, notes: cur.notes || null, idea: cur.idea || null
   };
   rec.folder = savedPuzzleFolder(rec);   // the Save tab groups by this folder — the pack / category it came from
+  return rec;
+}
+function saveCurrentPuzzle(note){
+  if (!cur){ setFeedback("think", "Load a puzzle first — then tap Save to keep it."); return; }
+  var rec = puzzleRecord(note);
   savedStore.puzzles = savedStore.puzzles.filter(function(p){ return p.id !== rec.id; });
   savedStore.puzzles.unshift(rec);
   storeSaved();
   setFeedback("ok", "Puzzle saved in the " + rec.folder + " folder" + (rec.note ? ", with your note" : "") + " — find it any time in the Save tab.");
+}
+/* ---- Liked puzzles: the heart (Like) button on the puzzle screen ----
+   Liking a puzzle keeps a copy of it in the Save tab's own "Liked
+   puzzles" folder; tapping Like again takes it back out. The record
+   is the same shape as a saved puzzle, so a liked puzzle reopens
+   exactly like a saved one (openSavedPuzzle). */
+function isLiked(id){
+  var f = false;
+  (savedStore.liked || []).forEach(function(p){ if (p.id === id) f = true; });
+  return f;
+}
+function syncLikeBtn(){
+  var b = $("btnLike"); if (!b) return;
+  var on = !!(cur && isLiked(cur.id));
+  b.classList.toggle("liked", on);
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+  var sp = b.querySelector("span"); if (sp) sp.textContent = on ? "Liked" : "Like";
 }
 function openSavedPuzzle(rec){
   var p = {
@@ -12507,11 +12630,14 @@ function openSavedPuzzle(rec){
 function renderSavedList(){
   var empty = $("savedEmpty"), gHead = $("savedGamesHead"), pHead = $("savedPuzzlesHead");
   var gBox = $("savedGames"), pBox = $("savedPuzzles");
+  var lHead = $("likedPuzzlesHead"), lBox = $("likedPuzzles");
   if (!gBox || !pBox) return;
-  var noGames = !savedStore.games.length, noPuzzles = !savedStore.puzzles.length;
-  if (empty) empty.hidden = !(noGames && noPuzzles);
+  if (!Array.isArray(savedStore.liked)) savedStore.liked = [];
+  var noGames = !savedStore.games.length, noPuzzles = !savedStore.puzzles.length, noLiked = !savedStore.liked.length;
+  if (empty) empty.hidden = !(noGames && noPuzzles && noLiked);
   if (gHead) gHead.hidden = noGames;
   if (pHead) pHead.hidden = noPuzzles;
+  if (lHead) lHead.hidden = noLiked;
   var folderIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
   // Saved games sit in their own closed folder too — the Save tab
   // opens showing just folder names, nothing expanded.
@@ -12565,8 +12691,28 @@ function renderSavedList(){
     }).join("");
     return h + '</div></div>';
   }).join("");
+  // Liked puzzles (the heart button on the puzzle screen) sit in
+  // their own closed folder under the saved puzzles — tap one to
+  // play it again, or Unlike to take it out.
+  var lkOpen = saveFolderOpen["__liked"] === true;
+  var lkItems = savedStore.liked.map(function(p){
+    var name = p.titleText || themeLabel(primaryTheme(p.themes || []));
+    var sub = p.isOpening ? "Opening line · tap to play it again"
+      : "Rating " + p.rating + ((p.themes && p.themes.length) ? " · " + p.themes.map(themeLabel).join(", ") : "");
+    return '<div class="saved-item">'
+      + '<button class="saved-main" type="button" data-open-liked="' + escAttr(p.id) + '"><span class="nm">' + escHtml(name) + '</span>'
+      + '<span class="sub">' + escHtml(sub) + '</span></button>'
+      + '<button class="saved-act del" type="button" data-unlike="' + escAttr(p.id) + '">Unlike</button></div>';
+  }).join("");
+  if (lBox) lBox.innerHTML = noLiked ? "" : '<div class="save-folder' + (lkOpen ? "" : " closed") + '">'
+    + '<button class="save-folder-head" type="button" data-save-folder="__liked">' + folderIcon
+    + '<span class="nm">Liked puzzles</span>'
+    + '<span class="cnt">' + savedStore.liked.length + (savedStore.liked.length === 1 ? " puzzle" : " puzzles") + '</span>'
+    + '<span class="chev">' + (lkOpen ? "▾" : "▸") + '</span></button>'
+    + '<div class="save-folder-body">' + lkItems + '</div></div>';
   function findGame(id){ var f = null; savedStore.games.forEach(function(g){ if (g.id === id) f = g; }); return f; }
   function findPuzzle(id){ var f = null; savedStore.puzzles.forEach(function(p){ if (p.id === id) f = p; }); return f; }
+  function findLiked(id){ var f = null; savedStore.liked.forEach(function(p){ if (p.id === id) f = p; }); return f; }
   Array.prototype.forEach.call(gBox.querySelectorAll("[data-open-game]"), function(b){
     b.addEventListener("click", function(){ var g = findGame(b.getAttribute("data-open-game")); if (g) openSavedGame(g); });
   });
@@ -12617,6 +12763,24 @@ function renderSavedList(){
       storeSaved(); renderSavedList();
     });
   });
+  if (lBox){
+    Array.prototype.forEach.call(lBox.querySelectorAll("[data-save-folder]"), function(b){
+      b.addEventListener("click", function(){
+        saveFolderOpen["__liked"] = !(saveFolderOpen["__liked"] === true);
+        renderSavedList();
+      });
+    });
+    Array.prototype.forEach.call(lBox.querySelectorAll("[data-open-liked]"), function(b){
+      b.addEventListener("click", function(){ var p = findLiked(b.getAttribute("data-open-liked")); if (p) openSavedPuzzle(p); });
+    });
+    Array.prototype.forEach.call(lBox.querySelectorAll("[data-unlike]"), function(b){
+      b.addEventListener("click", function(){
+        var id = b.getAttribute("data-unlike");
+        savedStore.liked = savedStore.liked.filter(function(p){ return p.id !== id; });
+        storeSaved(); renderSavedList(); syncLikeBtn();
+      });
+    });
+  }
 }
 /* ================= save notes =================
    Saving a game or a puzzle first opens a small sheet with an
@@ -12919,6 +13083,75 @@ function applyBoardScroll(){
   if (boardEl && boardEl.parentElement) lockEl(boardEl.parentElement);
   if (botBoardEl && botBoardEl.parentElement) lockEl(botBoardEl.parentElement);
 })();
+/* Focus mode (Settings > Screen layout > Focus mode): the switch
+   only arms it. Focus itself starts only when all three are true —
+   the switch is on, the phone is sideways (landscape with a short
+   screen, so a desktop or tablet lying flat never triggers it),
+   and a board screen is open (a puzzle or a Play game). Then
+   body.focus-live hides everything but the board and the side
+   rail. The rail buttons press the screen's own Hint / back /
+   forward buttons, so they do exactly what those buttons do.
+   Tapping the rail's exit box dismisses focus until the phone
+   goes upright and sideways again. */
+var focusDismissed = false;
+function syncFocusModeUI(){
+  var on = !!settings.focusMode;
+  var t = $("setFocusModeToggle");
+  if (t) t.setAttribute("aria-pressed", on ? "true" : "false");
+  /* The same switch also lives in the Play and Puzzle Options
+     sheets (that is where it was asked for) — keep all three in
+     step, with the On / Off state written on the sheet rows. */
+  ["optFocusMode", "optPzFocusMode"].forEach(function(id){
+    var b = $(id);
+    if (b){
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.textContent = "Focus mode · " + (on ? "On" : "Off");
+    }
+  });
+}
+function toggleFocusMode(){
+  settings.focusMode = !settings.focusMode;
+  focusDismissed = false;
+  saveSettings();
+  applyFocusMode();
+}
+function focusWanted(){
+  if (!settings.focusMode || focusDismissed) return false;
+  var v = document.body.getAttribute("data-view");
+  if (v !== "play" && v !== "bot") return false;
+  try { return window.matchMedia("(orientation: landscape) and (max-height: 640px)").matches; }
+  catch(e){ return false; }
+}
+function applyFocusMode(){
+  document.body.classList.toggle("focus-live", focusWanted());
+  syncFocusModeUI();
+}
+(function bindFocusMode(){
+  applyFocusMode();
+  ["setFocusModeToggle", "optFocusMode", "optPzFocusMode"].forEach(function(id){
+    var t = $(id);
+    if (t) t.addEventListener("click", toggleFocusMode);
+  });
+  window.addEventListener("resize", applyFocusMode);
+  window.addEventListener("orientationchange", function(){
+    /* back upright re-arms focus for the next sideways turn */
+    try { if (window.matchMedia("(orientation: portrait)").matches) focusDismissed = false; } catch(e){}
+    setTimeout(applyFocusMode, 80);
+  });
+  if (window.MutationObserver){
+    new MutationObserver(applyFocusMode).observe(document.body, { attributes: true, attributeFilter: ["data-view"] });
+  }
+  function press(map){
+    var v = document.body.getAttribute("data-view");
+    var el = $(v === "bot" ? map.bot : map.play);
+    if (el) el.click();
+  }
+  var hb = $("focusHintBtn"), bb = $("focusBackBtn"), fb = $("focusFwdBtn"), xb = $("focusExitBtn");
+  if (hb) hb.addEventListener("click", function(){ press({ play: "btnHint", bot: "botHintBtn" }); });
+  if (bb) bb.addEventListener("click", function(){ press({ play: "btnMvBack", bot: "botMvBack" }); });
+  if (fb) fb.addEventListener("click", function(){ press({ play: "btnMvFwd", bot: "botMvFwd" }); });
+  if (xb) xb.addEventListener("click", function(){ focusDismissed = true; applyFocusMode(); });
+})();
 /* Bubbles keep their size (Settings > Coach toggle): when on, the
    coach-size slider stops touching the layout — the CSS in the
    coach-free-size style block swaps the mascot's zoom for a pure
@@ -13161,6 +13394,10 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
     if (oa){ oa.setAttribute("aria-pressed", ah ? "true" : "false"); oa.textContent = "Auto hint · " + (ah ? "On" : "Off"); }
     var oe = el("optEngine");
     if (oe){ oe.setAttribute("aria-pressed", es ? "true" : "false"); oe.textContent = "Engine panel · " + (es ? "Shown" : "Hidden"); }
+    var pa = el("optPzAutoHint");
+    if (pa){ pa.setAttribute("aria-pressed", ah ? "true" : "false"); pa.textContent = "Auto hint · " + (ah ? "On" : "Off"); }
+    var pe = el("optPzEngine");
+    if (pe){ pe.setAttribute("aria-pressed", es ? "true" : "false"); pe.textContent = "Engine panel · " + (es ? "Shown" : "Hidden"); }
     var sa = el("setAutoHintToggle"); if (sa) sa.setAttribute("aria-pressed", ah ? "true" : "false");
     var se = el("setEngineShowToggle"); if (se) se.setAttribute("aria-pressed", es ? "true" : "false");
     var fh = el("foldHintCur");
@@ -13178,17 +13415,17 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
     try { runEnginePanel("bot"); } catch(e){}
     try { runEnginePanel("pz"); } catch(e){}
   }
-  ["tglAutoHint","pzTglAutoHint","optAutoHint","setAutoHintToggle"].forEach(function(id){
+  ["tglAutoHint","pzTglAutoHint","optAutoHint","optPzAutoHint","setAutoHintToggle"].forEach(function(id){
     var b = el(id); if (b) b.addEventListener("click", function(){ setAutoHint(!autoHintOn()); });
   });
-  ["tglEngine","pzTglEngine","optEngine","setEngineShowToggle"].forEach(function(id){
+  ["tglEngine","pzTglEngine","optEngine","optPzEngine","setEngineShowToggle"].forEach(function(id){
     var b = el(id); if (b) b.addEventListener("click", function(){ setEngineShown(!engineShown()); });
   });
   var nb = el("botNewBtn");
   if (nb) nb.addEventListener("click", function(){ try { openPlaySetup(); } catch(e){} });
   /* Options sheet (the Marine Play screen keeps everything in here) */
   var ov = el("botOptionsOverlay");
-  function openOptions(){ syncToggles(); if (ov) ov.hidden = false; }
+  function openOptions(){ syncToggles(); try { syncFocusModeUI(); } catch(e){} if (ov) ov.hidden = false; }
   function closeOptions(){ if (ov) ov.hidden = true; }
   var ob = el("botOptionsBtn"); if (ob) ob.addEventListener("click", openOptions);
   var oc = el("botOptionsClose"); if (oc) oc.addEventListener("click", closeOptions);
@@ -13201,6 +13438,24 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
   optClick("optPgn", "botPgnBtn"); optClick("optFlip", "botFlipBtn");
   var os = el("optSettings");
   if (os) os.addEventListener("click", function(){ closeOptions(); try { showView("settings"); } catch(e){} });
+  /* Puzzle Options sheet (everything the puzzle screen's Compact
+     row tucks away: Solution, Flip, Save, Prev / Next and the two
+     switches — each row simply presses the real button) */
+  var pov = el("pzOptionsOverlay");
+  function openPzOptions(){ syncToggles(); try { syncFocusModeUI(); } catch(e){} if (pov) pov.hidden = false; }
+  function closePzOptions(){ if (pov) pov.hidden = true; }
+  var pob = el("pzOptionsBtn"); if (pob) pob.addEventListener("click", openPzOptions);
+  var poc = el("pzOptionsClose"); if (poc) poc.addEventListener("click", closePzOptions);
+  if (pov) pov.addEventListener("click", function(e){ if (e.target === pov) closePzOptions(); });
+  function pzOptClick(id, target){
+    var b = el(id); if (!b) return;
+    b.addEventListener("click", function(){ closePzOptions(); var t2 = el(target); if (t2) t2.click(); });
+  }
+  pzOptClick("optPzSolution", "btnSolution"); pzOptClick("optPzFlip", "btnFlip");
+  pzOptClick("optPzSave", "btnSavePuzzle"); pzOptClick("optPzPrev", "btnPrev");
+  pzOptClick("optPzNext", "btnNavNext");
+  var pos2 = el("optPzSettings");
+  if (pos2) pos2.addEventListener("click", function(){ closePzOptions(); try { showView("settings"); } catch(e){} });
   /* Piece movement speed */
   function applyPieceSpeed(){
     var s = settings.pieceSpeed || "normal";
@@ -13294,7 +13549,7 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
      the app — the bottom tab bar included — so their buttons can
      never slide underneath it and get cut off. Moving the nodes
      keeps every id and listener working exactly as before. */
-  ["playSetupOverlay", "botOptionsOverlay"].forEach(function(id){
+  ["playSetupOverlay", "botOptionsOverlay", "pzOptionsOverlay"].forEach(function(id){
     var ov = document.getElementById(id);
     if (ov && ov.parentNode !== document.body) document.body.appendChild(ov);
   });
@@ -13391,6 +13646,12 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
   }, 1800);
 })();
 </script>
+<div id="focusRail" role="group" aria-label="Focus mode controls">
+  <button id="focusHintBtn" type="button" aria-label="Hint" title="Hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg></button>
+  <button id="focusBackBtn" type="button" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg></button>
+  <button id="focusFwdBtn" type="button" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></button>
+  <button id="focusExitBtn" type="button" aria-label="Exit focus mode" title="Exit focus mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg></button>
+</div>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js");});}</script>
 </body>
 </html>
