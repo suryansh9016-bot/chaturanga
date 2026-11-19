@@ -4144,34 +4144,6 @@
      (transform-origin bottom) so he never sinks into the board. */
   body.coach-free-size .mascot.coach-mascot{zoom:1;position:relative;z-index:8;transform:translate(var(--coach-shift-x,0px),var(--coach-shift-y,0px)) scale(var(--coach-zoom,1));transform-origin:50% 100%}
 </style>
-<style id="recent-puzzles">
-  /* ===== Recent puzzles (home + pack screen) =====
-     The puzzles the player opened last, as compact rows. Solved
-     puzzles sit on top — solving one sends it straight up to the
-     first row (see renderRecents). Colours ride the theme
-     variables, with the light themes (Bamboo, Ultra, Lavender,
-     Cherry) getting the same card colours as their pack rows. */
-  .recent-note{color:var(--ink-soft);font-size:12.5px;margin:0 2px 8px}
-  .recent-list{display:flex;flex-direction:column;gap:8px}
-  #recentSec{margin-bottom:4px}
-  #packRecentSec{margin:2px 0 12px}
-  .recent-pack-head{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--accent-strong);margin:0 2px 8px}
-  .recent-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line-strong);border-radius:14px;padding:10px 13px;color:var(--ink);min-height:56px}
-  .recent-row:active{background:var(--surface2)}
-  .recent-row .main{flex:1;min-width:0}
-  .recent-row .nm{font-size:14.5px;font-weight:800;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .recent-row .sub{font-size:12px;color:var(--ink-soft);display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .recent-row .done{flex:none;font-size:11.5px;font-weight:800;color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--accent);border-radius:999px;padding:3px 10px}
-  .recent-row .chev{flex:none;font-size:18px;color:var(--ink-soft);line-height:1}
-  body.theme-bamboo .recent-row{background:#f3ead2}
-  body.theme-bamboo .recent-row:active{background:#ead9ae}
-  body.theme-ultra .recent-row{background:#cec09c;border-color:#7d6742}
-  body.theme-ultra .recent-row:active{background:#b3a077}
-  body.theme-lavender .recent-row{background:linear-gradient(120deg,#fdfcff,#f0e8fd);border-color:#c4b0ec;color:#38255f}
-  body.theme-lavender .recent-row .sub{color:#7563a6}
-  body.theme-cherry .recent-row{background:linear-gradient(120deg,#fffbfc,#fbeaf1);border-color:#eab6ca;color:#55293c}
-  body.theme-cherry .recent-row .sub{color:#a1768a}
-</style>
 </head>
 <body data-view="home">
 <div class="wrap">
@@ -4209,13 +4181,6 @@
   </header>
 
   <div id="packsPanel" class="js-home">
-    <section id="recentSec" aria-labelledby="recentH" hidden>
-      <div class="sec-head row-head">
-        <h2 id="recentH"><span>Recent puzzles</span></h2>
-      </div>
-      <p class="recent-note">The puzzles you opened last — solve one and it goes to the top.</p>
-      <div id="recentList" class="recent-list"></div>
-    </section>
     <section aria-labelledby="catH">
       <div class="sec-head row-head">
         <h2 id="catH"><span>Puzzle Packs</span></h2>
@@ -4244,8 +4209,6 @@
     <div class="err-head"><h3>Blunders &amp; Mistakes</h3><span class="err-total" id="errTotal" hidden>0</span></div>
     <div id="errBox"></div>
     <div id="statsNotesWrap" hidden>
-      <div class="err-head"><h3>Your notes</h3></div>
-      <p class="stats-note" style="margin-top:0">Notes you wrote when saving a game or a puzzle. You can also read and change them in the Save tab.</p>
       <div id="statsNotes"></div>
     </div>
   </section>
@@ -4490,10 +4453,6 @@
     <p class="pack-sub" id="packSub"></p>
     <div class="pack-progress"><i id="packProg" style="width:0%"></i></div>
     <p class="pack-note" id="packNote">Loading from Lichess…</p>
-    <div id="packRecentSec" hidden>
-      <div class="recent-pack-head">Recent puzzles</div>
-      <div id="packRecentList" class="recent-list"></div>
-    </div>
     <div class="pack-filter-row">
       <button class="pack-filter-btn" id="btnPackFilter" type="button" aria-expanded="false" aria-controls="packFilterPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M7 12h10"/><path d="M10 19h4"/></svg><span>Filter</span></button>
       <span class="pack-filter-info" id="packFilterInfo"></span>
@@ -4911,6 +4870,7 @@ var PACKS = [
   { angle:"clearance", id:"dontBlock", target:30, top:true, fixedIds:["9zuHQ","U8av8","CTXig","LeiF2","K0DUZ","j16Uz","AOfKw","8DYj4","FnSeH","h9yIG","az9ua","iteRV","wHzT9","Oce7c","jLsSX","9Uf0i","wcFKW","WhO9c","x3Boz","cWqIo","XbG0F","W5vjP","2Z1Er","33LDV","fpDBV","rNVbi","RBGs0","OXrZB","D12WK","oGc6U"], name:"Don't Block Your Pieces", sub:"30 puzzles · move your piece out of the way, free the others." },
   { angle:"trappedPiece", id:"ghostBuster", target:30, top:true, fixedIds:["0ZTIq","5hdJJ","06AFP","0NEDW","9Ule0","Fs3qG","048VU","0598v","035Y0","0qAPg","0ZLzT","08BKi","03JIS","0TWAw","05Jem","0m1MJ","0QeBJ","0GHez","j9T8t","i9mtw","quIgc","0WPYk","BGnWZ","SjFAH","C9pt4","kLqc3","h3Wiz","0GJoY","01iqw","09IR3"], name:"Ghost Buster", sub:"30 puzzles · a piece sits in your home — trap it, take it." },
   { angle:"defensiveMove", id:"houdini", target:30, top:true, fixedIds:["5flmv","8hoHK","dYjS0","aPRAF","hdUV1","XwTmF","baU76","bMZyW","dAOGC","qnI2y","6IQr0","pEGu2","xSIT0","sw1ze","ll9Cu","mq2ze","KYHbW","1JiVj","NrPwf","pLP2N","DBD5q","KH4RB","Szg6m","07Jg5","1P7kn","jAKvM","JS5Ml","VSQRH","lDEe0","E51Ga"], name:"Houdini", sub:"30 puzzles · forced and in check — find the one move that saves you." },
+  { angle:"discoveredAttack", id:"discoverAttack", target:30, top:true, fixedIds:["0AO7M","0EFOe","02ljf","0Eosy","07u53","01zuf","02qhV","07M1s","0CkFP","0Ecbh","0AR8b","0DU12","029k3","00e63","01t6f","04Vom","04sdS","0EKY7","09nqt","0Fa0D","04fmN","03tCg","0AR06","0CuYW","0BYTz","03hfJ","09MBu","0AGEY","00ZEW","01zRs"], name:"Discover Attack", sub:"30 hard puzzles · crowded boards — move one piece, unleash the one hiding behind it. Sometimes it is check on the king; most of the time it wins a piece." },
   { angle:"daily",            name:"Puzzle of the Day",    sub:"One fresh puzzle, every day." },
   { angle:"mateIn1",          name:"Mate in 1",            sub:"Find the checkmate in one move" },
   { angle:"mateIn2",          name:"Mate in 2",            sub:"Force checkmate in two moves" },
@@ -5744,7 +5704,7 @@ function saveWrongDescribe(before, mv){
   var trap = still
     ? "After this move the " + tWord + " on " + sqName(stillSq) + " is still attacked and still has no defender — it is still hanging, and still taken for free. The saving move had to move it, defend it, block the attack, or trade it safely."
     : "The " + tWord + " escapes immediate danger here, but this is not the clean save the position offered — look for the move that saves it without giving anything else away.";
-  return gstText(goal, saveSetupText(before, color), trap);
+  return goal + " " + trap;   // plain words only — no GOAL / SETUP / TRAP block for a wrong move
 }
 /* ---- Fork Puzzles review: simple words only ----
    Short plain words, one idea at a time. Every line names the piece,
@@ -5832,7 +5792,7 @@ function forkWrongDescribe(before, mv){
   }
   var setup = "In this pack, one of your pieces must attack two black pieces at the same time. Then Black can save only one of them.";
   var trap = "Look again. Find a square where one of your pieces hits two pieces at once. That is the move.";
-  return gstText(goal, setup, trap);
+  return goal + " " + trap;   // plain words only — no GOAL / SETUP / TRAP block for a wrong move
 }
 /* ---- Ghost Buster review: simple words only ----
    The ghost is an enemy piece sitting deep in your home — like the
@@ -5959,7 +5919,7 @@ function ghostWrongDescribe(before, mv){
   if (!goal) goal = "You just played " + san + ". This does not trap the " + gWord + ". The " + gWord + " on " + gSq + " is still sitting in your home, and this move does not take it or close its way out.";
   var setup = "In this pack, an enemy piece sits deep in your home with no safe square to run to. Find the move that takes it, attacks it, or closes its last way out.";
   var trap = "Look again. Cover the " + gWord + "'s last escape square, or attack it so it has to run into your pieces.";
-  return gstText(goal, setup, trap);
+  return goal + " " + trap;   // plain words only — no GOAL / SETUP / TRAP block for a wrong move
 }
 /* ---- Houdini review: simple words only ----
    You are being forced — in check, or about to lose your queen or
@@ -6078,13 +6038,80 @@ function houdiniWrongDescribe(before, mv){
   if (!goal) goal = "You just played " + san + ". This move does not answer the threat. You are still being forced.";
   var setup = "In this pack, you are in danger — in check, or about to lose a big piece. Only one move saves you: run with the king, block the attack, defend the piece, or take the attacker.";
   var trap = "Look again. Find the one move that makes you safe in one go — that is the Houdini escape.";
-  return gstText(goal, setup, trap);
+  return goal + " " + trap;   // plain words only — no GOAL / SETUP / TRAP block for a wrong move
+}
+/* ---- Discover Attack review: simple words only ----
+   A discovered attack: one of your pieces steps away and the bishop,
+   rook or queen hiding behind it suddenly attacks something — the
+   enemy king (discovered check) or, most of the time, a piece that
+   was safe a moment ago. Every line names the piece that moved away,
+   the slider it freed, and the target that slider now hits. Every
+   fact is read off the real board. */
+function discoveredFacts(before, mv){
+  var mover = before.b[mv.from], color = mover[0], enemy = opp(color);
+  var after = applyMove(before, mv);
+  for (var s = 0; s < 64; s++){
+    var pc = after.b[s];
+    if (!pc || pc[0] !== color || "BRQ".indexOf(pc[1]) < 0 || s === mv.to) continue;
+    var was = attacksFrom(before, s), now = attacksFrom(after, s);
+    for (var i = 0; i < now.length; i++){
+      var tg = now[i];
+      if (was.indexOf(tg) >= 0) continue;
+      var tp = after.b[tg];
+      if (tp && tp[0] === enemy) return { sliderSq: s, slider: pc, targetSq: tg, target: tp, check: tp[1] === "K" };
+    }
+  }
+  return null;
+}
+function discoveredSetup(st, color){
+  // a slider of `color` with one of its own pieces standing in front
+  // of it and an enemy piece behind that piece — a discovered attack
+  // waiting to be set free
+  for (var s = 0; s < 64; s++){
+    var pc = st.b[s];
+    if (!pc || pc[0] !== color || "BRQ".indexOf(pc[1]) < 0) continue;
+    var dirs = pc[1] === "B" ? [[1,1],[1,-1],[-1,1],[-1,-1]] : pc[1] === "R" ? [[1,0],[-1,0],[0,1],[0,-1]] : [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+    for (var d = 0; d < dirs.length; d++){
+      var f = sqFile(s), r = sqRank(s), blocker = null;
+      while (true){
+        f += dirs[d][0]; r += dirs[d][1];
+        if (f < 0 || f > 7 || r < 1 || r > 8) break;
+        var q = st.b[sqIdx(f, r)];
+        if (!q) continue;
+        if (!blocker){ if (q[0] === color) blocker = { code: q, sq: sqIdx(f, r) }; else break; }
+        else { if (q[0] !== color) return { sliderSq: s, slider: pc, blocker: blocker, targetSq: sqIdx(f, r), target: q }; break; }
+      }
+    }
+  }
+  return null;
+}
+function discoveredDescribePosition(st){
+  var f = discoveredSetup(st, st.turn);
+  if (!f) return "Look for a bishop, rook or queen hiding behind one of your own pieces — move that front piece away and the slider attacks whatever stands behind it.";
+  return "Your " + PIECE_WORD[f.slider[1]] + " on " + sqName(f.sliderSq) + " is hiding behind your " + PIECE_WORD[f.blocker.code[1]] + " on " + sqName(f.blocker.sq) + ". Move that " + PIECE_WORD[f.blocker.code[1]] + " away and the " + PIECE_WORD[f.slider[1]] + " attacks the " + PIECE_WORD[f.target[1]] + " on " + sqName(f.targetSq) + (f.target[1] === "K" ? " — discovered check." : ".");
+}
+function discoveredDescribeMove(before, mv, o){
+  var san = sanFor(before, mv);
+  var f = discoveredFacts(before, mv);
+  if (!f) return autoDescribeMove(before, mv, o);
+  var mover = before.b[mv.from];
+  var head = "You just played " + san + ". Your " + PIECE_WORD[mover[1]] + " stepped away from " + sqName(mv.from) + ", and that opened the line of your " + PIECE_WORD[f.slider[1]] + " on " + sqName(f.sliderSq) + ".";
+  if (f.check) return head + " The " + PIECE_WORD[f.slider[1]] + " now gives check on the king — discovered check. The king must run, and the piece you moved is free to do damage too.";
+  return head + " The " + PIECE_WORD[f.slider[1]] + " now attacks the " + PIECE_WORD[f.target[1]] + " on " + sqName(f.targetSq) + " — a discovered attack. That piece was safe while your " + PIECE_WORD[mover[1]] + " stood in the way.";
+}
+function discoveredWrongDescribe(before, mv){
+  var san = sanFor(before, mv);
+  if (discoveredFacts(before, mv)) return "You just played " + san + ". That does open a line, but it is not the strong discovered attack in this position — look for the move that frees a slider onto something bigger.";
+  var s2 = discoveredSetup(before, before.turn);
+  if (s2) return "You just played " + san + ". No discovered attack — nothing was hiding behind that piece. Look at your " + PIECE_WORD[s2.slider[1]] + " on " + sqName(s2.sliderSq) + ": it sits behind your " + PIECE_WORD[s2.blocker.code[1]] + " on " + sqName(s2.blocker.sq) + ". Move that front piece away and the slider hits the " + PIECE_WORD[s2.target[1]] + " on " + sqName(s2.targetSq) + ".";
+  return "You just played " + san + ". No discovered attack — no slider was hiding behind that piece. Find a bishop, rook or queen with one of your pieces in front of it and an enemy piece behind.";
 }
 function packDescribeMove(before, mv, o){
   if (cur && (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2")) return forkDescribeMove(before, mv, o);
   if (cur && cur.fromPack === "saveHanging") return saveDescribeMove(before, mv, o);
   if (cur && cur.fromPack === "ghostBuster") return ghostDescribeMove(before, mv, o);
   if (cur && cur.fromPack === "houdini") return houdiniDescribeMove(before, mv, o);
+  if (cur && cur.fromPack === "discoverAttack") return discoveredDescribeMove(before, mv, o);
   return autoDescribeMove(before, mv, o);
 }
 function packDescribePosition(st){
@@ -6092,6 +6119,7 @@ function packDescribePosition(st){
   if (cur && cur.fromPack === "saveHanging") return saveDescribePosition(st);
   if (cur && cur.fromPack === "ghostBuster") return ghostDescribePosition(st);
   if (cur && cur.fromPack === "houdini") return houdiniDescribePosition(st);
+  if (cur && cur.fromPack === "discoverAttack") return discoveredDescribePosition(st);
   return autoDescribePosition(st);
 }
 var lastReviewText = "";
@@ -7008,7 +7036,7 @@ function renderCharSettings(){
   var box = $("setCharList");
   if (!box) return;
   box.innerHTML = COACHES.map(function(c){
-    return '<button class="set-opt" type="button" data-coach-pick="' + c.id + '" aria-pressed="' + (settings.character === c.id ? "true" : "false") + '"><img class="set-char-thumb" src="' + c.img + '" alt=""><span class="main"><span class="nm">' + c.name + '</span><span class="sub">' + c.role + ' · Elo ' + c.elo + ' · ' + c.ds + '</span></span><span class="set-check"></span></button>';
+    return '<button class="set-opt" type="button" data-coach-pick="' + c.id + '" aria-pressed="' + (settings.character === c.id ? "true" : "false") + '"><img class="set-char-thumb" src="' + c.img + '" alt=""><span class="main"><span class="nm">' + c.name + '</span><span class="sub">' + c.role + ' · Elo ' + (typeof settings.botElo === "number" ? effectiveBotElo() + " · your pick" : c.elo) + ' · ' + c.ds + '</span></span><span class="set-check"></span></button>';
   }).join("");
   Array.prototype.forEach.call(box.querySelectorAll("[data-coach-pick]"), function(b){
     b.addEventListener("click", function(){
@@ -7060,7 +7088,7 @@ function renderCharPicker(){
   grid.innerHTML = COACHES.map(function(c){
     var cur = settings.character === c.id;
     return '<div class="char-card' + (cur ? " cur" : "") + '">'
-      + '<button class="char-pick" type="button" data-char-pick="' + c.id + '" aria-label="Play with ' + c.name + '"><img src="' + c.img + '" alt=""><span class="char-meta"><span class="nm">' + c.name + '</span><span class="role">' + c.role + '</span><span class="elo">Elo ' + c.elo + '</span><span class="ds">' + c.ds + '</span></span></button>'
+      + '<button class="char-pick" type="button" data-char-pick="' + c.id + '" aria-label="Play with ' + c.name + '"><img src="' + c.img + '" alt=""><span class="char-meta"><span class="nm">' + c.name + '</span><span class="role">' + c.role + '</span><span class="elo">Elo ' + (typeof settings.botElo === "number" ? effectiveBotElo() + " · your pick" : c.elo) + '</span><span class="ds">' + c.ds + '</span></span></button>'
       + '<span class="char-state">' + (cur ? "Your coach now" : "") + '</span>'
       + '</div>';
   }).join("");
@@ -7145,7 +7173,7 @@ var stats = { solved:0, streak:0, attempts:0, firstTry:0 };
    so a solved puzzle stays solved after the page is closed and opened
    again: the "Solved" tag on its tile, the "X of N done" count on its
    pack card and the Puzzles Solved number all come back. */
-var recentPuzzles = [];      // puzzles opened last: {id, rating, theme, moves, packKey, packName, num, solved, ts, solvedTs} — saved with the progress below
+var recentOrder = { packs: [], openings: [] };   // Google-Docs style order: the pack / opening used last sits first on the home page — saved with the progress below
 var PROGRESS_KEY = "chessrank-progress";
 function storeProgress(){
   try {
@@ -7155,7 +7183,7 @@ function storeProgress(){
       packIdCache: packIdCache,
       stats: stats,
       dailyPuzzleId: dailyPuzzleId,
-      recentPuzzles: recentPuzzles
+      recentOrder: recentOrder
     }));
   } catch(e){}
 }
@@ -7172,91 +7200,42 @@ function storeProgress(){
       });
     }
     if (typeof s.dailyPuzzleId === "string") dailyPuzzleId = s.dailyPuzzleId;
-    if (Array.isArray(s.recentPuzzles)) recentPuzzles = s.recentPuzzles.filter(function(e){ return e && typeof e.id === "string"; }).slice(0, 10);
+    if (s.recentOrder && typeof s.recentOrder === "object"){
+      if (Array.isArray(s.recentOrder.packs)) recentOrder.packs = s.recentOrder.packs.filter(function(k){ return typeof k === "string"; }).slice(0, 40);
+      if (Array.isArray(s.recentOrder.openings)) recentOrder.openings = s.recentOrder.openings.filter(function(k){ return typeof k === "string"; }).slice(0, 40);
+    }
   } catch(e){}
 })();
-/* ================= recent puzzles =================
-   Every puzzle the player opens joins this list (newest first,
-   ten kept). Solving a puzzle sends it straight to the top of the
-   list as shown: renderRecents always puts the solved ones first,
-   latest solve first, then the still-unsolved ones in the order
-   they were opened. The list shows on the home Puzzles tab and on
-   the pack screen, and tapping a row reopens that puzzle. */
-function packNameForKey(key){
-  var nm = null;
-  if (!key) return null;
-  PACKS.forEach(function(p){ if ((p.id || p.angle) === key) nm = p.name; });
-  return nm;
-}
-function noteRecent(p, solvedNow){
-  if (!p || p.isOpening || !p.id) return;
-  var now = Date.now();
-  var key = p.fromPack || (p.daily ? "daily" : packKey) || null;
-  var entry = null;
-  recentPuzzles.forEach(function(e){ if (e.id === p.id) entry = e; });
-  if (!entry){ entry = { id: p.id }; recentPuzzles.unshift(entry); }
-  if (typeof p.rating === "number") entry.rating = p.rating;
-  if (p.themes && p.themes.length) entry.theme = themeLabel(primaryTheme(p.themes));
-  if (p.moves && p.moves.length) entry.moves = Math.ceil(p.moves.length / 2);
-  if (key) entry.packKey = key;
-  var nm = packNameForKey(entry.packKey) || (p.daily ? "Puzzle of the Day" : null) || (entry.packKey && entry.packKey === packKey ? packName : null);
-  if (nm) entry.packName = nm;
-  var pos = -1;
-  packList.forEach(function(e2, i){ if (e2.id === p.id) pos = i; });
-  if (pos >= 0) entry.num = pos + 1;
-  if (solvedIds[p.id]) entry.solved = true;
-  if (solvedNow){ entry.solved = true; entry.solvedTs = now; }
-  entry.ts = now;
-  recentPuzzles.sort(function(a, b){ return (b.ts || 0) - (a.ts || 0); });
-  if (recentPuzzles.length > 10) recentPuzzles = recentPuzzles.slice(0, 10);
+/* ================= recent packs & openings (Google Docs style) =================
+   There is no list of single puzzles anywhere. Like Google Docs,
+   using a pack moves the WHOLE pack to the front of the Puzzles
+   home page, and using an opening moves that opening to the front
+   of the Opening tab — the arrangement itself changes, newest
+   first. The order is saved on this device with the progress. */
+function bumpRecentPack(key){
+  if (!key) return;
+  var i = recentOrder.packs.indexOf(key);
+  if (i === 0) return;
+  if (i > 0) recentOrder.packs.splice(i, 1);
+  recentOrder.packs.unshift(key);
+  if (recentOrder.packs.length > 40) recentOrder.packs = recentOrder.packs.slice(0, 40);
   storeProgress();
-  renderRecents();
+  try { renderCategories(); } catch(e){}
 }
-function renderRecents(){
-  var listHome = $("recentList"), listPack = $("packRecentList");
-  if (!listHome && !listPack) return;
-  var sorted = recentPuzzles.slice().sort(function(a, b){
-    if (!!a.solved !== !!b.solved) return a.solved ? -1 : 1;   // solved puzzles go up, above everything unsolved
-    var ta = a.solved ? (a.solvedTs || a.ts || 0) : (a.ts || 0);
-    var tb = b.solved ? (b.solvedTs || b.ts || 0) : (b.ts || 0);
-    return tb - ta;
-  }).slice(0, 8);
-  var html = sorted.map(function(e){
-    var title = (e.packName || "Lichess puzzle") + (e.num ? " · #" + e.num : "");
-    var sub = "Rating " + (e.rating || "—")
-      + (e.theme ? " · " + e.theme : "")
-      + (e.moves ? " · " + e.moves + " move" + (e.moves > 1 ? "s" : "") : "");
-    return '<button class="recent-row" type="button" data-recent="' + escAttr(e.id) + '">'
-      + '<span class="main"><span class="nm">' + escHtml(title) + '</span>'
-      + '<span class="sub">' + escHtml(sub) + '</span></span>'
-      + (e.solved ? '<span class="done">Solved</span>' : '<span class="chev" aria-hidden="true">›</span>')
-      + '</button>';
-  }).join("");
-  if (listHome) listHome.innerHTML = html;
-  if (listPack) listPack.innerHTML = html;
-  var homeSec = $("recentSec"); if (homeSec) homeSec.hidden = !sorted.length;
-  var packSec = $("packRecentSec"); if (packSec) packSec.hidden = !sorted.length;
-  Array.prototype.forEach.call(document.querySelectorAll("[data-recent]"), function(b){
-    b.addEventListener("click", function(){ openRecent(b.getAttribute("data-recent")); });
-  });
+function bumpRecentOpening(id){
+  if (!id) return;
+  var i = recentOrder.openings.indexOf(id);
+  if (i === 0) return;
+  if (i > 0) recentOrder.openings.splice(i, 1);
+  recentOrder.openings.unshift(id);
+  if (recentOrder.openings.length > 40) recentOrder.openings = recentOrder.openings.slice(0, 40);
+  storeProgress();
+  try { renderOpenings(); } catch(e){}
 }
-function openRecent(id){
-  var entry = null;
-  recentPuzzles.forEach(function(e){ if (e.id === id) entry = e; });
-  var pk = entry ? (entry.packKey || packKey) : packKey;
-  if (detailCache[id]){ detailCache[id].fromPack = pk; startPuzzle(detailCache[id]); showView("play"); return; }
-  setListStatus("Loading puzzle from Lichess…");
-  lzFetch("https://lichess.org/api/puzzle/" + encodeURIComponent(id)).then(function(data){
-    var p = buildPuzzle(data);
-    p.fromPack = pk;
-    if (entry && entry.packKey === "daily") p.daily = true;
-    detailCache[p.id] = p;
-    setListStatus("");
-    startPuzzle(p);
-    showView("play");
-  }).catch(function(){
-    setListStatus("Could not load that puzzle from Lichess. Check your connection and tap it again.");
-  });
+function noteRecentUse(){
+  if (!cur) return;
+  if (cur.isOpening){ bumpRecentOpening(cur.openingId); return; }
+  bumpRecentPack(cur.fromPack || (cur.daily ? "daily" : packKey));
 }
 var view = new Array(64).fill(null);  // square idx -> {code, el} piece element on the board
 var capturedBy = { w:[], b:[] };      // piece codes each side has captured this puzzle
@@ -7265,7 +7244,7 @@ var VAL = { P:1, N:3, B:3, R:5, Q:9, K:0 };
 function $(id){ return document.getElementById(id); }
 
 /* ================= puzzle packs (home) ================= */
-var PK_ICON = { daily:"wN", mix:"wR", betterMoves:"wQ", forkPuzzles:"wN", forkPuzzles2:"wN", tradeBad:"wQ", deceptiveKing:"wK", dontBlock:"wR", ghostBuster:"wB", houdini:"wK", mateIn1:"wQ", mateIn2:"wQ", mateIn3:"wQ", middlegame:"wN", opening:"wB", openingAttack:"wQ", fork:"wN", pin:"wB", skewer:"wR", discoveredAttack:"wB", hangingPiece:"wP", saveHanging:"wK", sacrifice:"wQ", backRankMate:"wR", endgame:"wK", crushing:"wR" };
+var PK_ICON = { daily:"wN", mix:"wR", betterMoves:"wQ", forkPuzzles:"wN", forkPuzzles2:"wN", tradeBad:"wQ", deceptiveKing:"wK", dontBlock:"wR", ghostBuster:"wB", houdini:"wK", discoverAttack:"wB", mateIn1:"wQ", mateIn2:"wQ", mateIn3:"wQ", middlegame:"wN", opening:"wB", openingAttack:"wQ", fork:"wN", pin:"wB", skewer:"wR", discoveredAttack:"wB", hangingPiece:"wP", saveHanging:"wK", sacrifice:"wQ", backRankMate:"wR", endgame:"wK", crushing:"wR" };
 var OP_ICON = { evans:"wN", morra:"wR", fantasy:"wQ", italian:"wP", ruy:"wB", scotch:"wN", qgd:"wQ", london:"wB", french:"wP", kid:"wK", vienna:"wN", caro_adv:"wQ", alapin:"wP", scandi:"wR", larsen:"wB" };
 var PK_ARROW = '<span class="pk-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span>';
 /* One clean card style for everything on the Puzzles page. The Top 30
@@ -7316,7 +7295,10 @@ function renderCategories(){
      tab, so it must show packs, not openings. (Openings render in their
      own #openGrid under the Opening tab.) The Top 30 packs (top:true)
      all show at once, on top; every other pack sits behind See All. */
-  PACKS.forEach(function(pk){
+  var orderedPacks = [];
+  recentOrder.packs.forEach(function(k){ PACKS.forEach(function(pk){ if ((pk.id || pk.angle) === k) orderedPacks.push(pk); }); });
+  PACKS.forEach(function(pk){ if (orderedPacks.indexOf(pk) < 0) orderedPacks.push(pk); });
+  orderedPacks.forEach(function(pk){
     var key = pk.id || pk.angle;
     var info = packDoneInfo(pk);
     html += card(!pk.top, 'data-pack="' + key + '" data-name="' + pk.name + '" aria-pressed="' + (packKey === key ? "true" : "false") + '"',
@@ -7331,6 +7313,7 @@ function renderCategories(){
       var pk = null;
       PACKS.forEach(function(p){ if ((p.id || p.angle) === key) pk = p; });
       if (!pk) return;
+      bumpRecentPack(key);   // opening a pack moves the whole pack to the front of the home page
       if (packKey === key && packList.length){
         renderPack();
         showView("pack");
@@ -8152,6 +8135,10 @@ function autoHint(){
     if (hd.check && hd.checker) txt = "You are in check — the " + (cur.playerColor === "w" ? "black" : "white") + " " + PIECE_WORD[hd.checker.code[1]] + " on " + sqName(hd.checker.sq) + " is attacking your king. Escape like Houdini: run with the king, block the check, or take that piece. " + txt;
     else if (hd.hang) txt = "You are being forced — your " + PIECE_WORD[hd.hang.code[1]] + " on " + sqName(hd.hang.sq) + " is attacked and can be lost. Find the one move that saves it, defends it, or takes the attacker. " + txt;
   }
+  if (cur.fromPack === "discoverAttack"){
+    var df = discoveredFacts(state, mv);
+    if (df) txt = "Look at your " + PIECE_WORD[df.slider[1]] + " on " + sqName(df.sliderSq) + " — one of your pieces stands in front of it. Move that piece away and the " + PIECE_WORD[df.slider[1]] + " attacks the " + PIECE_WORD[df.target[1]] + " on " + sqName(df.targetSq) + (df.check ? " — with check on the king." : ".");
+  }
   if (cap) txt += " It can take the " + PIECE_WORD[cap[1]] + " on " + sqName(mv.to) + ".";
   return txt;
 }
@@ -8162,7 +8149,7 @@ function startPuzzle(p){
   clearDragVisual();
   cur = p;
   puzzleActive = true;
-  try { noteRecent(cur, false); } catch(e){}   // opening a puzzle puts it in Recent puzzles
+  try { noteRecentUse(); } catch(e){}   // using a pack / opening moves the whole pack / opening to the front of the home page
   state = parseFEN(cur.fen);
   flipped = state.turn === "b";   // your pieces start at the bottom, White or Black
   ply = 0; selected = null; legalSel = []; hintSquares = []; wrongSq = null;
@@ -8226,10 +8213,10 @@ function finishPuzzle(){
     if (mistakesThisPuzzle===0 && !hintUsed) stats.firstTry++;
     stats.streak++;
     storeProgress();
-    try { noteRecent(cur, true); } catch(e){}   // solved — this puzzle goes to the top of Recent puzzles
+    try { noteRecentUse(); } catch(e){}   // solved — its pack / opening stays at the front of the home page
   }
   else if (!revealed && solvedIds[cur.id]){
-    try { noteRecent(cur, true); } catch(e){}   // solved again — back to the top of Recent puzzles
+    try { noteRecentUse(); } catch(e){}   // solved again — its pack / opening stays at the front
   }
   $("summaryTitle").textContent = cur.isOpening ? "Line complete ✓" : (revealed ? "The Lichess solution" : "Puzzle solved ✓");
   $("summaryText").textContent = cur.isOpening
@@ -8380,6 +8367,9 @@ function attemptUserMove(from, to, promoChoice){
     } else if (cur.fromPack === "houdini"){
       addFeed("you", san, houdiniWrongDescribe(before, mv), "wrong");
       setAutoNote(houdiniWrongDescribe(before, mv));
+    } else if (cur.fromPack === "discoverAttack"){
+      addFeed("you", san, discoveredWrongDescribe(before, mv), "wrong");
+      setAutoNote(discoveredWrongDescribe(before, mv));
     } else if (cur.fromPack === "betterMoves"){
       addFeed("you", san, "Not the best move. " + autoDescribeMove(before, mv), "wrong");
       setAutoNote("What your move actually did: " + autoDescribeMove(before, mv) + " In this pack two or three moves can look good — but only one is the best, and this is not it. The coach bubble's engine check shows how strong your move really was, and names the best move.");
@@ -8739,11 +8729,24 @@ $("btnSolution").addEventListener("click", function(){
 });
 function stepPack(d){
   if (cur && cur.isOpening && cur.openingId){
-    var oi = 0;
-    OPENINGS.forEach(function(o, k){ if (o.id === cur.openingId) oi = k; });
-    var nop = OPENINGS[(oi + d + OPENINGS.length) % OPENINGS.length];
-    if (nop.course) startLarsenVariation(nop, larsenCurrent(nop));
-    else startOpening(nop, null);
+    var op = cur.openingRef || null;
+    if (!op) OPENINGS.forEach(function(o){ if (o.id === cur.openingId) op = o; });
+    if (!op) return;
+    if (op.course){
+      var nv = ((typeof cur.larsenVar === "number" ? cur.larsenVar : 0) + d + op.variations.length) % op.variations.length;
+      startLarsenVariation(op, nv);
+      return;
+    }
+    /* Next / Prev stay INSIDE this opening: the main line first, then
+       its "what if they play something else" lines in order (the d6
+       line, the next reply, …), then back to the main line. Next used
+       to jump to a completely different opening — Evans sent you to
+       the Nimzowitsch-Larsen — which is not what Next means here. */
+    var total = 1 + (op.branches || []).length;
+    var idx = 0;
+    if (cur.branchRef){ var bi = (op.branches || []).indexOf(cur.branchRef); idx = bi >= 0 ? bi + 1 : 0; }
+    var ni = ((idx + d) % total + total) % total;
+    startOpening(op, ni === 0 ? null : op.branches[ni - 1]);
     return;
   }
   if (!cur || !packList.length) return;
@@ -8803,20 +8806,52 @@ function pzNavUI(){
   dis("btnMvEnd", !browsing);
 }
 function pzGoTo(k){
-  if (!cur || busy || !pzSnaps.length) return;
+  if (!cur || !pzSnaps.length) return;
   var n = playedSans.length;
   if (k >= n){ pzExitBrowse(); return; }
   if (k < 0) k = 0;
-  if (pzBrowse < 0) pzLive = { state: state, capturedBy: capturedBy, lastMove: lastMove };
+  /* Going back must ALWAYS work — even while the opponent's reply or
+     the wrong-move slide-back is still on its way. Those pending
+     timers were the bug: the back tap did nothing while the board
+     was locked, then the next move jumped in on its own. Navigating
+     now cancels every pending timer (puzzleSeq bump), frees the
+     lock, and only then steps. The live position is rebuilt from
+     the last snapshot, never from a half-played wrong move. */
+  if (busy || pzBrowse < 0) puzzleSeq++;
+  busy = false;
+  if (pzBrowse < 0){
+    var liveSnap = pzSnaps[n];
+    if (liveSnap) pzLive = { state: liveSnap.state, capturedBy: { w: liveSnap.capW.slice(), b: liveSnap.capB.slice() }, lastMove: liveSnap.last ? { from: liveSnap.last.from, to: liveSnap.last.to } : null };
+    else pzLive = { state: state, capturedBy: capturedBy, lastMove: lastMove };
+  }
   var s = pzSnaps[k];
   if (!s){ pzExitBrowse(); return; }
+  var fromK = pzBrowse >= 0 ? pzBrowse : n;
   pzBrowse = k;
   hidePromoPicker();
   state = s.state;
   capturedBy = { w: s.capW.slice(), b: s.capB.slice() };
   lastMove = s.last ? { from: s.last.from, to: s.last.to } : null;
   selected = null; legalSel = []; hintSquares = []; wrongSq = null;
-  renderBoard(); resetView(); renderPlayerBars(); renderPuzzleInfo();
+  renderBoard();
+  /* One step at a time, the moved piece GLIDES to the stepped
+     position — no hard jump. A long jump (start / end buttons)
+     rebuilds the board at once, as before. */
+  var glide = null;
+  if (k === fromK - 1 && pzSnaps[fromK] && pzSnaps[fromK].last) glide = { elIdx: pzSnaps[fromK].last.from, fromIdx: pzSnaps[fromK].last.to };
+  else if (k === fromK + 1 && s.last) glide = { elIdx: s.last.to, fromIdx: s.last.from };
+  resetView();
+  if (glide && !reducedMotion()){
+    var gv = view[glide.elIdx];
+    if (gv && gv.el){
+      gv.el.style.transition = "none";
+      gv.el.style.transform = pieceTransform(glide.fromIdx);
+      void gv.el.offsetWidth;
+      gv.el.style.transition = "";
+      placeEl(gv, glide.elIdx, true);
+    }
+  }
+  renderPlayerBars(); renderPuzzleInfo();
 }
 /* Play from here: while browsing, make the viewed position the live
    one. The line is cut at the viewed move — the moves after it, their
@@ -8866,6 +8901,10 @@ function pzExitBrowse(){
   if (pzLive){ state = pzLive.state; capturedBy = pzLive.capturedBy; lastMove = pzLive.lastMove; pzLive = null; }
   selected = null; legalSel = []; hintSquares = []; wrongSq = null;
   renderBoard(); resetView(); renderPlayerBars(); renderPuzzleInfo();
+  /* If browsing cancelled a reply that was still on its way (the
+     player stepped back in the 500ms before it landed), the reply
+     is owed again now that we are back at the live position. */
+  if (cur && !finished && !busy && cur.moves[ply] && cur.moves[ply].actor === "opp") opponentReply();
 }
 $("btnMvStart").addEventListener("click", function(){ pzGoTo(0); });
 $("btnMvBack").addEventListener("click", function(){ pzGoTo(pzBrowse >= 0 ? pzBrowse - 1 : playedSans.length - 1); });
@@ -9924,7 +9963,10 @@ function larsenCurrent(op){
 }
 function renderOpenings(){
   var html = '<div class="list-card">';
-  OPENINGS.forEach(function(op){
+  var orderedOpenings = [];
+  recentOrder.openings.forEach(function(k){ OPENINGS.forEach(function(op){ if (op.id === k) orderedOpenings.push(op); }); });
+  OPENINGS.forEach(function(op){ if (orderedOpenings.indexOf(op) < 0) orderedOpenings.push(op); });
+  orderedOpenings.forEach(function(op){
     html += '<button class="cat-row" type="button" data-opening="' + op.id + '">'
       + '<span class="pk-ic"><img data-piece-icon="' + (OP_ICON[op.id] || "wN") + '" data-pcolor="' + (OP_ICON[op.id] || "wN").charAt(0) + '" src="' + piecePath(OP_ICON[op.id] || "wN") + '" alt=""></span>'
       + '<span class="main"><span class="nm">' + op.name + '</span>'
@@ -9942,6 +9984,7 @@ function openOpeningView(id){
   var op = null;
   OPENINGS.forEach(function(o){ if (o.id === id) op = o; });
   if (!op) return;
+  bumpRecentOpening(id);   // opening an opening moves it to the front of the Opening tab
   currentOpening = op;
   $("opTitle").textContent = op.name;
   $("opSub").textContent = op.sub;
@@ -10145,7 +10188,7 @@ function armBotBusyGuard(){
    reply is harmless — every reply path re-checks the turn before it
    moves, so a late twin returns without moving twice. */
 function ensureBotReplyIfOwed(){
-  if (!botState || botOver || botFreeMode() || botRetryActive) return;
+  if (!botState || botOver || botFreeMode() || botRetryActive || botBrowse >= 0) return;
   if (botHumanTurn()){ if (botBusy) botBusy = false; return; }
   if (botBusy){ armBotBusyGuard(); return; }
   botBusy = true; armBotBusyGuard();
@@ -10719,12 +10762,20 @@ function sfEvalFen(fen){
    The Stockfish 10 fallback build has no UCI_Elo — its own limiter
    is Skill Level 0–20, so the same Elo is mapped onto it evenly. */
 function sfSkillForElo(elo){
-  return Math.max(0, Math.min(20, Math.round((elo - 1500) / 1000 * 20)));
+  // The ruler's full range mapped straight onto Stockfish's Skill
+  // Level: Elo 800 → level 0, Elo 3000 → level 20.
+  return Math.max(0, Math.min(20, Math.round((elo - 800) / 2200 * 20)));
 }
 function sfApplyBotElo(elo){
   if (!sfWorker) return;
   try {
     if (sfEngineId === "sf10"){
+      sfWorker.postMessage("setoption name Skill Level value " + sfSkillForElo(elo));
+    } else if (elo < 1320){
+      // Below the engine's UCI_Elo floor (1320): the same set Elo is
+      // applied through Skill Level instead, so a pick under 1320
+      // really plays that weak — for every coach and alien alike.
+      sfWorker.postMessage("setoption name UCI_LimitStrength value false");
       sfWorker.postMessage("setoption name Skill Level value " + sfSkillForElo(elo));
     } else {
       sfWorker.postMessage("setoption name UCI_LimitStrength value true");
@@ -10736,7 +10787,7 @@ function sfClearBotElo(){
   if (!sfWorker) return;
   try {
     if (sfEngineId === "sf10") sfWorker.postMessage("setoption name Skill Level value 20");
-    else sfWorker.postMessage("setoption name UCI_LimitStrength value false");
+    else { sfWorker.postMessage("setoption name UCI_LimitStrength value false"); sfWorker.postMessage("setoption name Skill Level value 20"); }
   } catch(e){}
 }
 function sfBotMoveFen(fen, elo){
@@ -10830,7 +10881,6 @@ function judgePuzzleMove(before, mv, after, plyIndex, feedLi){
     if (!res) return;
     pzMarks[plyIndex] = res;
     try { updateReviewMark("pz", plyIndex, res); } catch(e){}
-    try { saveError("pz", before, mv, after, res); } catch(e){}
     try { renderPuzzleInfo(); } catch(e){}
     try { renderBoard(); } catch(e){}
     if (feedLi && feedLi.parentNode){
@@ -10851,7 +10901,6 @@ function judgePuzzleWrong(before, mv, after){
     // The full result (with the best move) still goes to saveError/Stats.
     var bubbleRes = { glyph: res.glyph, word: res.word, cls: res.cls, engine: res.engine, isBest: res.isBest, bestSan: null, bestUci: res.bestUci, loss: res.loss, to: res.to };
     try { updateReviewMarkEl(myLogEl, bubbleRes); } catch(e){}
-    try { saveError("pz", before, mv, after, res); } catch(e){}
     if (token === pzMarkToken) appendBubbleMark("pzLine", bubbleRes, "you");
   });
 }
@@ -11260,10 +11309,8 @@ function coachFallbackMove(st, color, elo){
   var best = null;
   try { best = bestMoveFor(st, color); } catch(e){}
   if (!best) return legal[0];
-  var t = Math.max(0, Math.min(1, (elo - 1500) / 1000));
-  var pBest = elo < 1500
-    ? Math.max(0.10, 0.40 - (1500 - elo) / 700 * 0.30)   // the ruler goes below the weakest coach: 40% best at Elo 1500 down to 10% at Elo 800
-    : 0.40 + 0.58 * t;                 // best move: 40% of the time at Elo 1500, 98% at Elo 2500
+  var t = Math.max(0, Math.min(1, (elo - 800) / 2200));
+  var pBest = 0.10 + 0.88 * t;   // the same ruler the user sets, end to end: best move 10% of the time at Elo 800, 98% at Elo 3000
   var r = Math.random();
   if (r < pBest) return best;
   var scored = legal.map(function(mv){ return { mv: mv, s: evalMoveFor(st, mv, color) }; });
@@ -11768,13 +11815,25 @@ function botNavUI(){
   if (bb) bb.hidden = !browsing;
 }
 function botGoTo(k){
-  if (!botState || botBusy || !botSnaps.length) return;
+  if (!botState || !botSnaps.length) return;
   var n = botSans.length;
   if (k >= n){ botExitBrowse(); return; }
   if (k < 0) k = 0;
-  if (botBrowse < 0) botLive = { state: botState, captured: botCaptured, lastMove: botLastMove };
+  /* Same fix as the puzzle board: stepping back works even while a
+     bot reply is on its way — the pending reply is cancelled
+     (botSeq bump) and the lock freed first, so the next move can
+     no longer jump in and steal the board back. The live position
+     is rebuilt from the last snapshot. */
+  if (botBusy || botBrowse < 0) botSeq++;
+  botBusy = false;
+  if (botBrowse < 0){
+    var liveSnap = botSnaps[n];
+    if (liveSnap) botLive = { state: liveSnap.state, captured: { w: liveSnap.capW.slice(), b: liveSnap.capB.slice() }, lastMove: liveSnap.last ? { from: liveSnap.last.from, to: liveSnap.last.to } : null };
+    else botLive = { state: botState, captured: botCaptured, lastMove: botLastMove };
+  }
   var s = botSnaps[k];
   if (!s){ botExitBrowse(); return; }
+  var fromK = botBrowse >= 0 ? botBrowse : n;
   botBrowse = k;
   hidePromoPicker();
   botState = s.state;
@@ -11782,7 +11841,22 @@ function botGoTo(k){
   botLastMove = s.last ? { from: s.last.from, to: s.last.to } : null;
   botSelected = null; botLegalSel = []; botHintSq = [];
   clearBestArrow("bot");
-  resetBotView(); renderBotSquares(); renderBotInfo();
+  renderBotSquares();
+  var glide = null;
+  if (k === fromK - 1 && botSnaps[fromK] && botSnaps[fromK].last) glide = { elIdx: botSnaps[fromK].last.from, fromIdx: botSnaps[fromK].last.to };
+  else if (k === fromK + 1 && s.last) glide = { elIdx: s.last.to, fromIdx: s.last.from };
+  resetBotView();
+  if (glide && !reducedMotion()){
+    var gv = botView[glide.elIdx];
+    if (gv && gv.el){
+      gv.el.style.transition = "none";
+      gv.el.style.transform = botTransform(glide.fromIdx);
+      void gv.el.offsetWidth;
+      gv.el.style.transition = "";
+      botPlaceEl(gv, glide.elIdx, true);
+    }
+  }
+  renderBotInfo();
   botSetTurn("Viewing move " + k + " of " + n + " — tap Play from here or one of your pieces to change the line from here; › returns to the live position.");
   botNavUI();
 }
@@ -11846,6 +11920,8 @@ function botExitBrowse(){
   botSetTurn(botOver ? "Game over." : botBusy ? "Bot is thinking…" : botFreeMode() ? (botState.turn === "w" ? "White to move." : "Black to move.") : "Your move.");
   botNavUI();
   try { runEnginePanel("bot"); } catch(e){}
+  /* A reply cancelled by stepping back is owed again at live. */
+  try { ensureBotReplyIfOwed(); } catch(e){}
 }
 $("botMvBack").addEventListener("click", function(){ botGoTo(botBrowse >= 0 ? botBrowse - 1 : botSans.length - 1); });
 $("botMvFwd").addEventListener("click", function(){
@@ -12037,6 +12113,11 @@ var errStore = (function(){
   try { var s = JSON.parse(localStorage.getItem(ERR_KEY) || "null"); if (Array.isArray(s)) return s; } catch(e){}
   return [];
 })();
+/* Puzzles and openings no longer save blunders & mistakes — only
+   Play games do. Records that older versions saved from a puzzle
+   or an opening are dropped here, once, on load. */
+errStore = errStore.filter(function(r){ return !(r && typeof r.source === "string" && (r.source.indexOf("Puzzle ·") === 0 || r.source.indexOf("Opening ·") === 0)); });
+storeErrors();
 var errFolderOpen = { blunder: false, mistake: false };   // Stats opens clean: just the two names, nothing expanded
 var botRetryActive = false;   // true while the Play board holds a saved-error position to retry
 function storeErrors(){ try { localStorage.setItem(ERR_KEY, JSON.stringify(errStore)); } catch(e){} }
@@ -12162,7 +12243,7 @@ function renderErrors(){
   if (!box) return;
   updateErrBadge();
   if (!errStore.length){
-    box.innerHTML = '<p class="stats-note" style="margin-top:0">Nothing saved yet. The first time one of your moves is marked ? (mistake) or ?? (blunder) — in a puzzle, an opening or a Play game — it will appear here with its position, ready to try again.</p>';
+    box.innerHTML = '<p class="stats-note" style="margin-top:0">Nothing saved yet. The first time one of your moves is marked ? (mistake) or ?? (blunder) in a Play game, it will appear here with its position, ready to try again. Puzzles do not save blunders or mistakes.</p>';
     return;
   }
   var typeOrder = ["Hanging piece", "Missed mate", "Missed capture", "Bad trade", "King in danger", "Missed tactic"];
@@ -12571,16 +12652,42 @@ $("noteSave").addEventListener("click", function(){
   }
   if (ctx.kind === "game") saveCurrentGame(note); else saveCurrentPuzzle(note);
 });
+var statsNotesOpen = false;      // the Notes folder in Stats starts closed — just the folder name shows
+var statsNoteSubOpen = {};       // note-type folder name -> true once tapped open (Fork, Defensive move, Games…)
 function renderStatsNotes(){
   var wrap = $("statsNotesWrap"), box = $("statsNotes");
   if (!wrap || !box) return;
   var items = [];
-  savedStore.games.forEach(function(g){ if (g.note) items.push({ nm: "You vs " + (g.coachName || "Coach"), nt: g.note, wh: savedDateText(g.dateISO) + " · saved game" }); });
-  savedStore.puzzles.forEach(function(p){ if (p.note) items.push({ nm: p.titleText || themeLabel(primaryTheme(p.themes || [])), nt: p.note, wh: savedDateText(p.dateISO) + " · saved in " + savedPuzzleFolder(p) }); });
+  savedStore.games.forEach(function(g){ if (g.note) items.push({ type: "Games", nm: "You vs " + (g.coachName || "Coach"), nt: g.note, wh: savedDateText(g.dateISO) + " · saved game" }); });
+  savedStore.puzzles.forEach(function(p){ if (p.note){ var tp = themeLabel(primaryTheme(p.themes || [])); items.push({ type: tp, nm: p.titleText || tp, nt: p.note, wh: savedDateText(p.dateISO) + " · saved in " + savedPuzzleFolder(p) }); } });
   wrap.hidden = !items.length;
-  box.innerHTML = items.map(function(it){
-    return '<div class="stats-note-item"><div class="nm">' + escHtml(it.nm) + '</div><div class="nt">' + escHtml(it.nt) + '</div><div class="wh">' + escHtml(it.wh) + '</div></div>';
-  }).join("");
+  if (!items.length){ box.innerHTML = ""; return; }
+  var types = [], byType = {};
+  items.forEach(function(it){ if (!byType[it.type]){ byType[it.type] = []; types.push(it.type); } byType[it.type].push(it); });
+  var h = '<div class="err-folder' + (statsNotesOpen ? "" : " closed") + '">'
+    + '<button class="err-folder-head" type="button" data-notes-folder="1"><span class="nm">Notes</span><span class="cnt">' + items.length + (items.length === 1 ? " note" : " notes") + '</span><span class="chev">' + (statsNotesOpen ? "▾" : "▸") + '</span></button>'
+    + '<div class="err-folder-body">';
+  types.forEach(function(tp){
+    var open = statsNoteSubOpen[tp] === true;
+    h += '<div class="err-folder' + (open ? "" : " closed") + '" style="margin-top:8px">'
+      + '<button class="err-folder-head" type="button" data-notes-sub="' + escAttr(tp) + '"><span class="nm">' + escHtml(tp) + '</span><span class="cnt">' + byType[tp].length + '</span><span class="chev">' + (open ? "▾" : "▸") + '</span></button>'
+      + '<div class="err-folder-body">'
+      + byType[tp].map(function(it){
+          return '<div class="stats-note-item"><div class="nm">' + escHtml(it.nm) + '</div><div class="nt">' + escHtml(it.nt) + '</div><div class="wh">' + escHtml(it.wh) + '</div></div>';
+        }).join("")
+      + '</div></div>';
+  });
+  box.innerHTML = h + '</div></div>';
+  Array.prototype.forEach.call(box.querySelectorAll("[data-notes-folder]"), function(b){
+    b.addEventListener("click", function(){ statsNotesOpen = !statsNotesOpen; renderStatsNotes(); });
+  });
+  Array.prototype.forEach.call(box.querySelectorAll("[data-notes-sub]"), function(b){
+    b.addEventListener("click", function(){
+      var tp = b.getAttribute("data-notes-sub");
+      statsNoteSubOpen[tp] = !(statsNoteSubOpen[tp] === true);
+      renderStatsNotes();
+    });
+  });
 }
 $("botSaveBtn").addEventListener("click", function(){
   if (!botStarted || !botSans.length){ botFlash("Play a move first — then tap Save."); return; }
@@ -12885,7 +12992,6 @@ buildBoardFrames();
 renderCategories();
 renderOpenings();
 renderPicker();
-try { renderRecents(); } catch(e){}
 cur = null;
 /* ================= backup: download / load (Settings) =================
    Everything Chaturanga saves on this device lives in localStorage
