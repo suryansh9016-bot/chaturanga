@@ -7344,7 +7344,7 @@ function $(id){ return document.getElementById(id); }
 
 /* ================= puzzle packs (home) ================= */
 var PK_ICON = { daily:"wN", mix:"wR", betterMoves:"wQ", forkPuzzles:"wN", forkPuzzles2:"wN", tradeBad:"wQ", deceptiveKing:"wK", dontBlock:"wR", ghostBuster:"wB", houdini:"wK", discoverAttack:"wB", mateIn1:"wQ", mateIn2:"wQ", mateIn3:"wQ", middlegame:"wN", opening:"wB", openingAttack:"wQ", fork:"wN", pin:"wB", skewer:"wR", discoveredAttack:"wB", hangingPiece:"wP", saveHanging:"wK", sacrifice:"wQ", backRankMate:"wR", endgame:"wK", crushing:"wR" };
-var OP_ICON = { evans:"wN", morra:"wR", fantasy:"wQ", italian:"wP", ruy:"wB", scotch:"wN", qgd:"wQ", london:"wB", french:"wP", kid:"wK", vienna:"wN", caro_adv:"wQ", alapin:"wP", scandi:"wR", larsen:"wB" };
+var OP_ICON = { evans:"wN", morra:"wR", fantasy:"wQ", italian:"wP", ruy:"wB", scotch:"wN", qgd:"wQ", london:"wB", french:"wP", kid:"wK", vienna:"wN", caro_adv:"wQ", alapin:"wP", scandi:"wR", larsen:"wB", schara:"bQ", schliemann:"bN", blumenfeld:"bP", ulvestad:"bB" };
 var PK_ARROW = '<span class="pk-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span>';
 /* One clean card style for everything on the Puzzles page. The Top 30
    packs lead and all show at once; the rest sit behind See All. */
@@ -8025,11 +8025,16 @@ function goalLine(text){
   return String(text || "").split("\n")[0].replace("THE GOAL: ", "");
 }
 /* ---- SHORT coach lines (the coach's only voice in the bubble) ----
-   One line per move, never more: a plain verdict word — Good, Great,
-   Bad, Brilliant — plus ONE true fact read off the real board: what
-   the move attacks, takes, checks or lets the other side attack.
-   No GOAL / SETUP / TRAP, no paragraphs. The long review still exists
-   only inside the Review panel, which stays hidden until tapped. */
+   One entry per move: a plain verdict word — Good, Great, Bad,
+   Brilliant — plus what the move DOES, read off the real board.
+   A good move says what it attacks, takes or checks, and when it
+   aims at the king it says so ("It will help you reach the king and
+   attack"). A bad move names the concrete consequence: the piece
+   left hanging, the capture that loses material, the reply the
+   other side can play now. Short plain words only, never more
+   than a couple of short sentences. No GOAL / SETUP / TRAP, no
+   paragraphs. The long review still exists only inside the Review
+   panel, which stays hidden until tapped. */
 function verdictFromRes(res){
   if (!res) return "Good";
   if (res.cls === "brilliant") return "Brilliant";
@@ -8042,6 +8047,25 @@ function quickVerdict(before, mv){
     var h = heuristicJudge(before, mv);
     return verdictFromRes(classifyMark(h.loss, false, h.loss <= 15));
   } catch(e){ return "Good"; }
+}
+function nearKingSq(sq, kSq){
+  return kSq >= 0 && Math.abs(sqFile(sq) - sqFile(kSq)) <= 1 && Math.abs(sqRank(sq) - sqRank(kSq)) <= 1;
+}
+/* The enemy pawn the moved piece attacks that stands right next to
+   the enemy king, guarded by the king alone (or by nobody) — the
+   f7 / f2 pattern, the weakest spot in the king's home. Returns the
+   hit {code, sq} or null. Shared by moveFact (names it) and
+   movePlan (says what it is for). */
+function weakKingPawnHit(after, fromSq, color){
+  var enemy = opp(color), kSq = kingIdx(after, enemy);
+  if (kSq < 0) return null;
+  var atks = attacksFrom(after, fromSq), i, q;
+  for (i = 0; i < atks.length; i++){
+    q = after.b[atks[i]];
+    if (q === enemy + "P" && nearKingSq(atks[i], kSq) && defendersOf(after, atks[i], enemy).length <= 1)
+      return { code: q, sq: atks[i] };
+  }
+  return null;
 }
 function moveFact(before, mv){
   var mover = before.b[mv.from]; if (!mover) return "";
@@ -8061,7 +8085,7 @@ function moveFact(before, mv){
   hits.sort(function(a, b){ return (b.code[1] === "K" ? 100 : VAL[b.code[1]]) - (a.code[1] === "K" ? 100 : VAL[a.code[1]]); });
   var bigHits = hits.filter(function(h){ return h.code[1] === "K" || VAL[h.code[1]] >= 3; });
   if (bigHits.length >= 2)
-    return "it attacks the " + PIECE_WORD[bigHits[0].code[1]] + " on " + sqName(bigHits[0].sq) + " and the " + PIECE_WORD[bigHits[1].code[1]] + " on " + sqName(bigHits[1].sq);
+    return "it attacks the " + PIECE_WORD[bigHits[0].code[1]] + " on " + sqName(bigHits[0].sq) + " and the " + PIECE_WORD[bigHits[1].code[1]] + " on " + sqName(bigHits[1].sq) + " at the same time — only one of them can be saved";
   // the moved piece itself is left where it can be taken
   if (attacked(after, mv.to, enemy) && defendersOf(after, mv.to, color).length === 0){
     var atk = cheapestAttacker(after, mv.to, enemy);
@@ -8073,6 +8097,12 @@ function moveFact(before, mv){
     return "it takes the " + PIECE_WORD[capCode[1]] + " on " + dest + (free ? " for free" : "");
   }
   if (check) return "it gives check — the king must move";
+  if (mover[1] === "K" && Math.abs(sqFile(mv.to) - sqFile(mv.from)) === 2)
+    return "the king is safe now, tucked behind its own pawns";
+  // a pawn right next to the enemy king — the weakest spot in its home
+  var weak = null;
+  try { weak = weakKingPawnHit(after, mv.to, color); } catch(e){}
+  if (weak) return "it attacks the pawn on " + sqName(weak.sq) + ", the weakest spot near the " + (enemy === "w" ? "white" : "black") + " king";
   if (bigHits.length === 1)
     return "it attacks the " + PIECE_WORD[bigHits[0].code[1]] + " on " + sqName(bigHits[0].sq);
   if (hits.length)
@@ -8086,16 +8116,170 @@ function moveFact(before, mv){
   if (mv.promo) return "the pawn becomes a " + PIECE_WORD[mv.promo];
   if ((mover[1] === "N" || mover[1] === "B") && sqRank(mv.from) === (color === "w" ? 1 : 8))
     return "it brings the " + word + " into the game";
+  if (mover[1] === "P" && "cde".indexOf(dest[0]) >= 0 && (sqRank(mv.to) === 4 || sqRank(mv.to) === 5))
+    return "it takes space in the center and fights for the middle";
+  if (mover[1] === "R"){
+    var fileClear = true;
+    for (var rr = 1; rr <= 8; rr++){
+      var rp = after.b[sqIdx(sqFile(mv.to), rr)];
+      if (rp && rp[1] === "P"){ fileClear = false; break; }
+    }
+    if (fileClear) return "it puts the rook on an open file, with no pawns in the way";
+  }
   return "the " + word + " goes to " + dest;
 }
-function shortMoveLine(prefix, before, mv, verdict){
+/* The plan clause for a good move — what the move is FOR, in one
+   short sentence, only when the board really shows it: the move
+   points at the weak pawn next to the enemy king, or it saves a
+   piece that was hanging and could be taken for free. */
+function movePlan(before, mv, isYou){
+  var mover = before.b[mv.from]; if (!mover) return "";
+  var color = mover[0], enemy = opp(color);
+  var after = applyMove(before, mv);
+  var weak = null;
+  try { weak = weakKingPawnHit(after, mv.to, color); } catch(e){}
+  if (weak) return isYou ? "It will help you reach the king and attack." : "It is aiming at the weakest spot near your king.";
+  for (var oi = 0; oi < 64; oi++){
+    var op = after.b[oi];
+    if (op && op[0] === color && oi !== mv.to
+        && attacked(before, oi, enemy) && defendersOf(before, oi, color).length === 0
+        && attacked(after, oi, enemy) && coversSq(after, mv.to, oi))
+      return isYou
+        ? "Now your " + PIECE_WORD[op[1]] + " on " + sqName(oi) + " is safe — it cannot be taken for free."
+        : "Now the " + PIECE_WORD[op[1]] + " on " + sqName(oi) + " cannot be taken for free.";
+  }
+  return "";
+}
+/* The bad-move reason when Stockfish is loaded, built from the
+   engine's own best reply for the other side: the reply is named,
+   plus its threat in short plain words — the piece it wins, the
+   check it gives, or the piece of the mover's that now has to run
+   because the reply attacks it with a cheaper piece (or with
+   nothing defending it). Returns "" when the reply cannot be
+   named at all, so the caller can fall back to the in-page rules. */
+function engineReplyReason(after, replyUci, color, isYou){
+  var rm = null;
+  try { rm = uciMove(after, replyUci); } catch(e){}
+  if (!rm) return "";
+  var enemy = opp(color);
+  var enemyName = enemy === "w" ? "White" : "Black";
+  var san = "";
+  try { san = sanFor(after, rm); } catch(e){}
+  if (!san) return "";
+  var head = "now " + enemyName + " can play " + san;
+  var rPiece = after.b[rm.from]; if (!rPiece) return "";
+  var afterR = applyMove(after, rm);
+  var fact = "";
+  try { fact = moveFact(after, rm); } catch(e){}
+  if (fact === "that is checkmate") return head + " — that is checkmate";
+  var isCap = !!after.b[rm.to] || (rPiece[1] === "P" && rm.to === after.ep && sqFile(rm.from) !== sqFile(rm.to));
+  // check and capture threats speak through moveFact's own words
+  if (inCheck(afterR, color) || isCap){
+    if (fact && fact.indexOf("goes to") < 0) return head + " — " + fact;
+    return head;
+  }
+  // a piece of the mover's side that the reply attacks and that
+  // cannot stay where it is — it has to run
+  var runWord = null, runVal = 0;
+  var atks = attacksFrom(afterR, rm.to);
+  for (var i = 0; i < atks.length; i++){
+    var q = afterR.b[atks[i]];
+    if (!q || q[0] !== color || q[1] === "K" || VAL[q[1]] < 2) continue;
+    if (VAL[rPiece[1]] < VAL[q[1]] || defendersOf(afterR, atks[i], color).length === 0){
+      if (VAL[q[1]] > runVal){ runVal = VAL[q[1]]; runWord = PIECE_WORD[q[1]]; }
+    }
+  }
+  if (runWord) return head + " and " + (isYou ? "your " : "the ") + runWord + " has to run";
+  if (fact && fact.indexOf("goes to") < 0) return head + " — " + fact;
+  return head;
+}
+/* The concrete consequence of a bad move, in one short clause: the
+   piece it leaves hanging, the capture that loses material, or the
+   reply the other side can play now. Actor-neutral wording for the
+   opponent's moves, "your" wording for the player's own. When
+   Stockfish is loaded, the reason comes from the engine instead:
+   the reply handed in by the engine judge (engReplyUci), or the
+   engine's cached best reply for this exact position when it has
+   already scored it — the in-page rules below (hanging pieces,
+   punishText, bestMoveFor) run only when Stockfish is not loaded,
+   or when the engine reply cannot be named at all. */
+function badReason(before, mv, isYou, engReplyUci){
+  var mover = before.b[mv.from]; if (!mover) return "";
+  var color = mover[0], enemy = opp(color);
+  var after = applyMove(before, mv);
+  var engUci = engReplyUci || null;
+  if (!engUci && sfState === "ready" && settings.sfOn){
+    try { var cachedSf = sfCache[stateToFEN(after)]; if (cachedSf && cachedSf.best) engUci = cachedSf.best; } catch(e){}
+  }
+  if (engUci){
+    var engReason = "";
+    try { engReason = engineReplyReason(after, engUci, color, isYou); } catch(e){}
+    if (engReason) return engReason;
+  }
+  var dest = sqName(mv.to), word = PIECE_WORD[mover[1]];
+  var poss = isYou ? "your " : "the ";
+  var enemyName = enemy === "w" ? "White" : "Black";
+  // the moved piece itself can be taken, and taking it wins material
+  if (attacked(after, mv.to, enemy)){
+    var atk = cheapestAttacker(after, mv.to, enemy);
+    var atkIdx = cheapestAttackerIdx(after, mv.to, enemy);
+    if (atk && defendersOf(after, mv.to, color).length === 0 && VAL[atk[1]] <= VAL[mover[1]])
+      return poss + word + " on " + dest + " is hanging — the " + PIECE_WORD[atk[1]] + " takes it and nothing defends it";
+    if (atk && atkIdx >= 0 && seeCaptureX(after, atkIdx, mv.to) >= 2)
+      return poss + word + " on " + dest + " gets taken — the " + PIECE_WORD[atk[1]] + " wins it";
+  }
+  // a capture that loses material once the other side takes back
+  var capCode = before.b[mv.to];
+  if (!capCode && mover[1] === "P" && mv.to === before.ep && sqFile(mv.from) !== sqFile(mv.to)) capCode = enemy + "P";
+  if (capCode && seeCaptureX(before, mv.from, mv.to) < 0){
+    var rk = cheapestAttacker(after, mv.to, enemy);
+    if (rk) return "it takes the " + PIECE_WORD[capCode[1]] + " on " + dest + ", but the " + PIECE_WORD[rk[1]] + " takes back and wins " + poss + word;
+  }
+  // another of the mover's pieces is left hanging by this move
+  var hang = hangingList(after, color), i;
+  for (i = 0; i < hang.length; i++){
+    if (hang[i].sq === mv.to) continue;
+    if (!attacked(before, hang[i].sq, enemy) || defendersOf(before, hang[i].sq, color).length > 0){
+      var ha = cheapestAttacker(after, hang[i].sq, enemy);
+      return "it leaves " + poss + PIECE_WORD[hang[i].code[1]] + " on " + sqName(hang[i].sq) + " hanging" + (ha ? " — the " + PIECE_WORD[ha[1]] + " can take it for free" : "");
+    }
+  }
+  // the other side's punishing reply: mate, a winning capture, a check
+  var pun = null;
+  try { pun = punishText(after, enemy); } catch(e){}
+  if (pun) return "now " + pun;
+  // the other side's best reply, when it takes something or gives check
+  try {
+    var reply = bestMoveFor(after, enemy);
+    if (reply && (after.b[reply.to] || inCheck(applyMove(after, reply), color))){
+      var rFact = moveFact(after, reply);
+      if (rFact) return "now " + enemyName + " can play " + sanFor(after, reply) + " — " + rFact;
+    }
+  } catch(e){}
+  return "";
+}
+function shortMoveLine(prefix, before, mv, verdict, engReplyUci){
   var san = "";
   try { san = sanFor(before, mv); } catch(e){}
-  var fact = "";
-  try { fact = moveFact(before, mv); } catch(e){}
+  var isYou = prefix !== "Opponent played";
   var head = prefix + (san ? " " + san : "") + ".";
-  var body = (verdict ? verdict + " move" : "Move") + (fact ? " — " + fact : "") + ".";
-  return head + " " + body.charAt(0).toUpperCase() + body.slice(1);
+  var body;
+  if (verdict === "Bad"){
+    var reason = "";
+    try { reason = badReason(before, mv, isYou, engReplyUci); } catch(e){}
+    if (!reason){ try { reason = moveFact(before, mv); } catch(e){} }
+    body = "Bad move" + (reason ? " — " + reason : "") + ".";
+  } else {
+    var fact = "";
+    try { fact = moveFact(before, mv); } catch(e){}
+    body = (verdict ? verdict + " move" : "Move") + (fact ? " — " + fact : "") + ".";
+    if (verdict){
+      var plan = "";
+      try { plan = movePlan(before, mv, isYou); } catch(e){}
+      if (plan) body += " " + plan;
+    }
+  }
+  return head + " " + body;
 }
 var lastShortLine = "";
 function expectedWhy(before, plyIdx, uci){
@@ -8250,7 +8434,7 @@ function startPuzzle(p){
   puzzleActive = true;
   try { noteRecentUse(); } catch(e){}   // using a pack / opening moves the whole pack / opening to the front of the home page
   state = parseFEN(cur.fen);
-  flipped = state.turn === "b";   // your pieces start at the bottom, White or Black
+  flipped = cur.playerColor ? (cur.playerColor === "b") : (state.turn === "b");   // your pieces start at the bottom, White or Black — the Black gambit courses start from White to move, but you are Black, so the board turns to your side
   ply = 0; selected = null; legalSel = []; hintSquares = []; wrongSq = null;
   busy = false; finished = false; revealed = false; mistakesThisPuzzle = 0; hintUsed = false;
   capturedBy = { w:[], b:[] };
@@ -8323,14 +8507,17 @@ function finishPuzzle(){
     : "The full Lichess line: " + playedSans.join(" ") + ". Rating " + cur.rating + " · Lichess tags: " + cur.themes.map(themeLabel).join(", ") + ".";
   $("summaryBox").classList.add("show");
   if (cur.isOpening && typeof cur.larsenVar === "number" && !revealed){
-    /* A finished Larsen variation stays finished on this device and
-       opens the next one in the course. */
-    if (!larsenDone[cur.larsenVar]){ larsenDone[cur.larsenVar] = true; storeLarsen(); }
-    var opL = cur.openingRef, nv = cur.larsenVar + 1;
+    /* A finished course variation stays finished on this device and
+       opens the next one in the course — the Larsen course in its own
+       key, each Black gambit course in its own new key. */
+    var opL = cur.openingRef, dmF = courseDoneMap(opL), nv = cur.larsenVar + 1;
+    if (!dmF[cur.larsenVar]){ dmF[cur.larsenVar] = true; storeCourseDone(opL); }
     $("summaryTitle").textContent = "Variation " + (cur.larsenVar + 1) + " complete ✓";
     $("summaryText").textContent = nv < opL.variations.length
       ? "Variation " + (cur.larsenVar + 1) + " of " + opL.variations.length + " done. Variation " + (nv + 1) + " is now open: " + opL.variations[nv].title + ". Go back to the opening page to play it."
-      : "All 8 variations done — the Nimzowitsch-Larsen course is complete. Play any variation again from the opening page.";
+      : (opL.blackCourse
+        ? "All " + opL.variations.length + " variations done — the " + opL.name + " course is complete. Play any variation again from the opening page."
+        : "All 8 variations done — the Nimzowitsch-Larsen course is complete. Play any variation again from the opening page.");
     try { renderOpenings(); } catch(e){}
   }
   try { runEnginePanel("pz"); } catch(e){}
@@ -8771,7 +8958,16 @@ $("btnLike").addEventListener("click", function(){
   storeSaved(); syncLikeBtn();
   setFeedback("ok", "Liked — find it any time in the Save tab, in the Liked puzzles folder.");
 });
-$("btnReset").addEventListener("click", function(){ if (cur) startPuzzle(cur); });
+$("btnReset").addEventListener("click", function(){
+  if (!cur) return;
+  startPuzzle(cur);
+  // A line that opens with the opponent's move (the Black gambit
+  // courses — White moves first) must start that move again after a
+  // Retry, exactly as when the variation was opened. Every older
+  // puzzle and opening starts with your own move, so nothing changes
+  // for them.
+  if (!finished && cur.moves[ply] && cur.moves[ply].actor === "opp") opponentReply();
+});
 $("btnFlip").addEventListener("click", function(){
   flipped = !flipped; selected = null; legalSel = [];
   clearBestArrow("pz");
@@ -10028,8 +10224,80 @@ var OPENINGS = [
       ["e8g8","Black castles to safety.","The doubled c-pawns stay behind as the weakness.","White castles and the plan is clear: attack the c-pawns."],
       ["e1g1","Castle — king safe, every piece developed.","The Modern Larsen is done: fast knight, strong bishop, and Black's doubled pawns to attack.","From here, aim at c6 and c7 — weak pawns fall in the endgame."]
      ]}
+  ]},
+{ id:"schara", name:"Von Hennig-Schara Gambit", sub:"against 1. d4 · You play Black · a course of 4 variations, in order",
+  course:true, blackCourse:true,
+  idea:"White wants a slow Queen's Gambit. You hit the centre with ...c5, and when White takes on d5 you take his d4 pawn instead of taking back. The whole centre blows open and your pieces fly out while his queen runs.",
+  variations:[
+   { title:"Variation 1 · The queen check", desc:"Win time. White's queen must keep running while your pieces come out.",
+     goal:"Win time. White's queen must keep running while your pieces come out.", setup:"After ...cxd4 the queen checks on a4 and takes the pawn. Block with the bishop, take back on d5, and when the queen takes again, hit her with the knight.", trap:"White is a pawn up but moves behind. Every queen move gives you a free move to bring a piece out, and your bishop lands on c5 aiming at f2.",
+     line:[["d2d4"],["d7d5"],["c2c4"],["e7e6"],["b1c3"],["c7c5"],["c4d5"],["c5d4"],["d1a4"],["c8d7"],["a4d4"],["e6d5"],["d4d5"],["b8c6"],["e2e3"],["g8f6"],["d5d1"],["f8c5"],["g1f3"],["e8g8"]] },
+   { title:"Variation 2 · Queen takes in the centre", desc:"Take the whole centre. When the queen takes on d4 and runs home, take back on d5 and keep the big pawn in the middle.",
+     goal:"Take the whole centre. When the queen takes on d4 and runs home, take back on d5 and keep the big pawn in the middle.", setup:"The queen takes, your knight hits her, she runs to d1. Your pawn stands on d5 and your bishop lands on c5 aiming at f2.", trap:"White has no centre pawns left. Your d5 pawn and c5 bishop press on e3 and f2 for the whole game.",
+     line:[["d2d4"],["d7d5"],["c2c4"],["e7e6"],["b1c3"],["c7c5"],["c4d5"],["c5d4"],["d1d4"],["b8c6"],["d4d1"],["e6d5"],["e2e3"],["g8f6"],["g1f3"],["f8c5"],["f1e2"],["e8g8"],["e1g1"],["f8e8"]] },
+   { title:"Variation 3 · The knight jump fails", desc:"Punish the knight jump. When White jumps the knight to e4 to dodge your pawn, do not chase it - take the d5 pawn with your queen and own the centre.",
+     goal:"Punish the knight jump. When White jumps the knight to e4 to dodge your pawn, do not chase it - take the d5 pawn with your queen and own the centre.", setup:"Your queen takes d5, the knight runs to g3, and ...h5 starts the kingside push. If White tries e4, take it en passant - his pawn runs past your d4 pawn and dies.", trap:"White wasted three moves with one knight and lost his e-pawn on the way. Your queen and bishops took the centre for free.",
+     line:[["d2d4"],["d7d5"],["c2c4"],["e7e6"],["b1c3"],["c7c5"],["c4d5"],["c5d4"],["c3e4"],["d8d5"],["e4g3"],["h7h5"],["e2e4"],["d4e3"],["c1e3"],["f8b4"],["e3d2"],["b4d2"],["d1d2"],["d5d2"],["e1d2"]] },
+   { title:"Variation 4 · White takes the other way", desc:"If White takes on d5 with the other pawn, forget the gambit - push your d-pawn and take the centre by force.",
+     goal:"If White takes on d5 with the other pawn, forget the gambit - push your d-pawn and take the centre by force.", setup:"White takes your c5 pawn too, so push ...d4. His knight takes your bishop, your queen checks on a5 and takes the knight back.", trap:"White grabbed pawns and has no centre left. Your queen sits in the middle and every piece comes out with a threat.",
+     line:[["d2d4"],["d7d5"],["c2c4"],["e7e6"],["b1c3"],["c7c5"],["c4d5"],["e6d5"],["d4c5"],["d5d4"],["c3e4"],["f8c5"],["e4c5"],["d8a5"],["c1d2"],["a5c5"],["e2e3"],["g8f6"],["g1f3"],["e8g8"]] }
+  ]}
+,{ id:"schliemann", name:"Schliemann Gambit", sub:"against 1. e4 · You play Black · a course of 4 variations, in order",
+  course:true, blackCourse:true,
+  idea:"White plays the Ruy Lopez because he wants a calm, slow game. On move 3 you slam ...f5 in his face and rip the f-file open at his king.",
+  variations:[
+   { title:"Variation 1 · The solid d3", desc:"Meet the solid answer calmly. White guards everything with d3, so take on e4, open the f-file, and put your bishop on c5 aiming at f2.",
+     goal:"Meet the solid answer calmly. White guards everything with d3, so take on e4, open the f-file, and put your bishop on c5 aiming at f2.", setup:"Trade on e4, knight to f6, castle fast. Your rook will stand on the open f-file and your bishop eyes f2.", trap:"White is solid but slow. Your f-file rook and c5 bishop make his king feel the heat first.",
+     line:[["e2e4"],["e7e5"],["g1f3"],["b8c6"],["f1b5"],["f7f5"],["d2d3"],["f5e4"],["d3e4"],["g8f6"],["e1g1"],["f8c5"],["b1c3"],["d7d6"],["c1g5"],["e8g8"]] },
+   { title:"Variation 2 · The two knights dance", desc:"Let both his knights jump in. Your d-pawn eats one knight, your queen steps back and guards the other, and you stay a step ahead.",
+     goal:"Let both his knights jump in. Your d-pawn eats one knight, your queen steps back and guards the other, and you stay a step ahead.", setup:"Take on e4 and push d5. One knight takes e5, your pawn takes the other knight on e4. When his knight eats c6, your queen steps to d5 and d6 and covers everything.", trap:"His knight ends the line on a7, far from the fight, and must run home. Your queen and bishops own the middle.",
+     line:[["e2e4"],["e7e5"],["g1f3"],["b8c6"],["f1b5"],["f7f5"],["b1c3"],["f5e4"],["c3e4"],["d7d5"],["f3e5"],["d5e4"],["e5c6"],["d8d5"],["c2c4"],["d5d6"],["c6a7"],["c8d7"],["b5d7"],["d6d7"],["d1h5"],["g7g6"]] },
+   { title:"Variation 3 · White takes the pawn", desc:"He took your f-pawn. Now hunt his king's house: your pawn storms to e4, his knight runs home to g1, and your queen eats the g2 and h2 pawns.",
+     goal:"He took your f-pawn. Now hunt his king's house: your pawn storms to e4, his knight runs home to g1, and your queen eats the g2 and h2 pawns.", setup:"Push ...e4, and when the knight hides on g1, bring the queen to g5. She takes g2, then h2, while his rook runs to g1 to chase her away.", trap:"White is a pawn up on paper, but his king has no pawn cover left on g2 and h2. Your queen is living inside his house.",
+     line:[["e2e4"],["e7e5"],["g1f3"],["b8c6"],["f1b5"],["f7f5"],["e4f5"],["e5e4"],["f3g1"],["d8g5"],["g1e2"],["g5g2"],["h1g1"],["g2h2"],["d2d4"],["g8f6"],["c1f4"],["h2h5"],["b1c3"]] },
+   { title:"Variation 4 · The centre break", desc:"Meet the centre break head-on. White pushes d4 to blow you open - take his e-pawn, trade his bishop off, and kick his centre pawn until it falls.",
+     goal:"Meet the centre break head-on. White pushes d4 to blow you open - take his e-pawn, trade his bishop off, and kick his centre pawn until it falls.", setup:"Take on e4. His bishop takes your knight, take back with the d-pawn. His knight takes e5, your knight comes to f6, and ...c5 kicks his d4 pawn. When it takes, trade queens and take the pawn back with your bishop.", trap:"White opened the centre to attack you and ended with no centre at all. Your bishop pair is alive and his e5 knight must run home.",
+     line:[["e2e4"],["e7e5"],["g1f3"],["b8c6"],["f1b5"],["f7f5"],["d2d4"],["f5e4"],["b5c6"],["d7c6"],["f3e5"],["g8f6"],["e1g1"],["c6c5"],["d4c5"],["d8d1"],["f1d1"],["f8c5"]] }
+  ]}
+,{ id:"blumenfeld", name:"Blumenfeld Countergambit", sub:"against 1. d4 · You play Black · a course of 4 variations, in order",
+  course:true, blackCourse:true,
+  idea:"White pushes d5 to grab space. You offer your b-pawn to pull his centre apart, then build a wall of pawns in the middle and push his pieces back.",
+  variations:[
+   { title:"Variation 1 · White takes the pawn", desc:"The pawn tsunami. White takes everything - let him. Your pawns roll to d5 and e5 and take the whole centre.",
+     goal:"The pawn tsunami. White takes everything - let him. Your pawns roll to d5 and e5 and take the whole centre.", setup:"He takes on e6, your f-pawn takes back, he takes b5. Now ...d5, castle, bishop to b7, and ...e5 - two centre pawns side by side.", trap:"White is a pawn up but his centre is gone. Your d5 and e5 pawns push his pieces back for the whole game.",
+     line:[["d2d4"],["g8f6"],["c2c4"],["e7e6"],["g1f3"],["c7c5"],["d4d5"],["b7b5"],["d5e6"],["f7e6"],["c4b5"],["d7d5"],["e2e3"],["f8d6"],["b1c3"],["e8g8"],["f1e2"],["c8b7"],["e1g1"],["e6e5"]] },
+   { title:"Variation 2 · The pin with Bg5", desc:"The pin wins nothing. White pins your knight with Bg5 - take on d5, play d6, finish your pieces, and the pin breaks itself.",
+     goal:"The pin wins nothing. White pins your knight with Bg5 - take on d5, play d6, finish your pieces, and the pin breaks itself.", setup:"Take the d5 pawn, guard with ...d6, bishop to e7, knight to d7, castle. Your b-pawn is ready to run and kick his pieces.", trap:"White spent two moves on a pin that never wins a thing. Your centre stands and your queenside pawns keep pushing.",
+     line:[["d2d4"],["g8f6"],["c2c4"],["e7e6"],["g1f3"],["c7c5"],["d4d5"],["b7b5"],["c1g5"],["e6d5"],["c4d5"],["d7d6"],["b1c3"],["f8e7"],["e2e3"],["e8g8"],["f1d3"],["b8d7"],["e1g1"]] },
+   { title:"Variation 3 · White plays safe with e3", desc:"White plays safe and keeps his pawn chain. Push him back anyway: your b-pawn kicks his knight, then your c-pawn kicks his bishop.",
+     goal:"White plays safe and keeps his pawn chain. Push him back anyway: your b-pawn kicks his knight, then your c-pawn kicks his bishop.", setup:"Take on d5, play ...d6, castle. Then ...b4 hits the knight on c3 and ...c4 hits the bishop on d3 - both his pieces must run.", trap:"His two best pieces spend the game running from your pawns. Your pawns own the queenside and the centre.",
+     line:[["d2d4"],["g8f6"],["c2c4"],["e7e6"],["g1f3"],["c7c5"],["d4d5"],["b7b5"],["e2e3"],["e6d5"],["c4d5"],["d7d6"],["b1c3"],["f8e7"],["f1d3"],["e8g8"],["e1g1"],["b5b4"],["c3e2"],["c5c4"],["d3c2"]] },
+   { title:"Variation 4 · White fianchettoes", desc:"The Benoni wall. White builds slowly with g3 - take on d5, answer with ...g6 and ...Bg7, and your bishop eyes his whole queenside.",
+     goal:"The Benoni wall. White builds slowly with g3 - take on d5, answer with ...g6 and ...Bg7, and your bishop eyes his whole queenside.", setup:"Trade on d5, pawn to d6, put your own bishop on g7, castle. Next your centre pawns can run with ...e5 or ...b4.", trap:"White's bishop on g2 looks at a wall of pawns. Your g7 bishop and centre pawns have the longer aim.",
+     line:[["d2d4"],["g8f6"],["c2c4"],["e7e6"],["g1f3"],["c7c5"],["d4d5"],["b7b5"],["g2g3"],["e6d5"],["c4d5"],["d7d6"],["f1g2"],["g7g6"],["e1g1"],["f8g7"],["e2e4"],["e8g8"]] }
+  ]}
+,{ id:"ulvestad", name:"Ulvestad Variation", sub:"against 1. e4 · You play Black · a course of 4 variations, in order",
+  course:true, blackCourse:true,
+  idea:"White's knight jumps to g5 to fry your f7 pawn - the Fried Liver. You block with ...d5, and when he takes, you kick his bishop with ...b5 instead of taking back. Now you attack him.",
+  variations:[
+   { title:"Variation 1 · Bishop takes, queen hunts", desc:"The queen hunt. He takes your b-pawn, so take his d5 pawn with your queen and take his bishop back. Then your queen and bishop line up on g2.",
+     goal:"The queen hunt. He takes your b-pawn, so take his d5 pawn with your queen and take his bishop back. Then your queen and bishop line up on g2.", setup:"Queen takes d5 and takes on c6. His queen runs to f3 and b3 and eats f7 - let her. Your king steps to d8 and your knight jumps to g4 with threats.", trap:"His queen is far away eating pawns while your pieces aim at his king. His g2 pawn stays weak for the whole game.",
+     line:[["e2e4"],["e7e5"],["g1f3"],["b8c6"],["f1c4"],["g8f6"],["f3g5"],["d7d5"],["e4d5"],["b7b5"],["c4b5"],["d8d5"],["b5c6"],["d5c6"],["d1f3"],["e5e4"],["f3b3"],["f8c5"],["b3f7"],["e8d8"],["e1g1"],["h8f8"],["f7b3"],["f6g4"],["d2d4"]] },
+   { title:"Variation 2 · Bishop runs home", desc:"He saves his bishop on f1. So take his centre pawn with your knight, and aim your other bishop down the long line at g2.",
+     goal:"He saves his bishop on f1. So take his centre pawn with your knight, and aim your other bishop down the long line at g2.", setup:"Knight takes d5. When his bishop grabs b5, your bishop lands on b7 - the long line to g2 is open. Trade on d4 and castle into safety.", trap:"His queen comes to h5 hunting your king - block her with ...g6 and she must run. Your b7 bishop keeps staring at g2.",
+     line:[["e2e4"],["e7e5"],["g1f3"],["b8c6"],["f1c4"],["g8f6"],["f3g5"],["d7d5"],["e4d5"],["b7b5"],["c4f1"],["f6d5"],["f1b5"],["c8b7"],["d2d4"],["e5d4"],["e1g1"],["f8e7"],["d1h5"],["g7g6"],["h5h6"],["d8d7"],["f1e1"],["a7a6"],["b5a4"]] },
+   { title:"Variation 3 · The pawn pushes past", desc:"He pushes his pawn past you to d6. Do not take it - take his bishop instead. Your b-pawn eats the c4 bishop and lands deep in his house.",
+     goal:"He pushes his pawn past you to d6. Do not take it - take his bishop instead. Your b-pawn eats the c4 bishop and lands deep in his house.", setup:"...bxc4 takes the bishop. His pawn runs to c7 and your queen eats it. Then pin his knight with Bg4 - he must weaken his kingside with f3 to chase your bishop away.", trap:"White gave a bishop for pawns and got nothing. Your c4 pawn sits inside his house and his g5 knight still stands out in the open.",
+     line:[["e2e4"],["e7e5"],["g1f3"],["b8c6"],["f1c4"],["g8f6"],["f3g5"],["d7d5"],["e4d5"],["b7b5"],["d5d6"],["b5c4"],["d6c7"],["d8c7"],["d2d3"],["c8g4"],["f2f3"],["g4h5"]] },
+   { title:"Variation 4 · The queen eats g2", desc:"The g2 trap. He brings his knight to c3 and forgets his g2 pawn - your queen eats it, and if his queen chases her, trade queens and keep the better pieces.",
+     goal:"The g2 trap. He brings his knight to c3 and forgets his g2 pawn - your queen eats it, and if his queen chases her, trade queens and keep the better pieces.", setup:"Queen takes d5, his knight comes to c3, your queen takes g2. He checks on f3, you trade queens, bishop to d7, castle long.", trap:"His king lost the g2 pawn and his queen is gone. Your rooks and bishops have open lines at his king.",
+     line:[["e2e4"],["e7e5"],["g1f3"],["b8c6"],["f1c4"],["g8f6"],["f3g5"],["d7d5"],["e4d5"],["b7b5"],["c4b5"],["d8d5"],["b1c3"],["d5g2"],["d1f3"],["g2f3"],["g5f3"],["c8d7"],["d2d3"],["a7a6"],["b5a4"],["a8b8"],["e1g1"],["f8d6"],["f1e1"]] }
   ]}
 ];
+/* The Black gambit courses carry the line inside each variation; the
+   first variation doubles as the course's main line (the line shown on
+   the course page), exactly like the Larsen course's own main line. */
+OPENINGS.forEach(function(op){ if (op.blackCourse && !op.line) op.line = op.variations[0].line; });
 function lineSans(entries){
   var st = parseFEN(START_FEN), out = [];
   entries.forEach(function(e, i){
@@ -10055,9 +10323,30 @@ var larsenDone = {};
   } catch(e){}
 })();
 function storeLarsen(){ try { localStorage.setItem(LARSEN_KEY, JSON.stringify(larsenDone)); } catch(e){} }
-function larsenDoneCount(op){ var n = 0; (op.variations || []).forEach(function(v, i){ if (larsenDone[i]) n++; }); return n; }
+/* The Black gambit courses keep their progress in their OWN storage
+   keys ("chessrank-course-<id>"), one per course — the Larsen key and
+   every other saved thing on this device stay exactly as they were. */
+var blackDone = {};
+(function loadBlackCourses(){
+  OPENINGS.forEach(function(op){
+    if (!op.blackCourse) return;
+    blackDone[op.id] = {};
+    try {
+      var s = JSON.parse(localStorage.getItem("chessrank-course-" + op.id) || "null");
+      if (s && typeof s === "object") Object.keys(s).forEach(function(k){ if (s[k]) blackDone[op.id][k] = true; });
+    } catch(e){}
+  });
+})();
+function storeBlackCourse(id){ try { localStorage.setItem("chessrank-course-" + id, JSON.stringify(blackDone[id] || {})); } catch(e){} }
+/* One door to a course's finished-variation map and its store: the
+   Larsen course reads and writes its old key, each Black course its
+   own new key. */
+function courseDoneMap(op){ return op.blackCourse ? (blackDone[op.id] || (blackDone[op.id] = {})) : larsenDone; }
+function storeCourseDone(op){ if (op.blackCourse) storeBlackCourse(op.id); else storeLarsen(); }
+function larsenDoneCount(op){ var dm = courseDoneMap(op); var n = 0; (op.variations || []).forEach(function(v, i){ if (dm[i]) n++; }); return n; }
 function larsenCurrent(op){
-  for (var i = 0; i < op.variations.length; i++) if (!larsenDone[i]) return i;
+  var dm = courseDoneMap(op);
+  for (var i = 0; i < op.variations.length; i++) if (!dm[i]) return i;
   return 0;
 }
 function renderOpenings(){
@@ -10091,22 +10380,25 @@ function openOpeningView(id){
   $("opLine").textContent = lineSans(op.line);
   var secT = $("opSecTitle"), playBtn = $("btnOpenPlay");
   if (op.course){
-    /* The Larsen course: 8 variations in order. A variation is open
+    /* A course: its variations in order. A variation is open
        only when the one before it is complete; finished ones can be
-       replayed any time. States: Completed / Current / Locked. */
-    if (secT) secT.textContent = "The 8 variations — in order";
+       replayed any time. States: Completed / Current / Locked. The
+       Larsen course and the Black gambit courses share this screen —
+       only the progress map (courseDoneMap) differs. */
+    if (secT) secT.textContent = "The " + op.variations.length + " variations — in order";
     if (playBtn) playBtn.textContent = "Play " + op.variations[larsenCurrent(op)].title;
+    var dm = courseDoneMap(op);
     var vh = "";
     op.variations.forEach(function(v, vi){
-      var done = !!larsenDone[vi];
-      var unlocked = vi === 0 || !!larsenDone[vi - 1];
+      var done = !!dm[vi];
+      var unlocked = vi === 0 || !!dm[vi - 1];
       var state = done ? "done" : (unlocked ? "current" : "locked");
       var tag = done ? "Completed ✓" : (unlocked ? "Play now" : "Locked — finish Variation " + vi + " first");
       vh += '<button class="branch-btn larsen-var ' + state + '" type="button" data-larsen="' + vi + '"' + (unlocked ? "" : " disabled") + '><b>' + v.title + '</b><span>' + v.desc + '</span><span class="lv-state">' + tag + '</span></button>';
     });
     var dc = larsenDoneCount(op);
     vh += '<p class="pack-note">' + (dc >= op.variations.length
-      ? "Course complete — all 8 variations done. Play any of them again any time."
+      ? "Course complete — all " + op.variations.length + " variations done. Play any of them again any time."
       : dc + " of " + op.variations.length + " variations done. Finish the current one to open the next.") + '</p>';
     $("opBranches").innerHTML = vh;
     Array.prototype.forEach.call(document.querySelectorAll("[data-larsen]"), function(btn){
@@ -10133,26 +10425,42 @@ $("btnOpenPlay").addEventListener("click", function(){
   if (currentOpening.course) startLarsenVariation(currentOpening, larsenCurrent(currentOpening));
   else startOpening(currentOpening, null);
 });
-/* One Larsen variation plays exactly like an opening main line — you
-   make the White moves, Black replies on its own, the move arrows and
-   the coach work the same — but finishing it marks the variation
-   complete (see finishPuzzle) and opens the next one. Variation 1
-   plays the opening's own main line. */
+/* One course variation plays exactly like an opening main line — you
+   make your side's moves, the other side replies on its own, the move
+   arrows and the coach work the same — but finishing it marks the
+   variation complete (see finishPuzzle) and opens the next one.
+   Variation 1 plays the opening's own main line. The Larsen course is
+   played as White; the Black gambit courses (blackCourse) mirror it:
+   you play Black, White's moves auto-play — White moves first, so its
+   first move is played for you the moment the variation opens — and
+   the board sits on Black's side (startPuzzle flips it for
+   playerColor "b"). A Black course variation carries ONE GOAL / SETUP
+   / TRAP note for the whole line, shown behind every move in Review,
+   the same way the Larsen notes sit behind its moves. */
 function startLarsenVariation(op, vi){
-  if (vi > 0 && !larsenDone[vi - 1]) vi = larsenCurrent(op);   // locked stays locked, even from a stale button
+  if (vi > 0 && !courseDoneMap(op)[vi - 1]) vi = larsenCurrent(op);   // locked stays locked, even from a stale button
   var v = op.variations[vi];
   var entries = vi === 0 ? op.line.slice() : v.line.slice();
+  var black = !!op.blackCourse;
   var p = {
-    id: "op-larsen-v" + (vi + 1), fen: START_FEN, rating: 0, plays: 0,
-    themes: [op.name], lastUci: null, playerColor: "w", youName: null, oppName: null, daily: false,
+    id: "op-" + op.id + "-v" + (vi + 1), fen: START_FEN, rating: 0, plays: 0,
+    themes: [op.name], lastUci: null, playerColor: black ? "b" : "w", youName: null, oppName: null, daily: false,
     isOpening: true, openingId: op.id, openingRef: op, branchRef: null, larsenVar: vi, idea: op.idea,
     titleText: op.name, overText: v.title,
-    intro: "Nimzowitsch-Larsen course — " + v.title + ". You play the White moves; Black replies on its own. Finish the whole line to open the next variation. Tap Review after any move to read THE GOAL / THE SETUP / THE TRAP behind it.",
-    moves: entries.map(function(e, i){ return { uci: e[0], actor: i % 2 === 0 ? "you" : "opp" }; }),
-    notes: entries.map(function(e){ return [e[1], e[2], e[3]]; })
+    intro: black
+      ? op.name + " course — " + v.title + ". You play the Black moves; White moves on its own. Finish the whole line to open the next variation. Tap Review after any move to read THE GOAL / THE SETUP / THE TRAP behind it."
+      : "Nimzowitsch-Larsen course — " + v.title + ". You play the White moves; Black replies on its own. Finish the whole line to open the next variation. Tap Review after any move to read THE GOAL / THE SETUP / THE TRAP behind it.",
+    moves: entries.map(function(e, i){ return { uci: e[0], actor: black ? (i % 2 === 0 ? "opp" : "you") : (i % 2 === 0 ? "you" : "opp") }; }),
+    notes: black
+      ? entries.map(function(){ return [v.goal, v.setup, v.trap]; })
+      : entries.map(function(e){ return [e[1], e[2], e[3]]; })
   };
   startPuzzle(p);
   showView("play");
+  if (black){
+    opponentReply();   // White to move first — its move plays on its own, then you find Black's reply
+    setFeedback("think", "White moves first — then find Black's move.");
+  }
 }
 function startOpening(op, branch){
   var entries = branch ? op.line.slice(0, branch.at).concat(branch.moves) : op.line.slice();
@@ -10917,6 +11225,77 @@ function isSacrifice(before, mv, after){
   }
   return false;
 }
+/* A king-safe copy of the SEE exchange score. The shared seeCapture
+   treats the king as a piece worth 0 that can be "recaptured", so a
+   capture the king alone can answer — Qxf7#, defended by the bishop
+   — reads as losing the queen. Here a king is never captured, and a
+   king captures only onto a square the other side does not cover
+   (the next attacker is tried instead). Used only by the coach's
+   fallback judge and bad-move reasons; the shared scorer is
+   untouched. */
+function seeFromX(st, target, side){
+  var excluded = {};
+  while (true){
+    var atk = -1, bestVal = 99, i, p;
+    for (i = 0; i < 64; i++){
+      if (excluded[i]) continue;
+      p = st.b[i];
+      if (!p || p[0] !== side) continue;
+      if (attacksFrom(st, i).indexOf(target) >= 0 && VAL[p[1]] < bestVal){ bestVal = VAL[p[1]]; atk = i; }
+    }
+    if (atk < 0) return 0;
+    var victim = st.b[target];
+    if (!victim || victim[1] === "K") return 0;
+    var s = cloneState(st);
+    s.b[target] = s.b[atk]; s.b[atk] = null;
+    if (s.b[target][1] === "K" && attacked(s, target, opp(side))){ excluded[atk] = 1; continue; }
+    return Math.max(0, VAL[victim[1]] - seeFromX(s, target, opp(side)));
+  }
+}
+function seeCaptureX(st, from, to){
+  var mover = st.b[from]; if (!mover) return 0;
+  var captured = st.b[to];
+  var gain = captured ? VAL[captured[1]] : 0;
+  var s = cloneState(st);
+  s.b[to] = mover; s.b[from] = null;
+  if (mover[1] === "K" && attacked(s, to, opp(mover[0]))) return 0 - gain;   // a king never steps into capture
+  return gain - seeFromX(s, to, opp(mover[0]));
+}
+/* A concrete problem with a move, seen by the in-page rules alone:
+   the other side can mate next move, can win real material with a
+   capture (the moved piece included), or the move leaves one of the
+   mover's own pieces hanging that was safe before. Quiet moves that
+   merely score below a greedy "best" are NOT a problem. */
+function moveProblem(before, mv){
+  var mover = before.b[mv.from]; if (!mover) return false;
+  var color = mover[0], enemy = opp(color);
+  var after = applyMove(before, mv);
+  // A capture whose full exchange loses material is a problem on its
+  // own — and its recapture must not be counted twice below, or an
+  // equal trade (2.exd5 Qxd5) would read as losing a pawn.
+  var playedCap = before.b[mv.to];
+  if (!playedCap && mover[1] === "P" && mv.to === before.ep && sqFile(mv.from) !== sqFile(mv.to)) playedCap = enemy + "P";
+  if (playedCap && seeCaptureX(before, mv.from, mv.to) < 0) return true;
+  var st = cloneState(after); st.turn = enemy;
+  var moves = movesForColor(st, enemy), i, m, a2;
+  for (i = 0; i < moves.length; i++){
+    m = moves[i];
+    a2 = applyMove(st, m);
+    if (inCheck(a2, color) && !anyLegal(a2, color)) return true;   // mate next move
+    if (st.b[m.to]){
+      var net = seeCaptureX(st, m.from, m.to);
+      if (net >= 2) return true;                                   // wins real material
+      if (!playedCap && m.to === mv.to && net > 0) return true;    // takes the moved piece for profit
+    }
+  }
+  var hang = hangingList(after, color);
+  for (i = 0; i < hang.length; i++){
+    if (hang[i].sq === mv.to) continue;
+    if (!attacked(before, hang[i].sq, enemy) || defendersOf(before, hang[i].sq, color).length > 0)
+      return true;                                                 // was safe before, hangs now
+  }
+  return false;
+}
 function heuristicJudge(before, mv){
   // Fallback judge (Stockfish not loaded): the coach's own in-page
   // scoring compares the played move with the best move it can find.
@@ -10925,35 +11304,141 @@ function heuristicJudge(before, mv){
   if (!best) return { loss: 0, bestUci: null };
   var diff = evalMoveFor(before, best, color) - evalMoveFor(before, mv, color);
   var loss = diff <= 2 ? 8 : diff <= 7 ? 40 : diff <= 15 ? 90 : diff <= 30 ? 200 : 420;
+  // The scorer is greedy — it pays a big bonus for any check or pawn
+  // grab — so a quiet, healthy move can score far below its "best"
+  // move and read as Bad (1...e6, 2...d6, 3.d4, 4.d3 and 4.Ng5 all
+  // read as Bad that way, and so did the Bc4 / c5 lines a player
+  // reported). The fallback judge may therefore only call a move
+  // Bad when it can point at a concrete problem (moveProblem): with
+  // none, the loss is capped at Good; with one, even a move the
+  // scorer liked reads as Bad. classifyMark's thresholds and the
+  // Stockfish path are untouched.
+  var problem = false;
+  try { problem = !!moveProblem(before, mv); } catch(e){}
+  if (problem && loss < 90) loss = 90;
+  if (!problem && loss > 55) loss = 40;
   return { loss: loss, bestUci: sqName(best.from) + sqName(best.to) + (best.promo ? String(best.promo).toLowerCase() : "") };
 }
-function judgeMoveCommon(before, mv, after, onDone, useSf){
+/* The opponent's punishing reply, found by the in-page rules alone
+   (Stockfish not loaded): a mate, or the capture that wins the most
+   material. Quiet replies are not named — with no concrete threat
+   there is nothing honest to point at. Returns a UCI string or null. */
+function punishReplyUci(after, enemy){
+  var st = cloneState(after); st.turn = enemy;
+  var moves = movesForColor(st, enemy), bestUci = null, bestNet = 1, i, m, a2;
+  for (i = 0; i < moves.length; i++){
+    m = moves[i];
+    a2 = applyMove(st, m);
+    if (inCheck(a2, opp(enemy)) && !anyLegal(a2, opp(enemy)))
+      return sqName(m.from) + sqName(m.to) + (m.promo ? String(m.promo).toLowerCase() : "");
+    if (st.b[m.to]){
+      var net = seeCaptureX(st, m.from, m.to);
+      if (net > bestNet){ bestNet = net; bestUci = sqName(m.from) + sqName(m.to) + (m.promo ? String(m.promo).toLowerCase() : ""); }
+    }
+  }
+  return bestUci;
+}
+function judgeMoveCommon(before, mv, after, onDone, useSf, isYou){
   var playedUci = sqName(mv.from) + sqName(mv.to) + (mv.promo ? String(mv.promo).toLowerCase() : "");
   var sac = false;
   try { sac = isSacrifice(before, mv, after); } catch(e){}
-  function finish(loss, bestUci, engineName){
+  // The deterministic threat reply, used whenever Stockfish did not
+  // supply one: what the opponent can do to this move right now.
+  var fbReply = null;
+  try { fbReply = punishReplyUci(after, opp(before.b[mv.from][0])); } catch(e){}
+  function finish(loss, bestUci, engineName, replyUci){
     var isBest = bestUci ? playedUci === bestUci : loss <= 15;
     var c = classifyMark(loss, sac, isBest);
     var bestSan = null;
     if (bestUci && bestUci !== playedUci){
       try { var bm = uciMove(before, bestUci); if (bm) bestSan = sanFor(before, bm); } catch(e){}
     }
-    onDone({ glyph: c.glyph, word: c.word, cls: c.cls, engine: engineName, isBest: isBest, bestSan: bestSan, bestUci: bestUci || null, loss: loss, to: mv.to });
+    // For a bad mark, the result also carries the opponent's best
+    // reply (Stockfish's pick when loaded, the in-page punishing
+    // reply otherwise) so the coach line can name the real threat:
+    // "Now Black can play d5 — it attacks the bishop on c4."
+    var replySan = null, replyFact = "";
+    if (replyUci && (c.cls === "inaccuracy" || c.cls === "mistake" || c.cls === "blunder")){
+      try {
+        var rm = uciMove(after, replyUci);
+        if (rm){
+          replySan = sanFor(after, rm);
+          var rf = "";
+          try { rf = moveFact(after, rm); } catch(e){}
+          if (rf && rf.indexOf("goes to") < 0) replyFact = rf;
+        }
+      } catch(e){}
+    }
+    // Stockfish path only: the bad-move reason rebuilt from the
+    // engine's real reply (badReason's engine branch), so the coach
+    // bubble line itself can name that reply and its threat instead
+    // of the in-page fallback diagnosis. The Coach check path leaves
+    // this empty and keeps the behaviour it has always had.
+    var engReason = "";
+    if (engineName === "Stockfish" && replyUci && (c.cls === "inaccuracy" || c.cls === "mistake" || c.cls === "blunder")){
+      try { engReason = badReason(before, mv, isYou !== false, replyUci); } catch(e){}
+    }
+    onDone({ glyph: c.glyph, word: c.word, cls: c.cls, engine: engineName, isBest: isBest, bestSan: bestSan, bestUci: bestUci || null, loss: loss, to: mv.to, replySan: replySan, replyFact: replyFact, replyName: opp(before.b[mv.from][0]) === "w" ? "White" : "Black", engReason: engReason });
   }
   if (sfState === "ready" && settings.sfOn && useSf !== false){
     sfEvalFen(stateToFEN(before)).then(function(eb){
-      if (!eb){ var h = heuristicJudge(before, mv); finish(h.loss, h.bestUci, "Coach check"); return; }
+      if (!eb){ var h = heuristicJudge(before, mv); finish(h.loss, h.bestUci, "Coach check", fbReply); return; }
       sfEvalFen(stateToFEN(after)).then(function(ea){
-        if (!ea){ var h2 = heuristicJudge(before, mv); finish(h2.loss, h2.bestUci, "Coach check"); return; }
+        if (!ea){ var h2 = heuristicJudge(before, mv); finish(h2.loss, h2.bestUci, "Coach check", fbReply); return; }
         var loss = eb.cp + ea.cp;   // ea.cp is from the opponent's side, so adding flips it to the mover's view
         if (loss < 0) loss = 0;
-        finish(loss, eb.best, "Stockfish");
+        finish(loss, eb.best, "Stockfish", ea.best);   // ea.best is the opponent's best reply in the new position
       });
     });
   } else {
     var h = heuristicJudge(before, mv);
-    finish(h.loss, h.bestUci, "Coach check");
+    finish(h.loss, h.bestUci, "Coach check", fbReply);
   }
+}
+/* For a bad mark, one extra sentence on the move's coach entry
+   names the opponent's best reply — the concrete threat the move
+   allows: "Now Black can play d5 — it attacks the bishop on c4."
+   Added once only, and only when the judge supplied a reply. */
+function appendReplyNote(entry, res, kind){
+  if (!entry || !res || !res.replySan) return;
+  if (!(res.cls === "inaccuracy" || res.cls === "mistake" || res.cls === "blunder")) return;
+  var host = entry.querySelector(".ch-text") || entry;
+  if (!host || (host.querySelector && host.querySelector(".rv-eng"))) return;
+  var s = document.createElement("span");
+  s.className = "rv-eng";
+  s.textContent = " Now " + (res.replyName || "the opponent") + " can play " + res.replySan + (res.replyFact ? " — " + res.replyFact : "") + ".";
+  host.appendChild(s);
+  scrollCoachBubble(kind);
+}
+/* When Stockfish judged the move, the bad-move line's own reason is
+   replaced with the engine-reply reason the judge built (res.engReason):
+   the line itself then reads "Bad move — now Black can play d5 and
+   your bishop has to run." instead of keeping the in-page fallback
+   diagnosis the quick line was written with, and no separate reply
+   sentence is appended after it. Returns true when the line was
+   rewritten. Coach-check results carry no engReason and never land
+   here — their lines stay exactly as they were. */
+function applyEngineBadReason(entry, res){
+  if (!entry || !res || !res.engReason) return false;
+  var host = entry.querySelector(".rv-body") || entry.querySelector(".ch-text") || entry;
+  if (!host || !host.childNodes) return false;
+  var nodes = host.childNodes;
+  for (var i = 0; i < nodes.length; i++){
+    var n = nodes[i];
+    if (n.nodeType !== 3) continue;
+    var idx = n.nodeValue.indexOf("Bad move");
+    if (idx < 0) continue;
+    var dash = n.nodeValue.indexOf(" — ", idx);
+    var keep = dash >= 0 ? n.nodeValue.slice(0, dash) : n.nodeValue.slice(0, idx + "Bad move".length);
+    n.nodeValue = keep + " — " + res.engReason + ".";
+    // an engine note appended by an earlier pass belongs to the old
+    // reason — drop it so the reply is never named twice
+    var nxt = n.nextSibling;
+    while (nxt){ var drop = nxt; nxt = nxt.nextSibling; if (drop.classList && drop.classList.contains("rv-eng")) host.removeChild(drop); }
+    try { scrollCoachBubble(entry.closest && entry.closest("#botBubbleScroll") ? "bot" : "pz"); } catch(e){}
+    return true;
+  }
+  return false;
 }
 function appendBubbleMark(id, res, actor){
   var kind = id === "pzLine" ? "pz" : "bot";
@@ -10961,11 +11446,20 @@ function appendBubbleMark(id, res, actor){
   // An entry with a badge row gets its mark through the badge alone
   // (plus the verdict-word sync) — no second verdict sentence is
   // ever appended to the coach line, in Play exactly as in puzzles.
-  if (entry && entry.querySelector(".rv-badge")){ updateReviewMarkEl(entry, res); return; }
+  // A bad mark may still add the one threat sentence (the reply the
+  // opponent can play now) — that is information, not a verdict.
+  // When Stockfish supplied the reply, that threat is folded into
+  // the line's own reason instead (applyEngineBadReason above).
+  if (entry && entry.querySelector(".rv-badge")){ updateReviewMarkEl(entry, res); if (!applyEngineBadReason(entry, res)) appendReplyNote(entry, res, kind); return; }
   var sp = $(id);
   var host = entry ? (entry.querySelector(".ch-text") || entry) : sp;
   if (!host) return;
   if (host.querySelector && host.querySelector(".rv-eng")) return;   // this entry already carries its engine note
+  if (res.replySan && (res.cls === "inaccuracy" || res.cls === "mistake" || res.cls === "blunder")){
+    if (entry && applyEngineBadReason(entry, res)) return;
+    appendReplyNote(entry || sp, res, kind);
+    return;
+  }
   if (res.bestSan && !res.isBest){
     var s = document.createElement("span");
     s.className = "rv-eng";
@@ -10997,8 +11491,10 @@ function judgePuzzleWrong(before, mv, after){
     // The bubble gets the mark only (word + glyph) — never a "best was …"
     // suffix: for a wrong move the suggested best move belongs only in
     // the Review panel, so the bubble copy of the result drops bestSan.
+    // It also drops the opponent-reply sentence: the wrong-move line
+    // already carries its one short reason, exactly as before.
     // The full result (with the best move) still goes to saveError/Stats.
-    var bubbleRes = { glyph: res.glyph, word: res.word, cls: res.cls, engine: res.engine, isBest: res.isBest, bestSan: null, bestUci: res.bestUci, loss: res.loss, to: res.to };
+    var bubbleRes = { glyph: res.glyph, word: res.word, cls: res.cls, engine: res.engine, isBest: res.isBest, bestSan: null, bestUci: res.bestUci, loss: res.loss, to: res.to, replySan: null, replyFact: "", replyName: null };
     try { updateReviewMarkEl(myLogEl, bubbleRes); } catch(e){}
     if (token === pzMarkToken) appendBubbleMark("pzLine", bubbleRes, "you");
   });
@@ -11017,7 +11513,7 @@ function judgeBotMove(before, mv, after, plyIndex, actor){
     try { renderBotInfo(); } catch(e){}
     try { renderBotSquares(); } catch(e){}
     if (token === botMarkToken) appendBubbleMark("botLine", res, actor);
-  }, useSf);
+  }, useSf, actor === "you");
 }
 
 var botBoardEl = document.getElementById("botBoard");
@@ -12078,6 +12574,7 @@ function coachNormText(t){
     .trim()
     .replace(/ — best was .*$/, "")
     .replace(/ Best was [^.]*\.?$/, "")
+    .replace(/ Now (White|Black) can play .*$/, "")
     .replace(/ Your move\.$/, "")
     .replace(/\b(Brilliant|Great|Good|Bad) move\b/g, "§ move");
 }
@@ -12621,11 +13118,21 @@ function openSavedPuzzle(rec){
     isOpening: !!rec.isOpening, openingId: rec.openingId || null,
     titleText: rec.titleText || null, overText: rec.overText || null,
     intro: rec.intro || null, notes: rec.notes || null, idea: rec.idea || null,
-    moves: (rec.moves || []).map(function(u, i){ return { uci: u, actor: i % 2 === 0 ? "you" : "opp" }; })
+    /* A saved opening line runs from move 1 of the game, so who plays
+       each move follows the side you played: in the Black gambit
+       courses White's moves (even indexes) are the opponent's and
+       Black's are yours. Puzzle records start with your own move
+       whatever your colour, so their parity stays as it always was. */
+    moves: (rec.moves || []).map(function(u, i){
+      var youPly = i % 2 === 0;
+      if (rec.isOpening && rec.playerColor === "b") youPly = !youPly;
+      return { uci: u, actor: youPly ? "you" : "opp" };
+    })
   };
   detailCache[p.id] = p;
   startPuzzle(p);
   showView("play");
+  if (p.moves[0] && p.moves[0].actor === "opp") opponentReply();   // a Black course line opens with White's move — play it, as on the course itself
 }
 function renderSavedList(){
   var empty = $("savedEmpty"), gHead = $("savedGamesHead"), pHead = $("savedPuzzlesHead");
