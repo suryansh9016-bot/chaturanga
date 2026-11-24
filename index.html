@@ -4963,6 +4963,7 @@ var PACKS = [
   { angle:"mix", target:30, top:true, name:"Mixed Puzzles", sub:"30 puzzles · a bit of everything." },
   { angle:"opening", id:"openingAttack", target:30, top:true, maxMoves:2, name:"Switch to Attack — Finish in 1–2 Moves", sub:"30 puzzles · finish the attack in 1–2 moves." },
   { angle:"hangingPiece", id:"saveHanging", target:30, top:true, fixedIds:["bJ8Hy","ijEj6","RvkLX","EC8xx","HV2D6","adpLP","nXB0n","PK0wJ","xsqTl","WEgCn","C4GRK","mwRl0","0cRpC","gS6l5","6lsKp","bZveW","toPX4","mDhaU","h5g14","5XK0D","PgmEf","Cu2Sq","hbIeT","F8dM0","RFB1b","LNplE","T9GMf","z7zpF","KgQco","7lgYd"], name:"Save Your Hanging Pieces", sub:"30 puzzles · save the piece that is hanging." },
+  { angle:"hangingPiece", id:"deadmanRedemption", target:30, top:true, fixedIds:["KrslV","NmCZY","J7TOp","LdmlS","FF7E7","q8mfY","KoPeg","kSqjo","B02Fe","M79ha","O6L5k","973Lc","FQ8uh","bIUcc","wapA2","wL1QE","GN82u","U6Avg","0Yefp","fhZW8","N5MNA","WRJfm","j1kWq","x9zp3","IKr8I","He02J","aQ7Ei","8Y6yU","ftP7L","8sypT"], name:"Deadman Redemption", sub:"30 puzzles · your pieces are secretly under attack — spot the danger and save them." },
   { angle:"sacrifice", id:"tradeBad", target:30, top:true, fixedIds:["SF1rR","AwZy5","N2h3T","HtgUr","vVfl6","WAHBC","z0lxt","AbRDp","TkHPj","sl38N","oYrsR","nSWZ7","AhLHL","RxgNx","sHdIP","NfWXF","hiAoz","bXJdp","W68Vr","2N0J3","9xDvf","RQxRz","OSOYQ","NEdVn","nHnbk","setBb","7nhB8","uFedg","VKvlH","KuF6h"], name:"Trade Bad Pieces", sub:"30 puzzles · trade your bad piece for their good piece." },
   { angle:"mateIn2", id:"deceptiveKing", target:30, top:true, fixedIds:["dWsl8","Jz0aH","rwZ3c","nE0bS","Je3CU","rHmuZ","zq5FW","JGPEh","jt3qc","3p4t7","uog0h","WdzSe","4SIyv","BQRvN","jX3yl","pYx3W","YlkvP","8Hz9m","9T7wX","xdJtR","NFP16","UEKYE","QsZUO","tu3Xa","8Qf8P","xzHB4","tuyte","fFDDu","QtPMd","AakiH"], name:"Deceptive King Checkmate", sub:"30 puzzles · the king runs in surprise ways — mate him anyway." },
   { angle:"clearance", id:"dontBlock", target:30, top:true, fixedIds:["9zuHQ","U8av8","CTXig","LeiF2","K0DUZ","j16Uz","AOfKw","8DYj4","FnSeH","h9yIG","az9ua","iteRV","wHzT9","Oce7c","jLsSX","9Uf0i","wcFKW","WhO9c","x3Boz","cWqIo","XbG0F","W5vjP","2Z1Er","33LDV","fpDBV","rNVbi","RBGs0","OXrZB","D12WK","oGc6U"], name:"Don't Block Your Pieces", sub:"30 puzzles · move your piece out of the way, free the others." },
@@ -6206,7 +6207,7 @@ function discoveredWrongDescribe(before, mv){
 }
 function packDescribeMove(before, mv, o){
   if (cur && (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2")) return forkDescribeMove(before, mv, o);
-  if (cur && cur.fromPack === "saveHanging") return saveDescribeMove(before, mv, o);
+  if (cur && (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption")) return saveDescribeMove(before, mv, o);
   if (cur && cur.fromPack === "ghostBuster") return ghostDescribeMove(before, mv, o);
   if (cur && cur.fromPack === "houdini") return houdiniDescribeMove(before, mv, o);
   if (cur && cur.fromPack === "discoverAttack") return discoveredDescribeMove(before, mv, o);
@@ -6214,7 +6215,7 @@ function packDescribeMove(before, mv, o){
 }
 function packDescribePosition(st){
   if (cur && (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2")) return forkDescribePosition(st);
-  if (cur && cur.fromPack === "saveHanging") return saveDescribePosition(st);
+  if (cur && (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption")) return saveDescribePosition(st);
   if (cur && cur.fromPack === "ghostBuster") return ghostDescribePosition(st);
   if (cur && cur.fromPack === "houdini") return houdiniDescribePosition(st);
   if (cur && cur.fromPack === "discoverAttack") return discoveredDescribePosition(st);
@@ -7343,7 +7344,7 @@ var VAL = { P:1, N:3, B:3, R:5, Q:9, K:0 };
 function $(id){ return document.getElementById(id); }
 
 /* ================= puzzle packs (home) ================= */
-var PK_ICON = { daily:"wN", mix:"wR", betterMoves:"wQ", forkPuzzles:"wN", forkPuzzles2:"wN", tradeBad:"wQ", deceptiveKing:"wK", dontBlock:"wR", ghostBuster:"wB", houdini:"wK", discoverAttack:"wB", mateIn1:"wQ", mateIn2:"wQ", mateIn3:"wQ", middlegame:"wN", opening:"wB", openingAttack:"wQ", fork:"wN", pin:"wB", skewer:"wR", discoveredAttack:"wB", hangingPiece:"wP", saveHanging:"wK", sacrifice:"wQ", backRankMate:"wR", endgame:"wK", crushing:"wR" };
+var PK_ICON = { daily:"wN", mix:"wR", betterMoves:"wQ", forkPuzzles:"wN", forkPuzzles2:"wN", tradeBad:"wQ", deceptiveKing:"wK", dontBlock:"wR", ghostBuster:"wB", houdini:"wK", discoverAttack:"wB", mateIn1:"wQ", mateIn2:"wQ", mateIn3:"wQ", middlegame:"wN", opening:"wB", openingAttack:"wQ", fork:"wN", pin:"wB", skewer:"wR", discoveredAttack:"wB", hangingPiece:"wP", saveHanging:"wK", deadmanRedemption:"wP", sacrifice:"wQ", backRankMate:"wR", endgame:"wK", crushing:"wR" };
 var OP_ICON = { evans:"wN", morra:"wR", fantasy:"wQ", italian:"wP", ruy:"wB", scotch:"wN", qgd:"wQ", london:"wB", french:"wP", kid:"wK", vienna:"wN", caro_adv:"wQ", alapin:"wP", scandi:"wR", larsen:"wB", schara:"bQ", schliemann:"bN", blumenfeld:"bP", ulvestad:"bB" };
 var PK_ARROW = '<span class="pk-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span>';
 /* One clean card style for everything on the Puzzles page. The Top 30
@@ -8321,7 +8322,7 @@ function wrongBadText(before, mv){
     }
     return "it does not attack two pieces at the same time";
   }
-  if (cur.fromPack === "saveHanging"){
+  if (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption"){
     var f = hangingFactsText(before, color);
     if (f){
       var tSq = mv.from === f.target.sq ? mv.to : f.target.sq;
@@ -8404,7 +8405,7 @@ function autoHint(){
   if (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2"){
     txt = "Look for the fork. Your " + PIECE_WORD[piece[1]] + " on " + sqName(mv.from) + " is the key piece. Find a square where it attacks two black pieces at the same time.";
   }
-  if (cur.fromPack === "saveHanging"){
+  if (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption"){
     var hf = hangingFactsText(state, cur.playerColor);
     if (hf) txt = "Your " + PIECE_WORD[hf.target.code[1]] + " on " + sqName(hf.target.sq) + " is hanging — attacked by the " + (hf.atk ? PIECE_WORD[hf.atk[1]] + " on " + sqName(hf.atkIdx) : "enemy") + ", defended by nothing. Save it: move it, defend it, or trade it. " + txt;
   }
@@ -8641,7 +8642,7 @@ function attemptUserMove(from, to, promoChoice){
     playSound(inCheck(state, state.turn) ? "check" : wasCap ? "capture" : "move");
     renderBoard();
     spawnMoveFx(boardEl, to, dispPos(to));
-    if (cur.fromPack === "saveHanging"){
+    if (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption"){
       addFeed("you", san, saveWrongDescribe(before, mv), "wrong");
       setAutoNote(saveWrongDescribe(before, mv));
     } else if (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2"){
