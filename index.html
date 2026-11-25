@@ -836,6 +836,31 @@
   .save-folder.closed .save-folder-body{display:none}
   .save-folder-body .saved-item{background:var(--surface2)}
 
+  /* ---------- Match view: the built-in famous game in Save > Matches ----------
+     A view-only replay on the app's own board: same .board, same square
+     colours from the theme, same piece set from Settings. No engine, no
+     marks, no arrows — just stepping through the game. */
+  .js-match{display:none}
+  body[data-view="match"] .js-match{display:block}
+  body[data-view="match"] .js-home,body[data-view="match"] .js-play,body[data-view="match"] .js-pack,body[data-view="match"] .js-open{display:none !important}
+  .match-sub{color:var(--ink-soft);font-size:13.5px;line-height:1.55;margin:10px 2px 0}
+  .match-board-slot{display:flex;justify-content:center;padding-top:12px}
+  .match-board-slot .board{width:min(100%,480px);flex:none}
+  .match-status{text-align:center;font-size:14px;font-weight:700;color:var(--ink);margin:14px 2px 0;line-height:1.5}
+  .match-note{background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);padding:11px 13px;margin:12px 0 0;font-size:14px;line-height:1.6;color:var(--ink)}
+  .match-note b{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-strong);margin-bottom:3px}
+  .match-nav{display:flex;gap:8px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap}
+  .match-nav button{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line-strong);color:var(--ink);border-radius:10px;min-height:44px;padding:8px 14px;font-weight:800;font-size:13.5px}
+  .match-nav button:active{background:var(--accent-soft);border-color:var(--accent)}
+  .match-nav button:disabled{opacity:.38}
+  .match-nav button svg{width:17px;height:17px;flex:none}
+  .match-moves{display:flex;flex-wrap:wrap;align-items:center;gap:5px 4px;margin:14px 0 6px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);padding:11px 12px}
+  .match-moves .mm-num{font-size:13px;font-weight:700;color:var(--ink-soft);margin-left:6px}
+  .match-moves .mm-num:first-child{margin-left:0}
+  .mm-mv{background:none;border:none;border-radius:7px;color:var(--ink);font-size:13.5px;font-weight:600;padding:4px 7px;min-height:30px}
+  .mm-mv:active{background:var(--surface2)}
+  .mm-mv.cur{background:var(--accent);color:#fff;font-weight:800}
+
   /* ---------- final pass: trainer layout — bot fixed on top, big board, controls scroll below ----------
      The two top bars and the Coach Bot row never move and never scroll.
      The board is as wide as the screen allows (capped only so it always
@@ -2260,7 +2285,7 @@
     .js-open{max-width:1020px;margin:0 auto}
 
     /* ---- settings / stats / save: comfortable reading width, centred ---- */
-    .js-settings,.js-stats,.js-save{max-width:860px;margin:0 auto}
+    .js-settings,.js-stats,.js-save,.js-match{max-width:860px;margin:0 auto}
 
     /* ---- puzzle + opening trainer: board left, coach + controls right ---- */
     body[data-view="play"] .trainer,
@@ -4298,6 +4323,29 @@
     <div id="savedPuzzles"></div>
     <div class="set-sec" id="likedPuzzlesHead">Liked Puzzles</div>
     <div id="likedPuzzles"></div>
+    <div class="set-sec" id="matchesHead">Matches</div>
+    <div id="matchesBox"></div>
+  </section>
+
+  <section class="js-match" aria-labelledby="matchH">
+    <div class="set-head">
+      <button class="round-btn" id="matchBackBtn" type="button" aria-label="Back to Save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button>
+      <h2 id="matchH">Fischer vs Tal</h2>
+      <span style="width:42px;flex:none"></span>
+    </div>
+    <p class="match-sub">Leipzig Olympiad 1960 · Round 5, Board 1 · Fischer played White, Tal played Black · Draw &frac12;&ndash;&frac12;</p>
+    <div class="match-board-slot">
+      <div class="board" id="matchBoard" role="img" aria-label="Fischer vs Tal game board. View only — use the buttons below the board to step through the game."></div>
+    </div>
+    <p class="match-status" id="matchStatus">Start of the game</p>
+    <p class="match-note" id="matchNote" hidden><b>Coach note</b><span id="matchNoteText"></span></p>
+    <div class="match-nav">
+      <button id="matchStartBtn" type="button" aria-label="Jump to the start of the game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14"/><path d="m17 6-6 6 6 6"/></svg><span>Start</span></button>
+      <button id="matchPrevBtn" type="button" aria-label="One move back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg><span>Prev</span></button>
+      <button id="matchNextBtn" type="button" aria-label="One move forward"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg><span>Next</span></button>
+      <button id="matchEndBtn" type="button" aria-label="Jump to the end of the game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14"/><path d="m7 6 6 6-6 6"/></svg><span>End</span></button>
+    </div>
+    <div class="match-moves" id="matchMoves" aria-label="Moves of the game — tap a move to jump to it"></div>
   </section>
 
   <section class="js-play" aria-labelledby="trainH">
@@ -9228,10 +9276,11 @@ function showView(name){
   if (name !== "settings") prevView = name;
   document.body.setAttribute("data-view", name);
   $("tabPuzzles").classList.toggle("active", name==="home" || name==="pack" || name==="open" || name==="play");
-  var tsv = $("tabSave"); if (tsv) tsv.classList.toggle("active", name==="save");
+  var tsv = $("tabSave"); if (tsv) tsv.classList.toggle("active", name==="save" || name==="match");
   $("tabPlay").classList.toggle("active", name==="bot");
   var ts = $("tabStats"); if (ts) ts.classList.toggle("active", name==="stats");
   if (name === "save" && typeof renderSavedList === "function") renderSavedList();
+  if (name === "match" && typeof renderMatch === "function") renderMatch();
   if (name === "stats" && typeof renderErrors === "function"){ renderErrors(); renderStatsNotes(); }
   if (name === "bot" && typeof ensureBotGame === "function") ensureBotGame();
   if (name === "settings") renderSettingsUI();
@@ -13139,13 +13188,17 @@ function renderSavedList(){
   var empty = $("savedEmpty"), gHead = $("savedGamesHead"), pHead = $("savedPuzzlesHead");
   var gBox = $("savedGames"), pBox = $("savedPuzzles");
   var lHead = $("likedPuzzlesHead"), lBox = $("likedPuzzles");
+  var mHead = $("matchesHead"), mBox = $("matchesBox");
   if (!gBox || !pBox) return;
   if (!Array.isArray(savedStore.liked)) savedStore.liked = [];
   var noGames = !savedStore.games.length, noPuzzles = !savedStore.puzzles.length, noLiked = !savedStore.liked.length;
-  if (empty) empty.hidden = !(noGames && noPuzzles && noLiked);
+  // The Matches folder always holds the built-in Fischer vs Tal game,
+  // so the Save tab is never truly empty.
+  if (empty) empty.hidden = !(noGames && noPuzzles && noLiked && !mBox);
   if (gHead) gHead.hidden = noGames;
   if (pHead) pHead.hidden = noPuzzles;
   if (lHead) lHead.hidden = noLiked;
+  if (mHead) mHead.hidden = !mBox;
   var folderIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
   // Saved games sit in their own closed folder too — the Save tab
   // opens showing just folder names, nothing expanded.
@@ -13289,7 +13342,187 @@ function renderSavedList(){
       });
     });
   }
+  // Matches: one built-in famous game, always in its own closed folder.
+  // It is part of the app, not a device save — no Delete, no Unlike,
+  // no Note button; tapping it opens the view-only replay.
+  if (mBox){
+    var mtOpen = saveFolderOpen["__matches"] === true;
+    mBox.innerHTML = '<div class="save-folder' + (mtOpen ? "" : " closed") + '">'
+      + '<button class="save-folder-head" type="button" data-save-folder="__matches">' + folderIcon
+      + '<span class="nm">Matches</span>'
+      + '<span class="cnt">1 game</span>'
+      + '<span class="chev">' + (mtOpen ? "▾" : "▸") + '</span></button>'
+      + '<div class="save-folder-body">'
+      + '<div class="saved-item">'
+      + '<button class="saved-main" type="button" data-open-match="fischer-tal-1960"><span class="nm">Fischer vs Tal — Leipzig 1960 (Draw)</span>'
+      + '<span class="sub">Leipzig Olympiad 1960 · Round 5, Board 1 · 21 moves · Draw &frac12;&ndash;&frac12; · tap to watch the game</span></button>'
+      + '</div></div></div>';
+    Array.prototype.forEach.call(mBox.querySelectorAll("[data-save-folder]"), function(b){
+      b.addEventListener("click", function(){
+        saveFolderOpen["__matches"] = !(saveFolderOpen["__matches"] === true);
+        renderSavedList();
+      });
+    });
+    Array.prototype.forEach.call(mBox.querySelectorAll("[data-open-match]"), function(b){
+      b.addEventListener("click", function(){ openMatch(); });
+    });
+  }
 }
+/* ================= famous match replay (Save > Matches) =================
+   Fischer vs Tal, Leipzig Olympiad 1960 — the built-in game in the
+   Matches folder. The replay is view-only: no engine judging, no eval
+   bar, no best-move arrow, no move marks — the position is stepped
+   through with the Start / Prev / Next / End buttons or by tapping a
+   move in the list. The board is drawn with the app's own squares and
+   piece pictures, so the theme and piece set picked in Settings apply
+   here too; renderMatch() rebuilds the pieces from piecePath() every
+   time the view opens, so a theme or piece change made in Settings is
+   picked up on return. matchPly is never reset by opening the game,
+   switching tabs or changing theme — the position you left is the
+   position you come back to. */
+var MATCH_SANS = ["e4","e6","d4","d5","Nc3","Bb4","e5","c5","a3","Ba5","b4","cxd4","Qg4","Ne7","bxa5","dxc3","Qxg7","Rg8","Qxh7","Nbc6","Nf3","Qc7","Bb5","Bd7","O-O","O-O-O","Bg5","Nxe5","Nxe5","Bxb5","Nxf7","Bxf1","Nxd8","Rxg5","Nxe6","Rxg2+","Kh1","Qe5","Rxf1","Qxe6","Kxg2","Qg4+"];
+/* Simple-words coach notes, keyed by the ply AFTER which they show
+   (ply 17 = after 9.Qxg7, ply 28 = after 14...Nxe5, and so on). */
+var MATCH_NOTES = {
+  17: "Fischer grabs two pawns, on g7 and on h7, one after the other.",
+  19: "Fischer grabs two pawns, on g7 and on h7, one after the other.",
+  28: "Tal gives up his knight on e5 and starts a long run of capture after capture — nine captures in a row. Nobody defends. Both sides just keep taking.",
+  35: "Fischer's knight on e6 hits the queen on c7 and the rook on g5 at the same time.",
+  36: "Tal gives up his rook with check on g2 — the king cannot take it.",
+  40: "Tal gives up his queen too — his queen takes the knight on e6.",
+  42: "Perpetual check — the queen keeps checking, and the game is a draw."
+};
+var matchStates = null;   // one position snapshot per ply, index 0 = the start
+var matchLast = [];       // ply -> {from,to} of the move that reached it
+var matchPly = 0;         // the ply on screen — kept across tabs and themes
+function matchResolve(st, san){
+  var ms = movesForColor(st, st.turn), i;
+  for (i = 0; i < ms.length; i++){ if (sanFor(st, ms[i]) === san) return ms[i]; }
+  // Fall back to piece + target square (+ the disambiguation letter in
+  // the SAN, like the b in Nbc6) if the app's SAN writer spells a move
+  // differently.
+  var m = /^([KQRBN])([a-h])?([1-8])?(x)?([a-h])([1-8])(=[QRBN])?[+#]?$/.exec(san);
+  if (!m) return null;
+  var dest = nameIdx(m[5] + m[6]), found = null, count = 0;
+  for (i = 0; i < ms.length; i++){
+    var mv = ms[i], p = st.b[mv.from];
+    if (!p || p[1] !== m[1] || mv.to !== dest) continue;
+    if (m[2] && "abcdefgh"[sqFile(mv.from)] !== m[2]) continue;
+    if (m[3] && String(sqRank(mv.from)) !== m[3]) continue;
+    found = mv; count++;
+  }
+  return count === 1 ? found : null;
+}
+function buildMatch(){
+  if (matchStates) return true;
+  var st = parseFEN(START_FEN), states = [cloneState(st)], last = [null];
+  for (var i = 0; i < MATCH_SANS.length; i++){
+    var mv = matchResolve(st, MATCH_SANS[i]);
+    if (!mv) return false;
+    last.push({ from: mv.from, to: mv.to });
+    st = applyMove(st, mv);
+    states.push(cloneState(st));
+  }
+  matchStates = states; matchLast = last;
+  return true;
+}
+function openMatch(){
+  if (buildMatch()) showView("match");
+}
+var matchSqLayer = null, matchPiecesLayer = null;
+function buildMatchMoveList(){
+  var box = $("matchMoves");
+  if (!box || box.children.length) return;
+  var html = "";
+  for (var i = 0; i < MATCH_SANS.length; i += 2){
+    html += '<span class="mm-num">' + (i / 2 + 1) + '.</span>'
+      + '<button type="button" class="mm-mv" data-match-ply="' + (i + 1) + '">' + escHtml(MATCH_SANS[i]) + '</button>';
+    if (MATCH_SANS[i + 1]) html += '<button type="button" class="mm-mv" data-match-ply="' + (i + 2) + '">' + escHtml(MATCH_SANS[i + 1]) + '</button>';
+  }
+  box.innerHTML = html;
+  Array.prototype.forEach.call(box.querySelectorAll("[data-match-ply]"), function(b){
+    b.addEventListener("click", function(){ matchGoTo(parseInt(b.getAttribute("data-match-ply"), 10)); });
+  });
+}
+function renderMatch(){
+  if (!buildMatch()) return;
+  var board = $("matchBoard");
+  if (!board) return;
+  if (!matchSqLayer){
+    matchSqLayer = document.createElement("div"); matchSqLayer.className = "sq-layer";
+    matchPiecesLayer = document.createElement("div"); matchPiecesLayer.className = "pieces-layer";
+    board.appendChild(matchSqLayer); board.appendChild(matchPiecesLayer);
+  }
+  var st = matchStates[matchPly], last = matchLast[matchPly];
+  var html = "";
+  for (var ri = 0; ri < 8; ri++){
+    for (var fi = 0; fi < 8; fi++){
+      var rank = 8 - ri, file = fi, idx = sqIdx(file, rank);
+      var cls = "sq " + ((file + rank) % 2 === 0 ? "dark" : "light");
+      if (last && (last.from === idx || last.to === idx)) cls += " last";
+      var p = st.b[idx];
+      if (p && p[1] === "K" && inCheck(st, p[0]) && st.turn === p[0]) cls += anyLegal(st, p[0]) ? " checkSq" : " mateSq";
+      var inner = "";
+      if (fi === 7) inner += '<span class="coord rank-c">' + rank + '</span>';
+      if (ri === 7) inner += '<span class="coord file-c">' + "abcdefgh"[file] + '</span>';
+      html += '<div class="' + cls + '" data-sq="' + idx + '">' + inner + '</div>';
+    }
+  }
+  matchSqLayer.innerHTML = html;
+  matchPiecesLayer.innerHTML = "";
+  for (var i = 0; i < 64; i++){
+    var code = st.b[i];
+    if (!code) continue;
+    var el = makePieceEl(code);
+    el.style.transform = "translate(" + (sqFile(i) * 100) + "%," + ((8 - sqRank(i)) * 100) + "%)";
+    matchPiecesLayer.appendChild(el);
+  }
+  var status = $("matchStatus");
+  if (status){
+    if (matchPly === 0) status.textContent = "Start of the game · Fischer (White) to move";
+    else {
+      var moveNo = Math.ceil(matchPly / 2), isW = matchPly % 2 === 1;
+      var label = moveNo + (isW ? ". " : "... ") + MATCH_SANS[matchPly - 1];
+      status.textContent = matchPly === MATCH_SANS.length
+        ? label + " — Tal · Draw agreed, ½–½"
+        : label + " — " + (isW ? "Fischer" : "Tal") + " · move " + matchPly + " of " + MATCH_SANS.length;
+    }
+  }
+  var note = $("matchNote"), noteText = $("matchNoteText");
+  if (note && noteText){
+    var nt = MATCH_NOTES[matchPly] || "";
+    note.hidden = !nt;
+    noteText.textContent = nt;
+  }
+  var atStart = matchPly === 0, atEnd = matchPly === MATCH_SANS.length;
+  var sb = $("matchStartBtn"), pb = $("matchPrevBtn"), nb = $("matchNextBtn"), eb = $("matchEndBtn");
+  if (sb) sb.disabled = atStart;
+  if (pb) pb.disabled = atStart;
+  if (nb) nb.disabled = atEnd;
+  if (eb) eb.disabled = atEnd;
+  buildMatchMoveList();
+  var box = $("matchMoves"), curBtn = null;
+  if (box){
+    Array.prototype.forEach.call(box.querySelectorAll("[data-match-ply]"), function(b){
+      var on = parseInt(b.getAttribute("data-match-ply"), 10) === matchPly;
+      b.classList.toggle("cur", on);
+      if (on) curBtn = b;
+    });
+    if (curBtn && curBtn.scrollIntoView) curBtn.scrollIntoView({ block: "nearest" });
+  }
+}
+function matchGoTo(k){
+  if (!buildMatch()) return;
+  k = Math.max(0, Math.min(MATCH_SANS.length, k));
+  matchPly = k;
+  renderMatch();
+}
+$("matchBackBtn").addEventListener("click", function(){ showView("save"); });
+$("matchStartBtn").addEventListener("click", function(){ matchGoTo(0); });
+$("matchPrevBtn").addEventListener("click", function(){ matchGoTo(matchPly - 1); });
+$("matchNextBtn").addEventListener("click", function(){ matchGoTo(matchPly + 1); });
+$("matchEndBtn").addEventListener("click", function(){ matchGoTo(MATCH_SANS.length); });
+
 /* ================= save notes =================
    Saving a game or a puzzle first opens a small sheet with an
    optional note box — write anything, or leave it empty and just tap
