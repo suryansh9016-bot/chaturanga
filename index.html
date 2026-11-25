@@ -836,30 +836,7 @@
   .save-folder.closed .save-folder-body{display:none}
   .save-folder-body .saved-item{background:var(--surface2)}
 
-  /* ---------- Match view: the built-in famous game in Save > Matches ----------
-     A view-only replay on the app's own board: same .board, same square
-     colours from the theme, same piece set from Settings. No engine, no
-     marks, no arrows — just stepping through the game. */
-  .js-match{display:none}
-  body[data-view="match"] .js-match{display:block}
-  body[data-view="match"] .js-home,body[data-view="match"] .js-play,body[data-view="match"] .js-pack,body[data-view="match"] .js-open{display:none !important}
-  .match-sub{color:var(--ink-soft);font-size:13.5px;line-height:1.55;margin:10px 2px 0}
-  .match-board-slot{display:flex;justify-content:center;padding-top:12px}
-  .match-board-slot .board{width:min(100%,480px);flex:none}
-  .match-status{text-align:center;font-size:14px;font-weight:700;color:var(--ink);margin:14px 2px 0;line-height:1.5}
-  .match-note{background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);padding:11px 13px;margin:12px 0 0;font-size:14px;line-height:1.6;color:var(--ink)}
-  .match-note b{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-strong);margin-bottom:3px}
-  .match-nav{display:flex;gap:8px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap}
-  .match-nav button{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line-strong);color:var(--ink);border-radius:10px;min-height:44px;padding:8px 14px;font-weight:800;font-size:13.5px}
-  .match-nav button:active{background:var(--accent-soft);border-color:var(--accent)}
-  .match-nav button:disabled{opacity:.38}
-  .match-nav button svg{width:17px;height:17px;flex:none}
-  .match-moves{display:flex;flex-wrap:wrap;align-items:center;gap:5px 4px;margin:14px 0 6px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);padding:11px 12px}
-  .match-moves .mm-num{font-size:13px;font-weight:700;color:var(--ink-soft);margin-left:6px}
-  .match-moves .mm-num:first-child{margin-left:0}
-  .mm-mv{background:none;border:none;border-radius:7px;color:var(--ink);font-size:13.5px;font-weight:600;padding:4px 7px;min-height:30px}
-  .mm-mv:active{background:var(--surface2)}
-  .mm-mv.cur{background:var(--accent);color:#fff;font-weight:800}
+
 
   /* ---------- final pass: trainer layout — bot fixed on top, big board, controls scroll below ----------
      The two top bars and the Coach Bot row never move and never scroll.
@@ -2237,6 +2214,8 @@
   .note-sheet p{margin:0 0 12px;color:var(--ink-soft);font-size:13px}
   .note-sheet textarea{width:100%;min-height:76px;resize:vertical;background:var(--surface2);border:1px solid var(--line-strong);border-radius:12px;color:var(--ink);font:inherit;font-size:14px;padding:10px 12px}
   .note-sheet textarea:focus{outline:2px solid var(--accent);outline-offset:0}
+  .note-sheet textarea.pgn-box{min-height:170px}
+  .note-sheet p.pgn-err{margin:8px 0 0;color:#d23c2e;font-size:13.5px;font-weight:700}
   .note-actions{display:flex;gap:8px;margin-top:14px}
   .note-actions button{flex:1;border-radius:10px;min-height:46px;font-weight:800;font-size:14px}
   .note-actions .note-cancel{background:var(--surface2);border:1px solid var(--line-strong);color:var(--ink)}
@@ -2285,7 +2264,7 @@
     .js-open{max-width:1020px;margin:0 auto}
 
     /* ---- settings / stats / save: comfortable reading width, centred ---- */
-    .js-settings,.js-stats,.js-save,.js-match{max-width:860px;margin:0 auto}
+    .js-settings,.js-stats,.js-save{max-width:860px;margin:0 auto}
 
     /* ---- puzzle + opening trainer: board left, coach + controls right ---- */
     body[data-view="play"] .trainer,
@@ -2565,6 +2544,8 @@
      and "Your move." last — the same order as Play. */
   .mv-nav{display:none !important}
   .pz-movesbar .pz-nav-arrow{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:none;background:transparent !important;border:none !important;box-shadow:none !important;color:var(--ink-soft);padding:0;opacity:.9}
+  .pz-movesbar #btnMvPlay{display:none}
+  body.viewer .pz-movesbar #btnMvPlay{display:inline-flex}
   .pz-movesbar .pz-nav-arrow svg{width:18px;height:18px}
   .pz-movesbar .pz-nav-arrow:disabled{opacity:.28;cursor:default}
   .pz-movesbar .pz-nav-arrow:active{opacity:1}
@@ -2924,6 +2905,12 @@
   body.ctl-compact #btnSavePuzzle{display:none !important}
   body.ctl-compact .pz-toggles{display:none !important}
   body.ctl-compact .pn-row{display:none !important}
+  /* v18: after a puzzle is solved (body.pz-done) the same small
+     Prev / Next buttons come back at the bottom in Compact mode
+     too — exactly the ones full mode shows. In a game viewer
+     (body.viewer) they are always there: they step between games. */
+  body.ctl-compact.pz-done .pn-row{display:flex !important}
+  body.ctl-compact.viewer .pn-row{display:flex !important}
   body.ctl-compact .mv-nav{display:none !important}
   body.ctl-full #pzOptionsBtn{display:none}
   #btnLike.liked{border-color:#e5484d}
@@ -4327,26 +4314,7 @@
     <div id="matchesBox"></div>
   </section>
 
-  <section class="js-match" aria-labelledby="matchH">
-    <div class="set-head">
-      <button class="round-btn" id="matchBackBtn" type="button" aria-label="Back to Save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button>
-      <h2 id="matchH">Fischer vs Tal</h2>
-      <span style="width:42px;flex:none"></span>
-    </div>
-    <p class="match-sub">Leipzig Olympiad 1960 · Round 5, Board 1 · Fischer played White, Tal played Black · Draw &frac12;&ndash;&frac12;</p>
-    <div class="match-board-slot">
-      <div class="board" id="matchBoard" role="img" aria-label="Fischer vs Tal game board. View only — use the buttons below the board to step through the game."></div>
-    </div>
-    <p class="match-status" id="matchStatus">Start of the game</p>
-    <p class="match-note" id="matchNote" hidden><b>Coach note</b><span id="matchNoteText"></span></p>
-    <div class="match-nav">
-      <button id="matchStartBtn" type="button" aria-label="Jump to the start of the game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14"/><path d="m17 6-6 6 6 6"/></svg><span>Start</span></button>
-      <button id="matchPrevBtn" type="button" aria-label="One move back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg><span>Prev</span></button>
-      <button id="matchNextBtn" type="button" aria-label="One move forward"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg><span>Next</span></button>
-      <button id="matchEndBtn" type="button" aria-label="Jump to the end of the game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14"/><path d="m7 6 6 6-6 6"/></svg><span>End</span></button>
-    </div>
-    <div class="match-moves" id="matchMoves" aria-label="Moves of the game — tap a move to jump to it"></div>
-  </section>
+
 
   <section class="js-play" aria-labelledby="trainH">
     <h2 id="trainH" class="sr-only">Puzzle trainer</h2>
@@ -4447,7 +4415,7 @@
       </div>
       <div class="pz-turnwrap"><div class="bot-turn" id="pzTurnText">Your move.</div></div>
       <div class="bot-matrow pz-matrow"><span class="bm-label">Material</span><span id="pzMat"></span></div>
-      <div class="bot-moves pz-movesbar"><button class="pz-nav-arrow" id="btnMvBack" type="button" aria-label="One move back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg></button><span id="pzMoveList">No moves yet</span><button class="pz-nav-arrow" id="btnMvFwd" type="button" aria-label="One move forward"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></button></div>
+      <div class="bot-moves pz-movesbar"><button class="pz-nav-arrow" id="btnMvBack" type="button" aria-label="One move back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg></button><span id="pzMoveList">No moves yet</span><button class="pz-nav-arrow" id="btnMvFwd" type="button" aria-label="One move forward"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></button><button class="pz-nav-arrow" id="btnMvPlay" type="button" aria-label="Play the game automatically">&#9654;</button></div>
      </div>
      </div>
     </div>
@@ -4539,6 +4507,7 @@
         <button id="optPzSave" type="button">Save puzzle</button>
         <button id="optPzPrev" type="button">Previous puzzle</button>
         <button id="optPzNext" type="button">Next puzzle</button>
+        <button id="optPzImportPgn" type="button">Import PGN</button>
         <button id="optPzAutoHint" type="button" aria-pressed="true">Auto hint · On</button>
         <button id="optPzEngine" type="button" aria-pressed="true">Engine panel · Shown</button>
         <button id="optPzFocusMode" type="button" aria-pressed="false">Focus mode · Off</button>
@@ -4957,6 +4926,19 @@
     </div>
   </div>
 
+  <div class="note-overlay" id="pgnOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="pgnTitle">
+    <div class="note-sheet">
+      <h2 id="pgnTitle">Import PGN</h2>
+      <p>Paste a full game in PGN — headers and moves. It opens like a puzzle, and it is saved in Save &rarr; Matches.</p>
+      <textarea id="pgnText" class="pgn-box" placeholder="Paste the PGN here&hellip;"></textarea>
+      <p class="pgn-err" id="pgnError" hidden></p>
+      <div class="note-actions">
+        <button class="note-cancel" id="pgnCancel" type="button">Cancel</button>
+        <button class="note-save" id="pgnImportBtn" type="button">Import</button>
+      </div>
+    </div>
+  </div>
+
   <nav class="tabbar" aria-label="Main">
     <button id="tabPuzzles" type="button" class="active"><img class="tab-knight" data-piece-icon="wN" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvci1zY2hlbWU6bGlnaHQgb25seSIgd2lkdGg9IjQ1IiBoZWlnaHQ9IjQ1IiB2aWV3Qm94PSIwIDAgNDUgNDUiPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ij48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMjIgMTBjMTAuNSAxIDE2LjUgOCAxNiAyOUgxNWMwLTkgMTAtNi41IDgtMjEiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMjQgMThjLjM4IDIuOTEtNS41NSA3LjM3LTggOS0zIDItMi44MiA0LjM0LTUgNC0xLjA0Mi0uOTQgMS40MS0zLjA0IDAtMy0xIDAgLjE5IDEuMjMtMSAyLTEgMC00LjAwMyAxLTQtNCAwLTIgNi0xMiA2LTEyczEuODktMS45IDItMy41Yy0uNzMtLjk5NC0uNS0yLS41LTMgMS0xIDMgMi41IDMgMi41aDJzLjc4LTEuOTkyIDIuNS0zYzEgMCAxIDMgMSAzIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTkuNSAyNS41YS41LjUgMCAxIDEtMSAwIC41LjUgMCAxIDEgMSAwbTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjUiLz48L2c+PC9zdmc+" alt=""><span>Puzzles</span></button>
     <button id="tabSave" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12a.5.5 0 0 1 .5.5v16.5l-6.5-4-6.5 4V4a.5.5 0 0 1 .5-.5z"/></svg><span>Save</span></button>
@@ -5067,6 +5049,8 @@ var packKey = null;     // pack identity (differs from angle when two packs shar
 var packTarget = 0;     // when > 0, keep loading batches until this many distinct puzzles are in
 var packFixedIds = null; // when set, the pack is exactly these Lichess puzzle ids, in this order (Fork Puzzles)
 var packIdCache = {};    // pack key -> puzzle ids seen when that pack loaded, so its done-count stays visible on the home cards
+var packListCache = {};   // v18: pack key -> the puzzles that pack already showed you, saved on this device, so the puzzles you solved stay in the pack with their Solved tag (the batch endpoint hands out a different random set on every call, which used to wipe them away)
+var packRecovered = {};   // v18: pack key -> true once that pack's old solved puzzles were looked up again
 var packSolvedCounts = {}; // pack key -> puzzles solved from that pack (saved on the device, see storeProgress), so every pack row can show a done count even before its full id list is known
 var dailyPuzzleId = null;  // id of today's daily puzzle, once it has been fetched
 var packMaxMoves = 0;   // when > 0, keep only puzzles the player finishes in at most this many of their own moves
@@ -5193,6 +5177,12 @@ function loadPack(angle, append, attempt){
       packList.push({ id:pz.id, rating:pz.rating, plays:pz.plays || 0, themes:pz.themes || [], solLen:(pz.solution || []).length });
     });
     if (packTarget && packList.length > packTarget) packList = packList.slice(0, packTarget);
+    /* v18: remember this pack's puzzles on the device, so the ones
+       you solved stay in the pack with their Solved tag. */
+    if (packKey && !packFixedIds){
+      packListCache[packKey] = packList.map(function(p){ return { id: p.id, rating: p.rating, plays: p.plays || 0, themes: (p.themes || []).slice(), solLen: p.solLen }; });
+      storeProgress();
+    }
     if (packTarget && packList.length < packTarget && seenNew > 0 && attempt < 12){
       // target pack safety net: if one batch still left the pack short
       // (the short-attack filter can skip many), fetch again — no baking,
@@ -7329,6 +7319,8 @@ function storeProgress(){
       solvedIds: solvedIds,
       packSolvedCounts: packSolvedCounts,
       packIdCache: packIdCache,
+      packListCache: packListCache,
+      packRecovered: packRecovered,
       stats: stats,
       dailyPuzzleId: dailyPuzzleId,
       recentOrder: recentOrder
@@ -7342,6 +7334,14 @@ function storeProgress(){
     if (s.solvedIds && typeof s.solvedIds === "object") solvedIds = s.solvedIds;
     if (s.packSolvedCounts && typeof s.packSolvedCounts === "object") packSolvedCounts = s.packSolvedCounts;
     if (s.packIdCache && typeof s.packIdCache === "object") packIdCache = s.packIdCache;
+    if (s.packListCache && typeof s.packListCache === "object"){
+      Object.keys(s.packListCache).forEach(function(k){
+        if (Array.isArray(s.packListCache[k])) packListCache[k] = s.packListCache[k].filter(function(p){ return p && typeof p.id === "string"; }).slice(0, 60);
+      });
+    }
+    if (s.packRecovered && typeof s.packRecovered === "object"){
+      Object.keys(s.packRecovered).forEach(function(k){ if (s.packRecovered[k]) packRecovered[k] = true; });
+    }
     if (s.stats && typeof s.stats === "object"){
       ["solved", "streak", "attempts", "firstTry"].forEach(function(k){
         if (typeof s.stats[k] === "number") stats[k] = s.stats[k];
@@ -7472,6 +7472,10 @@ function renderCategories(){
         return;
       }
       packList = [];
+      /* v18: a batch pack opens on the puzzles it already showed you
+         (saved on this device), so your solved ones are there with
+         their Solved tag at once; fresh ones only fill the pack up. */
+      if (!pk.fixedIds && packListCache[key]) packList = packListCache[key].slice();
       packKey = key;
       packAngle = pk.angle;
       packTarget = pk.target || 0;
@@ -7482,9 +7486,63 @@ function renderCategories(){
       renderPicker();
       renderPack();
       showView("pack");
-      if (packFixedIds) loadFixedPack(); else loadPack(pk.angle, false);
+      if (packFixedIds) loadFixedPack();
+      else if (!pk.target || packList.length < pk.target) loadPack(pk.angle, false);
+      if (!pk.fixedIds) recoverSolvedForPack(key, pk.angle);
     });
   });
+}
+/* v18: bring back the puzzles you solved before this fix. The batch
+   endpoint never returns them again, so on the first open of a batch
+   pack after the fix we look up each solved puzzle you own (one
+   Lichess request each, five at a time, in the background) and put
+   the ones that belong to this pack back at the front of the list —
+   with their Solved tag. It runs once per pack per device; the
+   pack's own puzzles are never touched. If the lookups fail (no
+   connection) it is not marked done, so it tries again next time. */
+var recoveringPack = {};
+function recoverSolvedForPack(key, angle){
+  if (!key || !angle || packRecovered[key] || recoveringPack[key]) return;
+  var known = {};
+  PACKS.forEach(function(p){ (p.fixedIds || []).forEach(function(id){ known[id] = true; }); });
+  Object.keys(packIdCache).forEach(function(k){ if (k !== key) (packIdCache[k] || []).forEach(function(id){ known[id] = true; }); });
+  (packListCache[key] || []).forEach(function(p){ known[p.id] = true; });
+  var ids = Object.keys(solvedIds).filter(function(id){ return !known[id]; });
+  if (!ids.length){ packRecovered[key] = true; storeProgress(); return; }
+  recoveringPack[key] = true;
+  var found = [], hadErr = false;
+  var workers = 5, next = 0, done = 0;
+  function finish(){
+    recoveringPack[key] = false;
+    if (!hadErr) packRecovered[key] = true;
+    var cached = packListCache[key] || [];
+    var merged = found.concat(cached.filter(function(p){ return !found.some(function(x){ return x.id === p.id; }); }));
+    var pk = null;
+    PACKS.forEach(function(p){ if ((p.id || p.angle) === key) pk = p; });
+    if (pk && pk.target && merged.length > pk.target) merged = merged.slice(0, pk.target);
+    if (found.length){
+      packListCache[key] = merged;
+      storeProgress();
+      if (packKey === key){ packList = merged.slice(); renderPack(); }
+    } else if (!hadErr) storeProgress();
+  }
+  function one(){
+    if (next >= ids.length){ if (++done === workers) finish(); return; }
+    var id = ids[next++];
+    var cached = detailCache[id];
+    var pr = cached ? Promise.resolve(cached)
+      : lzFetch("https://lichess.org/api/puzzle/" + encodeURIComponent(id)).then(function(d){ detailCache[id] = d; return d; });
+    pr.then(function(d){
+      try {
+        var pz = d && d.puzzle;
+        if (pz && (pz.themes || []).indexOf(angle) !== -1
+          && !found.some(function(x){ return x.id === pz.id; }))
+          found.push({ id: pz.id, rating: pz.rating, plays: pz.plays || 0, themes: pz.themes || [], solLen: (pz.solution || []).length });
+      } catch(e){}
+      one();
+    }).catch(function(){ hadErr = true; one(); });
+  }
+  for (var i = 0; i < workers; i++) one();
 }
 /* Pack screen: app-like level grid, every tile open — no locks anywhere. */
 function renderPack(){
@@ -7947,6 +8005,7 @@ function renderBoard(){ renderSquares(); renderCoords(); renderOuterCoords(); }
 function renderPlayerBars(){
   var youColor = flipped ? "b" : "w", oppColor = flipped ? "w" : "b";
   function nameFor(color){
+    if (viewerMode && cur) return color === cur.playerColor ? (cur.youName || "You") : (cur.oppName || "Opponent");
     if (cur && cur.playerColor){
       if (color === cur.playerColor) return (cur.youName || "You") + " (You)";
       return cur.oppName || ("Opponent · " + (color==="w" ? "White" : "Black"));
@@ -7973,7 +8032,12 @@ function renderPlayerBars(){
 }
 function setStatus(){
   var chip = $("turnChip"), st = $("stateChip");
-  if (!cur){
+  if (viewerMode){
+    var vend = !viewerOnBranch && viewerPly >= viewerEnd();
+    chip.textContent = vend ? "Game over" : ((state && state.turn === "w" ? (viewerGame.white || "White") : (viewerGame.black || "Black")) + " to move");
+    st.textContent = vend ? (viewerGame.result || "Game over") : ("Move " + viewerPly + " of " + viewerEnd());
+    st.className = "chip state-ok";
+  } else if (!cur){
     chip.textContent = "No puzzle loaded";
     st.textContent = "Tap a pack, then a puzzle — it loads from Lichess";
     st.className = "chip";
@@ -7998,6 +8062,7 @@ function setStatus(){
 function renderPuzzleInfo(){
   var tt = $("pzTurnText");
   if (tt) tt.textContent = pzBrowse >= 0 ? ("Viewing move " + pzBrowse + " of " + playedSans.length + " — tap Play from here or one of your pieces to change the line from here; › returns to the live position.") : !cur ? "Your move." : finished ? (revealed ? "Solution shown." : "Puzzle solved ✓") : busy ? "Opponent is replying…" : "Your move.";
+  if (viewerMode && tt) tt.textContent = (!viewerOnBranch && viewerPly >= viewerEnd()) ? ("End of the game · " + (viewerGame.result || "Game over")) : (viewerOnBranch ? "Trying a different move — tap Back to the main line" : ("Move " + viewerPly + " of " + viewerEnd() + " — tap › for the next move."));
   pzNavUI();
   var ml = $("pzMoveList");
   if (ml){
@@ -8009,6 +8074,10 @@ function renderPuzzleInfo(){
       ml.textContent = out.join("  ");
       pzStripShow();
     }
+  }
+  if (viewerMode){
+    var ml2 = $("pzMoveList");
+    if (ml2){ var vs = viewerSans(); ml2.textContent = vs.length ? viewerMovesText(vs) : "No moves yet — tap › to watch the game."; pzStripShow(); }
   }
   var mat = $("pzMat");
   if (mat && state){
@@ -8475,6 +8544,11 @@ function autoHint(){
   return txt;
 }
 function startPuzzle(p){
+  /* v18: a real puzzle always leaves viewer mode behind. */
+  viewerMode = false;
+  document.body.classList.remove("viewer");
+  document.body.classList.remove("pz-done");
+  viewerAutoStop();
   puzzleSeq++;               // invalidate every pending timer from the previous puzzle
   busy = false;
   hidePromoPicker();
@@ -8485,7 +8559,7 @@ function startPuzzle(p){
   state = parseFEN(cur.fen);
   flipped = cur.playerColor ? (cur.playerColor === "b") : (state.turn === "b");   // your pieces start at the bottom, White or Black — the Black gambit courses start from White to move, but you are Black, so the board turns to your side
   ply = 0; selected = null; legalSel = []; hintSquares = []; wrongSq = null;
-  busy = false; finished = false; revealed = false; mistakesThisPuzzle = 0; hintUsed = false;
+  busy = false; finished = false; revealed = false; document.body.classList.remove("pz-done"); mistakesThisPuzzle = 0; hintUsed = false;
   capturedBy = { w:[], b:[] };
   playedSans = [];
   clearReviewLog("pz");
@@ -8533,6 +8607,7 @@ function addFeed(actor, san, why, kind){
 }
 function finishPuzzle(){
   finished = true;
+  document.body.classList.add("pz-done");   /* v18: Compact mode shows Prev / Next now that the puzzle is done */
   // a short delay, so the success tone never lands on top of the
   // checkmate sound when the solving move is mate
   setTimeout(function(){ playSound("success"); }, 240);
@@ -8880,6 +8955,7 @@ boardEl.addEventListener("pointerdown", function(e){
   if (dragPointerId !== null && e.pointerId !== undefined && e.pointerId !== dragPointerId && drag && drag.el) return;
   clearDragVisual();               // kill any ghost from a pointerup the phone swallowed
   if (promoPickerTap("pz", e)) return;   // an open promotion picker owns this tap
+  if (viewerMode){ viewerBoardDown(e); return; }
   if (pzBrowse >= 0){
     // Viewing an old position: tapping one of your own pieces PLAYS
     // FROM HERE — the line is cut at the viewed move and this tap
@@ -8947,6 +9023,7 @@ boardEl.addEventListener("pointermove", function(e){
   }
 });
 function endDrag(e){
+  if (viewerMode){ viewerBoardUp(e); return; }
   if (!drag) { dragPointerId = null; return; }
   if (dragPointerId !== null && e.pointerId !== undefined && e.pointerId !== dragPointerId) return;
   var wasDrag = !!drag.el;
@@ -8984,6 +9061,7 @@ window.addEventListener("blur", function(){ clearDragVisual(); clearBotDragVisua
 
 /* ================= controls ================= */
 $("btnHint").addEventListener("click", function(){
+  if (viewerMode){ viewerHint(); return; }
   if (!cur || finished) return;
   hintUsed = true;
   var hintTxt = autoHint();
@@ -8997,6 +9075,7 @@ $("btnHint").addEventListener("click", function(){
 });
 $("btnLike").addEventListener("click", function(){
   if (!cur){ setFeedback("think", "Load a puzzle first — then tap Like to keep the ones you love."); return; }
+  if (viewerMode){ setFeedback("think", "This game already lives in Save → Matches — no need to Like it."); return; }
   if (isLiked(cur.id)){
     savedStore.liked = savedStore.liked.filter(function(p){ return p.id !== cur.id; });
     storeSaved(); syncLikeBtn();
@@ -9009,6 +9088,7 @@ $("btnLike").addEventListener("click", function(){
 });
 $("btnReset").addEventListener("click", function(){
   if (!cur) return;
+  if (viewerMode){ viewerGoTo(0); return; }
   startPuzzle(cur);
   // A line that opens with the opponent's move (the Black gambit
   // courses — White moves first) must start that move again after a
@@ -9052,6 +9132,7 @@ document.addEventListener("pointerdown", function(e){
   $("btnMenu").setAttribute("aria-expanded", "false");
 });
 $("btnSolution").addEventListener("click", function(){
+  if (viewerMode){ viewerAutoPlay(); return; }
   if (!cur || busy || finished) return;
   if (pzBrowse >= 0) pzExitBrowse();   // the solution plays out from the live position, never from a browsed snapshot
   revealed = true; hintUsed = true;
@@ -9072,6 +9153,7 @@ $("btnSolution").addEventListener("click", function(){
   stepFn();
 });
 function stepPack(d){
+  if (viewerMode){ viewerStepGame(d); return 0; }
   if (cur && cur.isOpening && cur.openingId){
     var op = cur.openingRef || null;
     if (!op) OPENINGS.forEach(function(o){ if (o.id === cur.openingId) op = o; });
@@ -9133,6 +9215,20 @@ function pzStripShow(){
   });
 }
 function pzNavUI(){
+  if (viewerMode){
+    var n = viewerEnd();
+    var atEnd = !viewerOnBranch && viewerPly >= n;
+    var lab = $("mvNavLabel");
+    if (lab){ lab.textContent = viewerOnBranch ? ("Move " + viewerPly + " of " + n + " — trying a different move") : ("Move " + viewerPly + " of " + n); lab.classList.toggle("live", true); }
+    var bb = $("btnMvBranch");
+    if (bb) bb.hidden = true;
+    var dis = function(id, off){ var b = $(id); if (b) b.disabled = !!off; };
+    dis("btnMvStart", viewerPly <= 0);
+    dis("btnMvBack", viewerPly <= 0);
+    dis("btnMvFwd", atEnd);
+    dis("btnMvEnd", atEnd);
+    return;
+  }
   var n = playedSans.length, browsing = pzBrowse >= 0;
   var lab = $("mvNavLabel");
   if (lab){
@@ -9250,15 +9346,16 @@ function pzExitBrowse(){
      is owed again now that we are back at the live position. */
   if (cur && !finished && !busy && cur.moves[ply] && cur.moves[ply].actor === "opp") opponentReply();
 }
-$("btnMvStart").addEventListener("click", function(){ pzGoTo(0); });
-$("btnMvBack").addEventListener("click", function(){ pzGoTo(pzBrowse >= 0 ? pzBrowse - 1 : playedSans.length - 1); });
+$("btnMvStart").addEventListener("click", function(){ if (viewerMode){ viewerGoTo(0); return; } pzGoTo(0); });
+$("btnMvBack").addEventListener("click", function(){ if (viewerMode){ viewerStep(-1); return; } pzGoTo(pzBrowse >= 0 ? pzBrowse - 1 : playedSans.length - 1); });
 $("btnMvFwd").addEventListener("click", function(){
+  if (viewerMode){ viewerStep(1); return; }
   if (pzBrowse >= 0){ pzGoTo(pzBrowse + 1); return; }
   var ml = $("pzMoveList");
   if (ml) ml.scrollBy({ left: Math.max(60, Math.round(ml.clientWidth * 0.8)), behavior: "smooth" });
 });
 $("pzMoveList").addEventListener("scroll", function(){ pzNavUI(); });
-$("btnMvEnd").addEventListener("click", function(){ pzExitBrowse(); });
+$("btnMvEnd").addEventListener("click", function(){ if (viewerMode){ viewerGoTo(viewerEnd()); return; } pzExitBrowse(); });
 $("btnMvBranch").addEventListener("click", function(){ pzBranch(); });
 var prevView = "home";
 /* Where each tab takes you, exactly:
@@ -9274,13 +9371,13 @@ var prevView = "home";
 function showView(name){
   if (name !== "play") document.body.classList.remove("reviewing");
   if (name !== "settings") prevView = name;
+  if (name !== "play") viewerAutoStop();   /* v18: leaving the puzzle screen stops a game auto-play */
   document.body.setAttribute("data-view", name);
   $("tabPuzzles").classList.toggle("active", name==="home" || name==="pack" || name==="open" || name==="play");
-  var tsv = $("tabSave"); if (tsv) tsv.classList.toggle("active", name==="save" || name==="match");
+  var tsv = $("tabSave"); if (tsv) tsv.classList.toggle("active", name==="save");
   $("tabPlay").classList.toggle("active", name==="bot");
   var ts = $("tabStats"); if (ts) ts.classList.toggle("active", name==="stats");
   if (name === "save" && typeof renderSavedList === "function") renderSavedList();
-  if (name === "match" && typeof renderMatch === "function") renderMatch();
   if (name === "stats" && typeof renderErrors === "function"){ renderErrors(); renderStatsNotes(); }
   if (name === "bot" && typeof ensureBotGame === "function") ensureBotGame();
   if (name === "settings") renderSettingsUI();
@@ -9328,7 +9425,7 @@ $("tabPlay").addEventListener("click", function(){
 $("tabStats").addEventListener("click", function(){ showView("stats"); });
 $("btnNavNext").addEventListener("click", goNextPuzzle);
 $("btnPrev").addEventListener("click", goPrevPuzzle);
-$("btnBack").addEventListener("click", function(){ puzzleActive = false; showView("home"); });
+$("btnBack").addEventListener("click", function(){ if (viewerMode){ puzzleActive = false; stopViewer(); showView("save"); return; } puzzleActive = false; showView("home"); });
 
 /* ================= openings trainer =================
    Curated opening lines you learn by playing: you make the White moves,
@@ -10557,6 +10654,16 @@ function renderBranchBar(){
   var bar = $("branchBar"), box = $("branchBtns");
   if (!bar || !box) return;
   if (!cur || !cur.isOpening || !cur.openingRef){ bar.hidden = true; box.innerHTML = ""; return; }
+  if (viewerMode){   /* v18: the "Back to the main line" bar for a tried move */
+    if (viewerBranch && viewerOnBranch){
+      box.innerHTML = '<div class="bb-now">You are trying a different move — the game line is safe.</div>'
+        + '<button class="branch-btn" type="button" data-viewer-main="1"><b>Back to the main line</b><span>' + escHtml(viewerGame.title) + ' — the game line from the start.</span></button>';
+      bar.hidden = false;
+      var vb = box.querySelector("[data-viewer-main]");
+      if (vb) vb.addEventListener("click", viewerBackToMain);
+    } else { bar.hidden = true; box.innerHTML = ""; }
+    return;
+  }
   var op = cur.openingRef, html = "";
   var here = [];
   (op.branches || []).forEach(function(br, bi){ if (br.at === ply && branchPrefixOk(op, br)) here.push(bi); });
@@ -12979,10 +13086,11 @@ var savedStore = (function(){
     var s = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
     if (s && Array.isArray(s.games) && Array.isArray(s.puzzles)){
       if (!Array.isArray(s.liked)) s.liked = [];   // liked puzzles (the heart button) — older saves gain the list empty
+      if (!Array.isArray(s.matches)) s.matches = [];   // v18: imported PGN games — older saves gain the list empty
       return s;
     }
   } catch(e){}
-  return { games: [], puzzles: [], liked: [] };
+  return { games: [], puzzles: [], liked: [], matches: [] };
 })();
 function storeSaved(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify(savedStore)); } catch(e){} }
 /* Which folder a saved puzzle belongs in: the pack or category it was
@@ -13342,21 +13450,28 @@ function renderSavedList(){
       });
     });
   }
-  // Matches: one built-in famous game, always in its own closed folder.
-  // It is part of the app, not a device save — no Delete, no Unlike,
-  // no Note button; tapping it opens the view-only replay.
+  // Matches: the built-in famous game plus your imported PGN games,
+  // always in their own closed folder. Imported games can be deleted;
+  // the built-in game is part of the app, so it has no Delete button.
+  // Tapping any game opens it in the puzzle view to watch.
   if (mBox){
     var mtOpen = saveFolderOpen["__matches"] === true;
+    var games = viewerGameList();
+    var items = games.map(function(g){
+      var del = g.imported
+        ? '<button class="saved-act del" type="button" data-del-match="' + escAttr(g.id) + '">Delete</button>'
+        : "";
+      return '<div class="saved-item">'
+        + '<button class="saved-main" type="button" data-open-match="' + escAttr(g.id) + '"><span class="nm">' + escHtml(g.title) + '</span>'
+        + '<span class="sub">' + escHtml(g.sub || "") + ' · tap to watch the game</span></button>'
+        + del + '</div>';
+    }).join("");
     mBox.innerHTML = '<div class="save-folder' + (mtOpen ? "" : " closed") + '">'
       + '<button class="save-folder-head" type="button" data-save-folder="__matches">' + folderIcon
       + '<span class="nm">Matches</span>'
-      + '<span class="cnt">1 game</span>'
+      + '<span class="cnt">' + games.length + (games.length === 1 ? " game" : " games") + '</span>'
       + '<span class="chev">' + (mtOpen ? "▾" : "▸") + '</span></button>'
-      + '<div class="save-folder-body">'
-      + '<div class="saved-item">'
-      + '<button class="saved-main" type="button" data-open-match="fischer-tal-1960"><span class="nm">Fischer vs Tal — Leipzig 1960 (Draw)</span>'
-      + '<span class="sub">Leipzig Olympiad 1960 · Round 5, Board 1 · 21 moves · Draw &frac12;&ndash;&frac12; · tap to watch the game</span></button>'
-      + '</div></div></div>';
+      + '<div class="save-folder-body">' + items + '</div></div>';
     Array.prototype.forEach.call(mBox.querySelectorAll("[data-save-folder]"), function(b){
       b.addEventListener("click", function(){
         saveFolderOpen["__matches"] = !(saveFolderOpen["__matches"] === true);
@@ -13364,22 +13479,22 @@ function renderSavedList(){
       });
     });
     Array.prototype.forEach.call(mBox.querySelectorAll("[data-open-match]"), function(b){
-      b.addEventListener("click", function(){ openMatch(); });
+      b.addEventListener("click", function(){ openViewerGameById(b.getAttribute("data-open-match")); });
+    });
+    Array.prototype.forEach.call(mBox.querySelectorAll("[data-del-match]"), function(b){
+      b.addEventListener("click", function(){
+        var id = b.getAttribute("data-del-match");
+        savedStore.matches = (savedStore.matches || []).filter(function(m){ return m.id !== id; });
+        storeSaved();
+        renderSavedList();
+      });
     });
   }
 }
-/* ================= famous match replay (Save > Matches) =================
+/* ================= famous match (Save > Matches) =================
    Fischer vs Tal, Leipzig Olympiad 1960 — the built-in game in the
-   Matches folder. The replay is view-only: no engine judging, no eval
-   bar, no best-move arrow, no move marks — the position is stepped
-   through with the Start / Prev / Next / End buttons or by tapping a
-   move in the list. The board is drawn with the app's own squares and
-   piece pictures, so the theme and piece set picked in Settings apply
-   here too; renderMatch() rebuilds the pieces from piecePath() every
-   time the view opens, so a theme or piece change made in Settings is
-   picked up on return. matchPly is never reset by opening the game,
-   switching tabs or changing theme — the position you left is the
-   position you come back to. */
+   Matches folder. It opens in the puzzle view (see the game viewer
+   below), so it looks exactly like a puzzle. */
 var MATCH_SANS = ["e4","e6","d4","d5","Nc3","Bb4","e5","c5","a3","Ba5","b4","cxd4","Qg4","Ne7","bxa5","dxc3","Qxg7","Rg8","Qxh7","Nbc6","Nf3","Qc7","Bb5","Bd7","O-O","O-O-O","Bg5","Nxe5","Nxe5","Bxb5","Nxf7","Bxf1","Nxd8","Rxg5","Nxe6","Rxg2+","Kh1","Qe5","Rxf1","Qxe6","Kxg2","Qg4+"];
 /* Simple-words coach notes, keyed by the ply AFTER which they show
    (ply 17 = after 9.Qxg7, ply 28 = after 14...Nxe5, and so on). */
@@ -13392,9 +13507,6 @@ var MATCH_NOTES = {
   40: "Tal gives up his queen too — his queen takes the knight on e6.",
   42: "Perpetual check — the queen keeps checking, and the game is a draw."
 };
-var matchStates = null;   // one position snapshot per ply, index 0 = the start
-var matchLast = [];       // ply -> {from,to} of the move that reached it
-var matchPly = 0;         // the ply on screen — kept across tabs and themes
 function matchResolve(st, san){
   var ms = movesForColor(st, st.turn), i;
   for (i = 0; i < ms.length; i++){ if (sanFor(st, ms[i]) === san) return ms[i]; }
@@ -13413,115 +13525,441 @@ function matchResolve(st, san){
   }
   return count === 1 ? found : null;
 }
-function buildMatch(){
-  if (matchStates) return true;
-  var st = parseFEN(START_FEN), states = [cloneState(st)], last = [null];
-  for (var i = 0; i < MATCH_SANS.length; i++){
-    var mv = matchResolve(st, MATCH_SANS[i]);
-    if (!mv) return false;
-    last.push({ from: mv.from, to: mv.to });
-    st = applyMove(st, mv);
-    states.push(cloneState(st));
-  }
-  matchStates = states; matchLast = last;
-  return true;
-}
-function openMatch(){
-  if (buildMatch()) showView("match");
-}
-var matchSqLayer = null, matchPiecesLayer = null;
-function buildMatchMoveList(){
-  var box = $("matchMoves");
-  if (!box || box.children.length) return;
-  var html = "";
-  for (var i = 0; i < MATCH_SANS.length; i += 2){
-    html += '<span class="mm-num">' + (i / 2 + 1) + '.</span>'
-      + '<button type="button" class="mm-mv" data-match-ply="' + (i + 1) + '">' + escHtml(MATCH_SANS[i]) + '</button>';
-    if (MATCH_SANS[i + 1]) html += '<button type="button" class="mm-mv" data-match-ply="' + (i + 2) + '">' + escHtml(MATCH_SANS[i + 1]) + '</button>';
-  }
-  box.innerHTML = html;
-  Array.prototype.forEach.call(box.querySelectorAll("[data-match-ply]"), function(b){
-    b.addEventListener("click", function(){ matchGoTo(parseInt(b.getAttribute("data-match-ply"), 10)); });
+/* The built-in game, as a viewer game: the same shape an imported
+   PGN game has, so Save > Matches lists both the same way. */
+var MATCH_GAME = {
+  id: "fischer-tal-1960",
+  title: "Fischer vs Tal — Leipzig 1960",
+  sub: "Leipzig Olympiad 1960 · Round 5, Board 1 · 21 moves · Draw ½–½",
+  sans: MATCH_SANS, notes: MATCH_NOTES,
+  startFen: START_FEN, result: "½–½", white: "Fischer", black: "Tal", imported: false
+};
+/* ================= game viewer (Save > Matches, imported PGN) =================
+   A game opens EXACTLY like a puzzle: the same puzzle view, the same
+   board, the same coach bubble above it, the same Back / Forward
+   arrows, the same move list at the bottom, the same Glide and effects.
+   The game is view-only — no solving, no engine judging — but the
+   chrome is the puzzle chrome, nothing custom. Stepping through the
+   moves never moves the screen: the board stays fixed, only the
+   pieces glide and the move strip slides sideways inside itself.
+   A branch (moving your own piece somewhere else) never erases the
+   game line: the main line is kept whole, and Back to the main line
+   (or stepping past the end of the tried line) brings it back. */
+var viewerMode = false;
+var viewerGame = null;
+var viewerMainSnaps = null;   // one snapshot per main-line ply, index 0 = the start
+var viewerPly = 0;            // plies of the line on screen
+var viewerBranch = null;      // { atPly, sans:[], snaps:[] } — a tried line, kept aside
+var viewerOnBranch = false;   // the position on screen comes from the branch
+var viewerAutoTimer = null;
+var viewerAutoSeq = 0;
+function viewerEnd(){ return viewerGame ? viewerGame.sans.length : 0; }
+function viewerGameList(){
+  var list = [MATCH_GAME];
+  (savedStore.matches || []).forEach(function(m){
+    list.push({ id: m.id, title: m.title, sub: m.sub, sans: m.sans, notes: m.notes || {},
+      startFen: m.startFen, result: m.result, white: m.white, black: m.black, imported: true });
   });
+  return list;
 }
-function renderMatch(){
-  if (!buildMatch()) return;
-  var board = $("matchBoard");
-  if (!board) return;
-  if (!matchSqLayer){
-    matchSqLayer = document.createElement("div"); matchSqLayer.className = "sq-layer";
-    matchPiecesLayer = document.createElement("div"); matchPiecesLayer.className = "pieces-layer";
-    board.appendChild(matchSqLayer); board.appendChild(matchPiecesLayer);
+function openViewerGameById(id){
+  var list = viewerGameList();
+  for (var i = 0; i < list.length; i++) if (list[i].id === id){ openViewerGame(list[i]); return; }
+}
+function stateKey(s){
+  var c = s.cast || {};
+  return s.b.join(",") + "|" + s.turn + "|"
+    + (c.K ? "K" : "") + (c.Q ? "Q" : "") + (c.k ? "k" : "") + (c.q ? "q" : "")
+    + "|" + (s.ep == null ? -1 : s.ep);
+}
+function capsCount(pos){ return (pos.capW.length + pos.capB.length); }
+function viewerCaptureCode(st, mv){
+  var capIdx = mv.to;
+  if (!st.b[mv.to] && st.b[mv.from] && st.b[mv.from][1] === "P" && sqFile(mv.from) !== sqFile(mv.to))
+    capIdx = sqIdx(sqFile(mv.to), sqRank(mv.from));
+  return st.b[capIdx] || null;
+}
+function viewerBuildSnaps(fen, sans){
+  var st;
+  try { st = parseFEN(fen); } catch(e){ return { ok: false, badIndex: -1, badSan: "" }; }
+  var snaps = [{ state: cloneState(st), capW: [], capB: [], last: null }];
+  var capW = [], capB = [];
+  for (var i = 0; i < sans.length; i++){
+    var mv = matchResolve(st, sans[i]);
+    if (!mv) return { ok: false, badIndex: i, badSan: sans[i] };
+    var cap = viewerCaptureCode(st, mv);
+    var next = applyMove(st, mv);
+    if (cap){ if (st.turn === "w") capW.push(cap); else capB.push(cap); }
+    st = next;
+    snaps.push({ state: cloneState(st), capW: capW.slice(), capB: capB.slice(), last: { from: mv.from, to: mv.to } });
   }
-  var st = matchStates[matchPly], last = matchLast[matchPly];
-  var html = "";
-  for (var ri = 0; ri < 8; ri++){
-    for (var fi = 0; fi < 8; fi++){
-      var rank = 8 - ri, file = fi, idx = sqIdx(file, rank);
-      var cls = "sq " + ((file + rank) % 2 === 0 ? "dark" : "light");
-      if (last && (last.from === idx || last.to === idx)) cls += " last";
-      var p = st.b[idx];
-      if (p && p[1] === "K" && inCheck(st, p[0]) && st.turn === p[0]) cls += anyLegal(st, p[0]) ? " checkSq" : " mateSq";
-      var inner = "";
-      if (fi === 7) inner += '<span class="coord rank-c">' + rank + '</span>';
-      if (ri === 7) inner += '<span class="coord file-c">' + "abcdefgh"[file] + '</span>';
-      html += '<div class="' + cls + '" data-sq="' + idx + '">' + inner + '</div>';
+  return { ok: true, snaps: snaps };
+}
+function viewerPos(){
+  if (viewerOnBranch && viewerBranch) return viewerBranch.snaps[viewerPly - viewerBranch.atPly];
+  return viewerMainSnaps ? viewerMainSnaps[viewerPly] : null;
+}
+function viewerSans(){
+  var main = (viewerGame.sans || []);
+  if (viewerOnBranch && viewerBranch)
+    return main.slice(0, viewerBranch.atPly).concat(viewerBranch.sans.slice(0, viewerPly - viewerBranch.atPly));
+  return main.slice(0, viewerPly);
+}
+function viewerMovesText(sans){
+  var parts = [];
+  for (var i = 0; i < sans.length; i++){
+    if (i % 2 === 0) parts.push((Math.floor(i / 2) + 1) + ".");
+    parts.push(sans[i]);
+  }
+  return parts.join(" ");
+}
+function viewerCoachLine(){
+  if (!viewerGame) return;
+  var n = viewerEnd(), line;
+  if (viewerOnBranch && viewerBranch){
+    var bi = viewerPly - viewerBranch.atPly - 1;
+    var last = viewerBranch.sans[Math.max(0, bi)];
+    line = "You tried " + last + " instead of the game move — the game line is safe, tap Back to the main line.";
+  } else if (viewerPly >= n){
+    line = "Game over · " + (viewerGame.result || "") + " — " + viewerGame.title + ".";
+  } else if (viewerPly === 0){
+    line = viewerGame.title + " — tap › to watch the game move by move.";
+  } else {
+    var san = viewerGame.sans[viewerPly - 1];
+    var num = Math.ceil(viewerPly / 2);
+    var who = (viewerPly % 2 === 1) ? (viewerGame.white || "White") : (viewerGame.black || "Black");
+    line = num + ". " + san + " — " + who;
+    var note = (viewerGame.notes || {})[viewerPly];
+    if (note) line += " " + note;
+  }
+  setFeedback("think", line);
+}
+function viewerSync(step){
+  var pos = viewerPos();
+  if (!pos) return;
+  state = pos.state;
+  capturedBy = { w: pos.capW.slice(), b: pos.capB.slice() };
+  lastMove = pos.last ? { from: pos.last.from, to: pos.last.to } : null;
+  selected = null; legalSel = [];
+  clearBestArrow("pz");
+  hintSquares = [];
+  if (step){
+    moveView(step.from, step.to);
+    spawnMoveFx(boardEl, step.to, dispPos(step.to));
+    playSound(inCheck(state, state.turn) ? "check" : (step.cap ? "capture" : "move"));
+    renderBoard();
+  } else {
+    renderBoard();
+    resetView();
+  }
+  renderPlayerBars();
+  renderPuzzleInfo();
+  renderBranchBar();
+  pzNavUI();
+  setStatus();
+}
+function openViewerGame(g){
+  viewerAutoStop();
+  var built = viewerBuildSnaps(g.startFen || START_FEN, g.sans || []);
+  if (!built.ok){
+    setFeedback("think", "This game could not be opened — move " + (built.badIndex + 1) + ", " + built.badSan + ", is not a legal move here.");
+    return;
+  }
+  viewerGame = g;
+  viewerMainSnaps = built.snaps;
+  viewerPly = 0;
+  viewerBranch = null;
+  viewerOnBranch = false;
+  var cur0 = {
+    id: g.id, fen: g.startFen || START_FEN, rating: 0, themes: [], moves: [],
+    titleText: g.title, overText: g.sub, intro: g.sub,
+    playerColor: "w", youName: g.white || "White", oppName: g.black || "Black",
+    daily: false, isOpening: false
+  };
+  startPuzzle(cur0);   // opens the puzzle view on the starting position
+  viewerMode = true;
+  document.body.classList.add("viewer");
+  clearReviewLog("pz");
+  viewerSync(null);
+  viewerCoachLine();
+  showView("play");
+}
+function stopViewer(){
+  viewerAutoStop();
+  viewerMode = false;
+  viewerGame = null;
+  viewerMainSnaps = null;
+  viewerBranch = null;
+  viewerOnBranch = false;
+  document.body.classList.remove("viewer");
+}
+function viewerGoTo(k, keepAuto){
+  if (!viewerGame) return;
+  if (!keepAuto) viewerAutoStop();
+  viewerOnBranch = false;
+  viewerBranch = null;
+  var prev = viewerPly;
+  viewerPly = Math.max(0, Math.min(viewerEnd(), k));
+  if (viewerPly === prev) return;
+  var pos = viewerPos();
+  var step = (viewerPly === prev + 1 && pos && pos.last)
+    ? { from: pos.last.from, to: pos.last.to, cap: capsCount(pos) > capsCount(viewerMainSnaps[prev]) }
+    : null;
+  viewerSync(step);
+  viewerCoachLine();
+}
+function viewerStep(d, keepAuto){
+  if (!viewerGame) return;
+  if (!keepAuto) viewerAutoStop();
+  var prevPos = viewerPos();
+  var switched = false;
+  if (viewerOnBranch && viewerBranch){
+    var at = viewerBranch.atPly, end = at + viewerBranch.sans.length;
+    if (d > 0){
+      if (viewerPly < end) viewerPly++;
+      else { viewerOnBranch = false; viewerBranch = null; viewerPly = Math.min(viewerEnd(), at + 1); switched = true; }
+    } else {
+      if (viewerPly > at) viewerPly--;
+      else { viewerOnBranch = false; viewerBranch = null; viewerPly = Math.max(0, at - 1); switched = true; }
+    }
+  } else {
+    viewerPly = Math.max(0, Math.min(viewerEnd(), viewerPly + d));
+  }
+  var pos = viewerPos();
+  if (!pos) return;
+  if (pos === prevPos && !switched) return;   /* at the start or the end already — the screen stays put */
+  var step = null;
+  if (!switched && d > 0 && pos.last) step = { from: pos.last.from, to: pos.last.to, cap: capsCount(pos) > capsCount(prevPos) };
+  viewerSync(step);
+  viewerCoachLine();
+}
+function viewerBackToMain(){
+  if (!viewerGame || !viewerBranch) return;
+  viewerAutoStop();
+  var at = viewerBranch.atPly;
+  viewerOnBranch = false;
+  viewerBranch = null;
+  viewerPly = at;
+  viewerSync(null);
+  viewerCoachLine();
+}
+function viewerStepGame(d){
+  var list = viewerGameList();
+  if (list.length < 2){
+    setFeedback("think", "Only one game in Matches right now — import a PGN from Options to add another.");
+    return;
+  }
+  var i = 0;
+  for (var k = 0; k < list.length; k++) if (list[k].id === viewerGame.id) i = k;
+  openViewerGame(list[(i + d + list.length) % list.length]);
+}
+function viewerBranchMove(from, to, promoChoice){
+  if (!viewerGame) return;
+  viewerAutoStop();
+  var legal = legalMoves(state, from);
+  var matches = legal.filter(function(m){ return m.to === to; });
+  if (!matches.length){ selected = null; legalSel = []; renderBoard(); return; }
+  var mv = matches[0];
+  if (!promoChoice && matches.length > 1){
+    showPromoPicker("pz", boardEl, from, to, state.b[from][0], dispPos(to), function(pc){ viewerBranchMove(from, to, pc); });
+    return;
+  }
+  if (promoChoice) mv = matches.filter(function(m){ return m.promo === promoChoice; })[0] || mv;
+  var san = sanFor(state, mv);
+  /* Playing the game move itself just steps forward on the game line — no branch. */
+  if (!viewerOnBranch){
+    var nextMain = viewerMainSnaps[viewerPly + 1];
+    if (nextMain){
+      var ns = applyMove(state, mv);
+      if (stateKey(ns) === stateKey(nextMain.state)){ viewerStep(1); return; }
+    }
+  } else {
+    /* A branch move that lands back on the game line rejoins it. */
+    var ni = viewerBranch.atPly + viewerBranch.sans.length + 1;
+    var nm = viewerMainSnaps[ni];
+    if (nm){
+      var oldPos = viewerPos();
+      var ns2 = applyMove(state, mv);
+      if (stateKey(ns2) === stateKey(nm.state)){
+        viewerOnBranch = false; viewerBranch = null; viewerPly = ni;
+        viewerSync({ from: mv.from, to: mv.to, cap: capsCount(nm) > capsCount(oldPos) });
+        viewerCoachLine();
+        return;
+      }
     }
   }
-  matchSqLayer.innerHTML = html;
-  matchPiecesLayer.innerHTML = "";
-  for (var i = 0; i < 64; i++){
-    var code = st.b[i];
-    if (!code) continue;
-    var el = makePieceEl(code);
-    el.style.transform = "translate(" + (sqFile(i) * 100) + "%," + ((8 - sqRank(i)) * 100) + "%)";
-    matchPiecesLayer.appendChild(el);
+  if (!viewerOnBranch){
+    viewerBranch = { atPly: viewerPly, sans: [], snaps: [viewerPos()] };
+    viewerOnBranch = true;
   }
-  var status = $("matchStatus");
-  if (status){
-    if (matchPly === 0) status.textContent = "Start of the game · Fischer (White) to move";
-    else {
-      var moveNo = Math.ceil(matchPly / 2), isW = matchPly % 2 === 1;
-      var label = moveNo + (isW ? ". " : "... ") + MATCH_SANS[matchPly - 1];
-      status.textContent = matchPly === MATCH_SANS.length
-        ? label + " — Tal · Draw agreed, ½–½"
-        : label + " — " + (isW ? "Fischer" : "Tal") + " · move " + matchPly + " of " + MATCH_SANS.length;
+  var ns3 = applyMove(state, mv);
+  var cap = viewerCaptureCode(state, mv);
+  var curPos = viewerPos();
+  var capW = curPos.capW.slice(), capB = curPos.capB.slice();
+  if (cap){ if (state.turn === "w") capW.push(cap); else capB.push(cap); }
+  viewerBranch.sans.push(san);
+  viewerBranch.snaps.push({ state: cloneState(ns3), capW: capW, capB: capB, last: { from: mv.from, to: mv.to } });
+  viewerPly++;
+  viewerSync({ from: mv.from, to: mv.to, cap: !!cap });
+  viewerCoachLine();
+}
+function viewerHint(){
+  if (!viewerGame) return;
+  if (viewerOnBranch){
+    var at = viewerBranch.atPly;
+    setFeedback("hint", "The game went " + viewerGame.sans[at] + " here — tap Back to the main line to see it.");
+    return;
+  }
+  if (viewerPly >= viewerEnd()){
+    setFeedback("hint", "The game is over — tap |< to watch it again from the start.");
+    return;
+  }
+  var mv = matchResolve(state, viewerGame.sans[viewerPly]);
+  if (!mv) return;
+  hintSquares = [mv.from, mv.to];
+  renderBoard();
+  setFeedback("hint", "Next: " + viewerGame.sans[viewerPly] + ".");
+}
+function viewerBoardDown(e){
+  clearDragVisual();
+  if (promoPickerTap("pz", e)) return;
+  var idx = boardSquareAt(e.clientX, e.clientY);
+  if (idx === null || idx === undefined) return;
+  e.preventDefault();
+  dragPointerId = (e.pointerId !== undefined) ? e.pointerId : null;
+  try { if (boardEl.setPointerCapture && e.pointerId !== undefined) boardEl.setPointerCapture(e.pointerId); } catch(err){}
+  if (selected !== null && selected !== idx && legalSel.some(function(m){ return m.to === idx; })){
+    viewerBranchMove(selected, idx);
+    return;
+  }
+  var p = state.b[idx];
+  if (p && p[0] === state.turn){
+    if (selected === idx){ selected = null; legalSel = []; renderBoard(); return; }
+    selectSquare(idx);
+    drag = { from: idx, x0: e.clientX, y0: e.clientY, el: null, v: null, deselectTap: false };
+  } else {
+    selected = null; legalSel = []; renderBoard();
+  }
+}
+function viewerBoardUp(e){
+  if (!drag) { dragPointerId = null; return; }
+  if (dragPointerId !== null && e.pointerId !== undefined && e.pointerId !== dragPointerId) return;
+  var wasDrag = !!drag.el;
+  var from = drag.from;
+  try {
+    if (!wasDrag){
+      if (drag.deselectTap){ selected = null; legalSel = []; renderBoard(); }
+      return;
     }
-  }
-  var note = $("matchNote"), noteText = $("matchNoteText");
-  if (note && noteText){
-    var nt = MATCH_NOTES[matchPly] || "";
-    note.hidden = !nt;
-    noteText.textContent = nt;
-  }
-  var atStart = matchPly === 0, atEnd = matchPly === MATCH_SANS.length;
-  var sb = $("matchStartBtn"), pb = $("matchPrevBtn"), nb = $("matchNextBtn"), eb = $("matchEndBtn");
-  if (sb) sb.disabled = atStart;
-  if (pb) pb.disabled = atStart;
-  if (nb) nb.disabled = atEnd;
-  if (eb) eb.disabled = atEnd;
-  buildMatchMoveList();
-  var box = $("matchMoves"), curBtn = null;
-  if (box){
-    Array.prototype.forEach.call(box.querySelectorAll("[data-match-ply]"), function(b){
-      var on = parseInt(b.getAttribute("data-match-ply"), 10) === matchPly;
-      b.classList.toggle("cur", on);
-      if (on) curBtn = b;
-    });
-    if (curBtn && curBtn.scrollIntoView) curBtn.scrollIntoView({ block: "nearest" });
+    var idx = boardSquareAt(e.clientX, e.clientY);
+    if (idx !== null && idx !== from) viewerBranchMove(from, idx);
+    else renderBoard();
+  } finally {
+    clearDragVisual();
   }
 }
-function matchGoTo(k){
-  if (!buildMatch()) return;
-  k = Math.max(0, Math.min(MATCH_SANS.length, k));
-  matchPly = k;
-  renderMatch();
+function viewerAutoPlay(){
+  if (!viewerGame) return;
+  if (viewerAutoTimer){ viewerAutoStop(); return; }
+  if (viewerOnBranch) viewerBackToMain();
+  if (viewerPly >= viewerEnd()) viewerGoTo(0, true);
+  viewerAutoSeq++;
+  var seq = viewerAutoSeq;
+  var btn = $("btnMvPlay");
+  if (btn){ btn.textContent = "❚❚"; btn.setAttribute("aria-label", "Pause the game"); }
+  var stepFn = function(){
+    if (seq !== viewerAutoSeq) return;
+    if (!viewerGame || viewerPly >= viewerEnd()){ viewerAutoStop(); return; }
+    viewerStep(1, true);
+    viewerAutoTimer = setTimeout(stepFn, 2000);
+  };
+  viewerAutoTimer = setTimeout(stepFn, 1000);
 }
-$("matchBackBtn").addEventListener("click", function(){ showView("save"); });
-$("matchStartBtn").addEventListener("click", function(){ matchGoTo(0); });
-$("matchPrevBtn").addEventListener("click", function(){ matchGoTo(matchPly - 1); });
-$("matchNextBtn").addEventListener("click", function(){ matchGoTo(matchPly + 1); });
-$("matchEndBtn").addEventListener("click", function(){ matchGoTo(MATCH_SANS.length); });
+function viewerAutoStop(){
+  viewerAutoSeq++;
+  if (viewerAutoTimer){ clearTimeout(viewerAutoTimer); viewerAutoTimer = null; }
+  var btn = $("btnMvPlay");
+  if (btn){ btn.textContent = "▶"; btn.setAttribute("aria-label", "Play the game automatically"); }
+}
+/* ================= Import PGN =================
+   Paste a full PGN in Options. It is checked move by move on a real
+   board before anything opens: one illegal move, and the box says
+   which move it is in plain words instead of loading a broken game.
+   A good game opens in the puzzle view like a match, and it is saved
+   in Save > Matches with its own name from the PGN headers. */
+function parsePGN(text){
+  text = String(text || "").trim();
+  if (!text) return { ok: false, error: "Paste a game first — the box is empty." };
+  var headers = {};
+  var hm = text.match(/\[([A-Za-z0-9_]+)\s+"([^"]*)"\]/g) || [];
+  hm.forEach(function(h){
+    var m = /\[([A-Za-z0-9_]+)\s+"([^"]*)"\]/.exec(h);
+    if (m) headers[m[1]] = m[2];
+  });
+  var body = text.replace(/^\[.*\]$/gm, " ");
+  var prev = null;
+  while (prev !== body){ prev = body; body = body.replace(/\{[^{}]*\}/g, " "); }
+  prev = null;
+  while (prev !== body){ prev = body; body = body.replace(/\([^()]*\)/g, " "); }
+  body = body.replace(/\$\d+/g, " ");
+  body = body.replace(/\d+\.(\.\.)?/g, " ");
+  body = body.replace(/0-0/g, "O-O");
+  var tokens = body.split(/\s+/).filter(function(t){
+    return t && t !== "1-0" && t !== "0-1" && t !== "1/2-1/2" && t !== "*";
+  });
+  if (!tokens.length) return { ok: false, error: "No moves found — paste a full PGN with moves." };
+  var startFen = headers.FEN || START_FEN;
+  var st;
+  try { st = parseFEN(startFen); } catch(e){
+    return { ok: false, error: "The starting position (FEN) is not valid — check it and try again." };
+  }
+  for (var i = 0; i < tokens.length; i++){
+    var mv = matchResolve(st, tokens[i]);
+    if (!mv){
+      var side = i % 2 === 0 ? "White" : "Black";
+      var num = Math.floor(i / 2) + 1;
+      return { ok: false, error: "Move " + num + " for " + side + ", " + tokens[i] + ", is not a legal move here. Check that move and try again." };
+    }
+    st = applyMove(st, mv);
+  }
+  var white = headers.White || "", black = headers.Black || "";
+  var title = (white && black) ? (white + " vs " + black) : "My Game";
+  var subBits = [];
+  if (headers.Event) subBits.push(headers.Event);
+  if (headers.Date) subBits.push(headers.Date);
+  var result = headers.Result || "*";
+  var sub = (subBits.length ? subBits.join(" · ") + " · " : "") + tokens.length + " moves"
+    + (result && result !== "*" ? " · " + result : "");
+  return { ok: true, game: {
+    title: title, sub: sub, sans: tokens, startFen: startFen,
+    result: result === "*" ? "" : result, white: white, black: black, notes: {}, imported: true
+  } };
+}
+function openPgnDialog(){
+  var err = $("pgnError"); if (err) err.hidden = true;
+  var ov = $("pgnOverlay"); if (ov) ov.hidden = false;
+  setTimeout(function(){ try { var t = $("pgnText"); if (t) t.focus(); } catch(e){} }, 60);
+}
+function closePgnDialog(){ var ov = $("pgnOverlay"); if (ov) ov.hidden = true; }
+function importPGN(){
+  var t = $("pgnText");
+  var res = parsePGN(t ? t.value : "");
+  var err = $("pgnError");
+  if (!res.ok){
+    if (err){ err.textContent = res.error; err.hidden = false; }
+    return;
+  }
+  if (err) err.hidden = true;
+  var g = res.game;
+  g.id = "pgn-" + Date.now().toString(36);
+  if (!Array.isArray(savedStore.matches)) savedStore.matches = [];
+  savedStore.matches.unshift(g);
+  storeSaved();
+  renderSavedList();
+  if (t) t.value = "";
+  closePgnDialog();
+  openViewerGame(g);
+}
 
 /* ================= save notes =================
    Saving a game or a puzzle first opens a small sheet with an
@@ -13609,6 +14047,7 @@ $("botPgnBtn").addEventListener("click", function(){
 });
 $("btnSavePuzzle").addEventListener("click", function(){
   if (!cur){ setFeedback("think", "Load a puzzle first — then tap Save to keep it."); return; }
+  if (viewerMode){ setFeedback("think", "This game already lives in Save → Matches — no need to save it again."); return; }
   var existing = null;
   savedStore.puzzles.forEach(function(p){ if (p.id === cur.id) existing = p.note; });
   openNoteDialog("puzzle", "save", null, existing);
@@ -14195,6 +14634,12 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
   pzOptClick("optPzSolution", "btnSolution"); pzOptClick("optPzFlip", "btnFlip");
   pzOptClick("optPzSave", "btnSavePuzzle"); pzOptClick("optPzPrev", "btnPrev");
   pzOptClick("optPzNext", "btnNavNext");
+  var opi = el("optPzImportPgn");
+  if (opi) opi.addEventListener("click", function(){ closePzOptions(); openPgnDialog(); });
+  var pgc = el("pgnCancel"); if (pgc) pgc.addEventListener("click", closePgnDialog);
+  var pgo = el("pgnOverlay"); if (pgo) pgo.addEventListener("click", function(e){ if (e.target === pgo) closePgnDialog(); });
+  var pgb = el("pgnImportBtn"); if (pgb) pgb.addEventListener("click", importPGN);
+  var mpb = el("btnMvPlay"); if (mpb) mpb.addEventListener("click", function(){ if (viewerMode) viewerAutoPlay(); });
   var pos2 = el("optPzSettings");
   if (pos2) pos2.addEventListener("click", function(){ closePzOptions(); try { showView("settings"); } catch(e){} });
   /* Piece movement speed */
