@@ -1,7 +1,7 @@
 /* Chaturanga service worker: cache the site's own files so the installed
    app opens fast and works offline. Only same-origin files listed below are
    cached; Lichess/Stockfish requests always go to the network. */
-var CACHE = 'chaturanga-v18';
+var CACHE = 'chaturanga-v19';
 var FILES = [
   "index.html",
   "manifest.json",
