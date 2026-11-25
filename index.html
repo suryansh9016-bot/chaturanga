@@ -4993,9 +4993,48 @@ function primaryTheme(themes){
    puzzles — the fixed-id packs load exactly those puzzles by id; the
    batch packs (Better Moves, Mixed, Switch to Attack) are filled to
    30 from one big Lichess batch (see loadPack). Every tile is open. */
+/* Made puzzles, built into the page: the two 15-puzzle fork packs
+   below (Fork with Rook, Fork with Bishop). These are not Lichess
+   puzzles — each one carries its own position (fen) and solution
+   moves here, plus the simple-words coach line (note) the review
+   shows after the fork move. Order matters: it is the pack order. */
+var MADE_PUZZLES = {
+  "made-rook-01": { fen:"6k1/8/2P1b3/8/5P2/2n1p3/4R3/K7 w - - 0 1", rating:1250, themes:["fork", "advantage", "middlegame"], solution:["e2e3", "g8f7", "e3c3"], note:"You just played Rxe3. Your rook on e3 attacks the knight on c3 and the bishop on e6 at the same time, so Black can only save one of them." },
+  "made-rook-02": { fen:"1k6/8/8/1b6/8/1p5n/3P4/1R5K w - - 0 1", rating:1275, themes:["fork", "advantage", "middlegame"], solution:["b1b3", "h3f4", "b3b5"], note:"You just played Rxb3. Your rook on b3 attacks the knight on h3 and the bishop on b5 at the same time, so Black can only save one of them." },
+  "made-rook-03": { fen:"8/1k2pR2/p7/8/1p3p2/8/5p2/K7 w - - 0 1", rating:1300, themes:["fork", "advantage", "middlegame"], solution:["f7f4", "e7e5", "f4f2"], note:"You just played Rxf4. Your rook on f4 attacks the pawn on f2 and the pawn on b4 at the same time, so Black can only save one of them." },
+  "made-rook-04": { fen:"k7/5p2/8/2b5/8/1Pp2n2/K1R5/8 w - - 0 1", rating:1325, themes:["fork", "advantage", "middlegame"], solution:["c2c3", "f3h4", "c3c5"], note:"You just played Rxc3. Your rook on c3 attacks the knight on f3 and the bishop on c5 at the same time, so Black can only save one of them." },
+  "made-rook-05": { fen:"k7/p5p1/6n1/8/4p1p1/8/7P/K5R1 w - - 0 1", rating:1350, themes:["fork", "advantage", "middlegame"], solution:["g1g4", "g6e5", "g4e4"], note:"You just played Rxg4. Your rook on g4 attacks the knight on g6 and the pawn on e4 at the same time, so Black can only save one of them." },
+  "made-rook-06": { fen:"8/6pk/4p3/8/p3p3/2p5/K3R3/8 w - - 0 1", rating:1375, themes:["fork", "advantage", "middlegame"], solution:["e2e4", "h7g8", "e4a4"], note:"You just played Rxe4. Your rook on e4 attacks the pawn on a4 and the pawn on e6 at the same time, so Black can only save one of them." },
+  "made-rook-07": { fen:"k7/8/2pp4/P7/3p3p/3R4/7K/8 w - - 0 1", rating:1400, themes:["fork", "advantage", "middlegame"], solution:["d3d4", "d6d5", "d4h4"], note:"You just played Rxd4. Your rook on d4 attacks the pawn on h4 and the pawn on d6 at the same time, so Black can only save one of them." },
+  "made-rook-08": { fen:"6R1/7k/8/2Pp2p1/8/6p1/8/1K6 w - - 0 1", rating:1425, themes:["fork", "advantage", "middlegame"], solution:["g8g5", "d5d4", "g5g3"], note:"You just played Rxg5. Your rook on g5 attacks the pawn on g3 and the pawn on d5 at the same time, so Black can only save one of them." },
+  "made-rook-09": { fen:"7k/8/6R1/p5p1/P7/6b1/1p6/1K6 w - - 0 1", rating:1450, themes:["fork", "advantage", "middlegame"], solution:["g6g5", "g3e1", "b1b2"], note:"You just played Rxg5. Your rook on g5 attacks the bishop on g3 and the pawn on a5 at the same time, so Black can only save one of them." },
+  "made-rook-10": { fen:"8/Pk1P3p/5b2/8/8/5p1n/5R2/7K w - - 0 1", rating:1475, themes:["fork", "advantage", "middlegame"], solution:["f2f3", "f6e7", "f3h3"], note:"You just played Rxf3. Your rook on f3 attacks the knight on h3 and the bishop on f6 at the same time, so Black can only save one of them." },
+  "made-rook-11": { fen:"6k1/3p2p1/8/8/1n1pP3/3R4/6K1/8 w - - 0 1", rating:1500, themes:["fork", "advantage", "middlegame"], solution:["d3d4", "b4a6", "d4d7"], note:"You just played Rxd4. Your rook on d4 attacks the knight on b4 and the pawn on d7 at the same time, so Black can only save one of them." },
+  "made-rook-12": { fen:"7k/3n4/8/1p1p4/3R4/8/3pP3/1K6 w - - 0 1", rating:1525, themes:["fork", "advantage", "middlegame"], solution:["d4d5", "d7e5", "d5d2"], note:"You just played Rxd5. Your rook on d5 attacks the knight on d7 and the pawn on d2 at the same time, so Black can only save one of them." },
+  "made-rook-13": { fen:"8/6k1/1R6/1ppP2p1/p7/P7/1p6/6K1 w - - 0 1", rating:1550, themes:["fork", "advantage", "middlegame"], solution:["b6b5", "g7f6", "b5b2"], note:"You just played Rxb5. Your rook on b5 attacks the pawn on b2 and the pawn on c5 at the same time, so Black can only save one of them." },
+  "made-rook-14": { fen:"8/1kp2R2/8/8/3p1p2/8/K4p2/8 w - - 0 1", rating:1575, themes:["fork", "advantage", "middlegame"], solution:["f7f4", "c7c5", "f4f2"], note:"You just played Rxf4. Your rook on f4 attacks the pawn on f2 and the pawn on d4 at the same time, so Black can only save one of them." },
+  "made-rook-15": { fen:"8/pk6/2R4p/p1p5/8/8/K1p5/8 w - - 0 1", rating:1600, themes:["fork", "advantage", "middlegame"], solution:["c6c5", "c2c1n", "c5c1"], note:"You just played Rxc5. Your rook on c5 attacks the pawn on c2 and the pawn on a5 at the same time, so Black can only save one of them." },
+  "made-bishop-01": { fen:"8/p2p3k/8/4P3/3p4/8/1p6/1K4B1 w - - 0 1", rating:1250, themes:["fork", "advantage", "middlegame"], solution:["g1d4", "a7a5", "b1b2"], note:"You just played Bxd4. Your bishop on d4 attacks the pawn on b2 and the pawn on a7 at the same time, so Black can only save one of them." },
+  "made-bishop-02": { fen:"5n2/1kB2P2/1p1p4/8/1p6/8/4P1K1/8 w - - 0 1", rating:1275, themes:["fork", "advantage", "middlegame"], solution:["c7d6", "b4b3", "d6f8"], note:"You just played Bxd6. Your bishop on d6 attacks the knight on f8 and the pawn on b4 at the same time, so Black can only save one of them." },
+  "made-bishop-03": { fen:"1B4k1/8/3p4/1Pp5/8/p5p1/K7/8 w - - 0 1", rating:1300, themes:["fork", "advantage", "middlegame"], solution:["b8d6", "g3g2", "d6c5"], note:"You just played Bxd6. Your bishop on d6 attacks the pawn on g3 and the pawn on c5 at the same time, so Black can only save one of them." },
+  "made-bishop-04": { fen:"n7/5p1k/8/2Pp4/2B5/P7/4P1K1/8 w - - 0 1", rating:1325, themes:["fork", "advantage", "middlegame"], solution:["c4d5", "a8c7", "d5f7"], note:"You just played Bxd5. Your bishop on d5 attacks the knight on a8 and the pawn on f7 at the same time, so Black can only save one of them." },
+  "made-bishop-05": { fen:"k7/5p2/p7/2p5/2p5/8/B1P5/1K6 w - - 0 1", rating:1350, themes:["fork", "advantage", "middlegame"], solution:["a2c4", "f7f5", "c4a6"], note:"You just played Bxc4. Your bishop on c4 attacks the pawn on a6 and the pawn on f7 at the same time, so Black can only save one of them." },
+  "made-bishop-06": { fen:"8/k7/6p1/8/4pP2/8/1Kp3B1/8 w - - 0 1", rating:1375, themes:["fork", "advantage", "middlegame"], solution:["g2e4", "a7b6", "b2c2"], note:"You just played Bxe4. Your bishop on e4 attacks the pawn on c2 and the pawn on g6 at the same time, so Black can only save one of them." },
+  "made-bishop-07": { fen:"6k1/8/2pp4/8/4p3/5BP1/P5P1/1n4K1 w - - 0 1", rating:1400, themes:["fork", "advantage", "middlegame"], solution:["f3e4", "b1a3", "e4c6"], note:"You just played Bxe4. Your bishop on e4 attacks the knight on b1 and the pawn on c6 at the same time, so Black can only save one of them." },
+  "made-bishop-08": { fen:"8/k7/2P1p2p/2p5/7P/4p3/8/K1B5 w - - 0 1", rating:1425, themes:["fork", "advantage", "middlegame"], solution:["c1e3", "a7b6", "e3h6"], note:"You just played Bxe3. Your bishop on e3 attacks the pawn on c5 and the pawn on h6 at the same time, so Black can only save one of them." },
+  "made-bishop-09": { fen:"1k6/8/3r3B/7P/1p3p2/8/8/1Kn5 w - - 0 1", rating:1450, themes:["fork", "advantage", "middlegame"], solution:["h6f4", "c1e2", "f4d6"], note:"You just played Bxf4. Your bishop on f4 attacks the rook on d6 and the knight on c1 at the same time, so Black can only save one of them." },
+  "made-bishop-10": { fen:"8/6k1/p3p3/8/2p5/8/5P2/1K3B2 w - - 0 1", rating:1475, themes:["fork", "advantage", "middlegame"], solution:["f1c4", "a6a5", "c4e6"], note:"You just played Bxc4. Your bishop on c4 attacks the pawn on a6 and the pawn on e6 at the same time, so Black can only save one of them." },
+  "made-bishop-11": { fen:"1k1r3B/3P4/5pP1/5P2/8/2p5/K7/8 w - - 0 1", rating:1500, themes:["fork", "advantage", "middlegame"], solution:["h8f6", "d8d7", "f6c3"], note:"You just played Bxf6. Your bishop on f6 attacks the rook on d8 and the pawn on c3 at the same time, so Black can only save one of them." },
+  "made-bishop-12": { fen:"6k1/8/1p6/6B1/8/3Pp3/1KP5/6n1 w - - 0 1", rating:1525, themes:["fork", "advantage", "middlegame"], solution:["g5e3", "g1f3", "e3b6"], note:"You just played Bxe3. Your bishop on e3 attacks the knight on g1 and the pawn on b6 at the same time, so Black can only save one of them." },
+  "made-bishop-13": { fen:"k7/3p1p2/p7/8/2p5/3P4/B7/7K w - - 0 1", rating:1550, themes:["fork", "advantage", "middlegame"], solution:["a2c4", "a8a7", "c4f7"], note:"You just played Bxc4. Your bishop on c4 attacks the pawn on a6 and the pawn on f7 at the same time, so Black can only save one of them." },
+  "made-bishop-14": { fen:"k7/8/2r3B1/8/1PP1p3/8/1K6/1n6 w - - 0 1", rating:1575, themes:["fork", "advantage", "middlegame"], solution:["g6e4", "b1d2", "e4c6"], note:"You just played Bxe4. Your bishop on e4 attacks the rook on c6 and the knight on b1 at the same time, so Black can only save one of them." },
+  "made-bishop-15": { fen:"5Bk1/8/3p4/8/P4p2/n7/6P1/7K w - - 0 1", rating:1600, themes:["fork", "advantage", "middlegame"], solution:["f8d6", "a3c4", "d6f4"], note:"You just played Bxd6. Your bishop on d6 attacks the knight on a3 and the pawn on f4 at the same time, so Black can only save one of them." }
+};
 var PACKS = [
   { angle:"fork", id:"forkPuzzles", target:30, top:true, fixedIds:["nwPl7","ONGKX","xWrcJ","sBXdF","Nfk5k","7c5iS","peeGU","7xaGK","9bDII","k24xo","6qLVy","Ys18U","dKqWC","X5jlQ","axu7l","OnfIz","QoUOS","9fPBj","HtRlP","yAlmi","ljJsp","p8pRZ","geFjo","7loJu","3qEA2","BHNF8","1X8al","tLexw","tBVV6","ofoS7"], name:"Fork Puzzles", sub:"30 puzzles · attack two pieces at once, win one." },
   { angle:"fork", id:"forkPuzzles2", target:30, top:true, fixedIds:["PIIs5","tPCqB","nciNB","bCaBL","2MA4A","G3upa","4BX56","QpKkw","zSBzl","saza2","zDeQO","XTtMD","fUBeb","frMwF","AxxFU","nhzNm","AVnZY","782ma","uU4zk","6cP6k","0fgNj","lNCg8","ULkmr","S5fu6","e3pas","F5E8i","50RBT","vbZHZ","YIimL","r8I8c"], name:"Fork Puzzles Part 2", sub:"30 puzzles · attack two pieces at once, win one." },
+  { angle:"fork", id:"forkRook", target:15, top:true, fixedIds:["made-rook-01","made-rook-02","made-rook-03","made-rook-04","made-rook-05","made-rook-06","made-rook-07","made-rook-08","made-rook-09","made-rook-10","made-rook-11","made-rook-12","made-rook-13","made-rook-14","made-rook-15"], name:"Fork with Rook", sub:"15 puzzles · your rook attacks two pieces at once, win one." },
+  { angle:"fork", id:"forkBishop", target:15, top:true, fixedIds:["made-bishop-01","made-bishop-02","made-bishop-03","made-bishop-04","made-bishop-05","made-bishop-06","made-bishop-07","made-bishop-08","made-bishop-09","made-bishop-10","made-bishop-11","made-bishop-12","made-bishop-13","made-bishop-14","made-bishop-15"], name:"Fork with Bishop", sub:"15 puzzles · your bishop attacks two pieces at once, win one." },
   { angle:"advantage", id:"betterMoves", target:30, top:true, name:"Better Moves", sub:"30 puzzles · only one move is best — find it." },
   { angle:"mix", target:30, top:true, name:"Mixed Puzzles", sub:"30 puzzles · a bit of everything." },
   { angle:"opening", id:"openingAttack", target:30, top:true, maxMoves:2, name:"Switch to Attack — Finish in 1–2 Moves", sub:"30 puzzles · finish the attack in 1–2 moves." },
@@ -5118,8 +5157,19 @@ function buildPuzzle(data){
     daily: false
   };
 }
+/* Build a playable puzzle from a made puzzle stored in this page
+   (MADE_PUZZLES) — same shape buildPuzzle returns for a Lichess
+   puzzle, plus the puzzle's own coach line in madeNote. */
+function buildMadePuzzle(id){
+  var m = MADE_PUZZLES[id];
+  if (!m) return null;
+  var p = buildPuzzle({ puzzle:{ id:id, fen:m.fen, rating:m.rating, plays:0, themes:m.themes, solution:m.solution, lastMove:null }, game:{} });
+  p.madeNote = m.note || null;
+  return p;
+}
 function openPuzzleById(id){
   if (detailCache[id]){ detailCache[id].fromPack = packKey; startPuzzle(detailCache[id]); showView("play"); return; }
+  if (MADE_PUZZLES[id]){ var mp = buildMadePuzzle(id); mp.fromPack = packKey; detailCache[mp.id] = mp; startPuzzle(mp); showView("play"); return; }
   setListStatus("Loading puzzle " + id + " from Lichess…");
   lzFetch("https://lichess.org/api/puzzle/" + encodeURIComponent(id)).then(function(data){
     var p = buildPuzzle(data);
@@ -5239,8 +5289,12 @@ function loadFixedPack(){
   function worker(){
     if (idx >= missing.length) return Promise.resolve();
     var id = missing[idx++];
-    return lzFetch("https://lichess.org/api/puzzle/" + encodeURIComponent(id)).then(function(data){
-      var p = buildPuzzle(data);
+    /* Made puzzles (Fork with Rook / Fork with Bishop) are built from
+       the data stored in this page — no Lichess fetch for them. */
+    var got = MADE_PUZZLES[id]
+      ? Promise.resolve(buildMadePuzzle(id))
+      : lzFetch("https://lichess.org/api/puzzle/" + encodeURIComponent(id)).then(function(data){ return buildPuzzle(data); });
+    return got.then(function(p){
       detailCache[p.id] = p;
       if (!have(p.id)) packList.push({ id:p.id, rating:p.rating, plays:p.plays || 0, themes:p.themes || [], solLen:(p.moves || []).length });
     }).catch(function(){
@@ -6243,7 +6297,16 @@ function discoveredWrongDescribe(before, mv){
   return "You just played " + san + ". No discovered attack — no slider was hiding behind that piece. Find a bishop, rook or queen with one of your pieces in front of it and an enemy piece behind.";
 }
 function packDescribeMove(before, mv, o){
-  if (cur && (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2")) return forkDescribeMove(before, mv, o);
+  /* A made puzzle (Fork with Rook / Fork with Bishop) carries its own
+     coach line: on the fork move itself — the position the puzzle
+     starts from — that line is the review text, word for word. Later
+     moves in the same puzzle fall through to the fork review below. */
+  if (cur && cur.madeNote && cur.fen){
+    var startPos = parseFEN(cur.fen), sameStart = startPos.turn === before.turn;
+    if (sameStart){ for (var si = 0; si < 64; si++){ if (startPos.b[si] !== before.b[si]){ sameStart = false; break; } } }
+    if (sameStart) return cur.madeNote;
+  }
+  if (cur && (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2" || cur.fromPack === "forkRook" || cur.fromPack === "forkBishop")) return forkDescribeMove(before, mv, o);
   if (cur && (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption")) return saveDescribeMove(before, mv, o);
   if (cur && cur.fromPack === "ghostBuster") return ghostDescribeMove(before, mv, o);
   if (cur && cur.fromPack === "houdini") return houdiniDescribeMove(before, mv, o);
@@ -6251,7 +6314,7 @@ function packDescribeMove(before, mv, o){
   return autoDescribeMove(before, mv, o);
 }
 function packDescribePosition(st){
-  if (cur && (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2")) return forkDescribePosition(st);
+  if (cur && (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2" || cur.fromPack === "forkRook" || cur.fromPack === "forkBishop")) return forkDescribePosition(st);
   if (cur && (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption")) return saveDescribePosition(st);
   if (cur && cur.fromPack === "ghostBuster") return ghostDescribePosition(st);
   if (cur && cur.fromPack === "houdini") return houdiniDescribePosition(st);
@@ -7383,7 +7446,7 @@ var VAL = { P:1, N:3, B:3, R:5, Q:9, K:0 };
 function $(id){ return document.getElementById(id); }
 
 /* ================= puzzle packs (home) ================= */
-var PK_ICON = { daily:"wN", mix:"wR", betterMoves:"wQ", forkPuzzles:"wN", forkPuzzles2:"wN", tradeBad:"wQ", deceptiveKing:"wK", dontBlock:"wR", ghostBuster:"wB", houdini:"wK", discoverAttack:"wB", mateIn1:"wQ", mateIn2:"wQ", mateIn3:"wQ", middlegame:"wN", opening:"wB", openingAttack:"wQ", fork:"wN", pin:"wB", skewer:"wR", discoveredAttack:"wB", hangingPiece:"wP", saveHanging:"wK", deadmanRedemption:"wP", sacrifice:"wQ", backRankMate:"wR", endgame:"wK", crushing:"wR" };
+var PK_ICON = { daily:"wN", mix:"wR", betterMoves:"wQ", forkPuzzles:"wN", forkPuzzles2:"wN", forkRook:"wR", forkBishop:"wB", tradeBad:"wQ", deceptiveKing:"wK", dontBlock:"wR", ghostBuster:"wB", houdini:"wK", discoverAttack:"wB", mateIn1:"wQ", mateIn2:"wQ", mateIn3:"wQ", middlegame:"wN", opening:"wB", openingAttack:"wQ", fork:"wN", pin:"wB", skewer:"wR", discoveredAttack:"wB", hangingPiece:"wP", saveHanging:"wK", deadmanRedemption:"wP", sacrifice:"wQ", backRankMate:"wR", endgame:"wK", crushing:"wR" };
 var OP_ICON = { evans:"wN", morra:"wR", fantasy:"wQ", italian:"wP", ruy:"wB", scotch:"wN", qgd:"wQ", london:"wB", french:"wP", kid:"wK", vienna:"wN", caro_adv:"wQ", alapin:"wP", scandi:"wR", larsen:"wB", schara:"bQ", schliemann:"bN", blumenfeld:"bP", ulvestad:"bB" };
 var PK_ARROW = '<span class="pk-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span>';
 /* One clean card style for everything on the Puzzles page. The Top 30
@@ -7494,7 +7557,8 @@ function renderPack(){
       ? "Loading puzzles from Lichess… " + packList.length + " of " + packTarget + " loaded so far."
       : (lzTxt || "Loading puzzles from Lichess…");
   } else if (packTarget){
-    $("packNote").textContent = solved + " of " + packTarget + " solved · loaded live from Lichess · every level is open — tap any tile, nothing is locked.";
+    var madePack = !!(pk && pk.fixedIds && pk.fixedIds.length && MADE_PUZZLES[pk.fixedIds[0]]);
+    $("packNote").textContent = solved + " of " + packTarget + " solved · " + (madePack ? "made puzzles, built into the app" : "loaded live from Lichess") + " · every level is open — tap any tile, nothing is locked.";
   } else {
     $("packNote").textContent = packList.length
       ? solved + " of " + packList.length + " solved · loaded live from Lichess · every level is open — tap any tile, nothing is locked."
@@ -8371,7 +8435,7 @@ function wrongBadText(before, mv){
   var mover = before.b[mv.from], color = mover[0], enemy = opp(color);
   var after = applyMove(before, mv);
   var dest = sqName(mv.to);
-  if (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2"){
+  if (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2" || cur.fromPack === "forkRook" || cur.fromPack === "forkBishop"){
     if (attacked(after, mv.to, enemy) && defendersOf(after, mv.to, color).length === 0){
       var atkF = cheapestAttacker(after, mv.to, enemy);
       if (atkF && VAL[atkF[1]] <= VAL[mover[1]])
@@ -8459,7 +8523,7 @@ function autoHint(){
   var motif = themeLabel(primaryTheme(cur.themes));
   var cap = state.b[mv.to];
   var txt = "The key piece is your " + PIECE_WORD[piece[1]] + " on " + sqName(mv.from) + ". Think: " + motif.toLowerCase() + ".";
-  if (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2"){
+  if (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2" || cur.fromPack === "forkRook" || cur.fromPack === "forkBishop"){
     txt = "Look for the fork. Your " + PIECE_WORD[piece[1]] + " on " + sqName(mv.from) + " is the key piece. Find a square where it attacks two black pieces at the same time.";
   }
   if (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption"){
@@ -8715,7 +8779,7 @@ function attemptUserMove(from, to, promoChoice){
     if (cur.fromPack === "saveHanging" || cur.fromPack === "deadmanRedemption"){
       addFeed("you", san, saveWrongDescribe(before, mv), "wrong");
       setAutoNote(saveWrongDescribe(before, mv));
-    } else if (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2"){
+    } else if (cur.fromPack === "forkPuzzles" || cur.fromPack === "forkPuzzles2" || cur.fromPack === "forkRook" || cur.fromPack === "forkBishop"){
       addFeed("you", san, forkWrongDescribe(before, mv), "wrong");
       setAutoNote(forkWrongDescribe(before, mv));
     } else if (cur.fromPack === "ghostBuster"){
@@ -13233,7 +13297,8 @@ function puzzleRecord(note){
     daily: !!cur.daily, isOpening: !!cur.isOpening,
     openingId: cur.openingId || null,
     titleText: cur.titleText || null, overText: cur.overText || null,
-    intro: cur.intro || null, notes: cur.notes || null, idea: cur.idea || null
+    intro: cur.intro || null, notes: cur.notes || null, idea: cur.idea || null,
+    madeNote: cur.madeNote || null
   };
   rec.folder = savedPuzzleFolder(rec);   // the Save tab groups by this folder — the pack / category it came from
   return rec;
@@ -13272,6 +13337,7 @@ function openSavedPuzzle(rec){
     isOpening: !!rec.isOpening, openingId: rec.openingId || null,
     titleText: rec.titleText || null, overText: rec.overText || null,
     intro: rec.intro || null, notes: rec.notes || null, idea: rec.idea || null,
+    madeNote: rec.madeNote || null,
     /* A saved opening line runs from move 1 of the game, so who plays
        each move follows the side you played: in the Black gambit
        courses White's moves (even indexes) are the opponent's and
