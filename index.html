@@ -4477,6 +4477,7 @@
         <div class="bot-btnrow" style="margin-top:8px">
           <button id="botSaveBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12a.5.5 0 0 1 .5.5v16.5l-6.5-4-6.5 4V4a.5.5 0 0 1 .5-.5z"/></svg><span>Save game</span></button>
           <button id="botPgnBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg><span>Export PGN</span></button>
+          <button id="botBestBtn" type="button" aria-label="Best move by Stockfish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg><span>Best move</span></button>
           <button id="botFlipBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v13"/><path d="m4 13 3 3 3-3"/><path d="M17 21V8"/><path d="m14 11 3-3 3 3"/></svg><span>Flip board</span></button>
         </div>
         <div class="bot-turn" id="botTurnText">Your move.</div>
@@ -14520,6 +14521,7 @@ $("botSaveBtn").addEventListener("click", function(){
   if (botLoadedSaveId) savedStore.games.forEach(function(g){ if (g.id === botLoadedSaveId) existing = g.note; });
   openNoteDialog("game", "save", null, existing);
 });
+$("botBestBtn").addEventListener("click", function(){ showStockfishBest("bot"); });
 $("botPgnBtn").addEventListener("click", function(){
   if (!botStarted || !botSans.length){ botFlash("No moves yet — play a move first."); return; }
   var dISO = new Date().toISOString();
