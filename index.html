@@ -2905,7 +2905,8 @@
   body.ctl-compact #btnSolution,
   body.ctl-compact #btnFlip,
   body.ctl-compact #btnSavePuzzle,
-  body.ctl-compact #btnPzPgn{display:none !important}
+  body.ctl-compact #btnPzPgn,
+  body.ctl-compact #btnPzBest{display:none !important}
   body.ctl-compact .pz-toggles{display:none !important}
   body.ctl-compact .pn-row{display:none !important}
   /* v18: after a puzzle is solved (body.pz-done) the same small
@@ -4406,6 +4407,7 @@
         <button id="btnFlip" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v13"/><path d="m4 13 3 3 3-3"/><path d="M17 21V8"/><path d="m14 11 3-3 3 3"/></svg><span>Flip</span></button>
         <button id="btnSavePuzzle" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12a.5.5 0 0 1 .5.5v16.5l-6.5-4-6.5 4V4a.5.5 0 0 1 .5-.5z"/></svg><span>Save</span></button>
         <button id="btnPzPgn" type="button" aria-label="Export PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg><span>PGN</span></button>
+        <button id="btnPzBest" type="button" aria-label="Best move by Stockfish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg><span>Best</span></button>
       </div>
       <div class="pn-row">
         <button id="btnPrev" type="button">‹ Prev</button>
@@ -4490,6 +4492,7 @@
         <button id="optNew" type="button">New game</button>
         <button id="optSave" type="button">Save game</button>
         <button id="optPgn" type="button">Export PGN</button>
+        <button id="optSfBest" type="button">Best move by Stockfish</button>
         <button id="optFlip" type="button">Flip board</button>
         <button id="optAutoHint" type="button" aria-pressed="true">Auto hint · On</button>
         <button id="optEngine" type="button" aria-pressed="true">Engine panel · Shown</button>
@@ -4515,6 +4518,7 @@
         <button id="optPzNext" type="button">Next puzzle</button>
         <button id="optPzImportPgn" type="button">Import PGN</button>
         <button id="optPzPgn" type="button">Export PGN</button>
+        <button id="optPzSfBest" type="button">Best move by Stockfish</button>
         <button id="optPzAutoHint" type="button" aria-pressed="true">Auto hint · On</button>
         <button id="optPzEngine" type="button" aria-pressed="true">Engine panel · Shown</button>
         <button id="optPzMarks" type="button" aria-pressed="true">Move signs · On</button>
@@ -11097,6 +11101,62 @@ function greatMovesText(marks, sans){
                      : "No !! or ! moves yet — the engine marks a move !! when it is brilliant and ! when it is great.";
 }
 var engToken = { bot: 0, pz: 0 };
+var sfBestToken = { pz: 0, bot: 0 };
+function sfBestState(kind){
+  if (kind === "bot") return (botBrowse >= 0 && botSnaps[botBrowse]) ? botSnaps[botBrowse].state : botState;
+  if (pzBrowse >= 0 && pzSnaps[pzBrowse]) return pzSnaps[pzBrowse].state;
+  return state;
+}
+/* Options -> Best move by Stockfish, in every mode (puzzles, matches,
+   openings, Play vs bot / two people / analysis): Stockfish picks the
+   best move for the position on screen, the arrow and the two squares
+   show it on the board, and the coach says in simple words why that
+   move is best. When Stockfish has not loaded, the coach's own check
+   picks the move and the line says so honestly. */
+function showStockfishBest(kind){
+  var st = sfBestState(kind);
+  function say(line){ if (kind === "bot") botSay(line); else setFeedback("hint", line); }
+  if (!st){ say("No game on the board yet \u2014 open a puzzle or a game first."); return; }
+  if (!anyLegal(st, st.turn)){ say("The game is over in this position \u2014 there is no move to suggest."); return; }
+  var my = ++sfBestToken[kind];
+  var key = stateKey(st);
+  say("Stockfish is thinking\u2026");
+  var thinkEntry = null;
+  try { thinkEntry = currentCoachEntry(kind); } catch(e){}
+  function show(bestUci, cpW, engineName){
+    if (my !== sfBestToken[kind]) return;
+    var stNow = sfBestState(kind);
+    if (!stNow || stateKey(stNow) !== key) return;
+    var bm = null; try { bm = bestUci ? uciMove(stNow, bestUci) : null; } catch(e){}
+    if (!bm){ say("No best move found for this position."); return; }
+    var san = sanFor(stNow, bm);
+    var fact = ""; try { fact = moveFact(stNow, bm); } catch(e){}
+    var plan = ""; try { plan = movePlan(stNow, bm, true); } catch(e){}
+    var line = engineName + " best move: " + san;
+    if (fact) line += " \u2014 " + fact + ".";
+    if (plan) line += " " + plan;
+    if (cpW != null) line += " " + evalSentence(cpW);
+    if (kind === "bot"){ botHintSq = [bm.from, bm.to]; renderBotSquares(); }
+    else { hintSquares = [bm.from, bm.to]; renderBoard(); }
+    drawBestArrow(kind, bm.from, bm.to);
+    var elBest = $(kind === "bot" ? "botEngBest" : "pzEngBest");
+    if (elBest) elBest.textContent = (engineName === "Stockfish" ? "Best move: " : "Coach's suggestion: ") + san + " \u2014 the arrow on the board shows it.";
+    var replaced = false;
+    try {
+      var host = thinkEntry && (thinkEntry.querySelector(".ch-text") || thinkEntry);
+      if (host && host.textContent && host.textContent.indexOf("thinking") >= 0){ host.textContent = line; replaced = true; scrollCoachBubble(kind); }
+    } catch(e){}
+    if (!replaced) say(line);
+  }
+  if (sfState === "ready" && settings.sfOn){
+    sfEvalFen(stateToFEN(st)).then(function(r){
+      if (r) show(r.best, st.turn === "w" ? r.cp : -r.cp, "Stockfish");
+      else show(bestUciOf(st), heuristicEvalCp(st), "Coach check");
+    });
+  } else {
+    show(bestUciOf(st), heuristicEvalCp(st), "Coach check");
+  }
+}
 function runEnginePanel(kind){
   var st = kind === "bot" ? botState : state;
   var pre = kind === "bot" ? "bot" : "pz";
@@ -14468,6 +14528,7 @@ $("botPgnBtn").addEventListener("click", function(){
     function(){ botFlash("PGN copied — the .pgn file is downloading too."); });
 });
 $("btnPzPgn").addEventListener("click", function(){ exportCurrentPuzzlePGN(); });
+$("btnPzBest").addEventListener("click", function(){ showStockfishBest("pz"); });
 $("btnSavePuzzle").addEventListener("click", function(){
   if (!cur){ setFeedback("think", "Load a puzzle first — then tap Save to keep it."); return; }
   var saveId = (viewerMode && viewerGame) ? matchBookmarkId() : cur.id;
@@ -15075,6 +15136,8 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
   }
   optClick("optNew", "botNewBtn"); optClick("optSave", "botSaveBtn");
   optClick("optPgn", "botPgnBtn"); optClick("optFlip", "botFlipBtn");
+  var osb = el("optSfBest");
+  if (osb) osb.addEventListener("click", function(){ closeOptions(); showStockfishBest("bot"); });
   var os = el("optSettings");
   if (os) os.addEventListener("click", function(){ closeOptions(); try { showView("settings"); } catch(e){} });
   /* Puzzle Options sheet (everything the puzzle screen's Compact
@@ -15094,6 +15157,8 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
   pzOptClick("optPzSave", "btnSavePuzzle"); pzOptClick("optPzPrev", "btnPrev");
   pzOptClick("optPzNext", "btnNavNext");
   pzOptClick("optPzPgn", "btnPzPgn");
+  var opsb = el("optPzSfBest");
+  if (opsb) opsb.addEventListener("click", function(){ closePzOptions(); showStockfishBest("pz"); });
   var opi = el("optPzImportPgn");
   if (opi) opi.addEventListener("click", function(){ closePzOptions(); openPgnDialog(); });
   var pgc = el("pgnCancel"); if (pgc) pgc.addEventListener("click", closePgnDialog);
