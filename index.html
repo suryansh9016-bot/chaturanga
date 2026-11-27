@@ -2904,9 +2904,7 @@
   body.ctl-compact .game-box .action-row button{flex:1 1 0;min-width:0}
   body.ctl-compact #btnSolution,
   body.ctl-compact #btnFlip,
-  body.ctl-compact #btnSavePuzzle,
-  body.ctl-compact #btnPzPgn,
-  body.ctl-compact #btnPzBest{display:none !important}
+  body.ctl-compact #btnSavePuzzle{display:none !important}
   body.ctl-compact .pz-toggles{display:none !important}
   body.ctl-compact .pn-row{display:none !important}
   /* v18: after a puzzle is solved (body.pz-done) the same small
@@ -4406,8 +4404,6 @@
         <button id="btnReset" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Retry</span></button>
         <button id="btnFlip" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v13"/><path d="m4 13 3 3 3-3"/><path d="M17 21V8"/><path d="m14 11 3-3 3 3"/></svg><span>Flip</span></button>
         <button id="btnSavePuzzle" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12a.5.5 0 0 1 .5.5v16.5l-6.5-4-6.5 4V4a.5.5 0 0 1 .5-.5z"/></svg><span>Save</span></button>
-        <button id="btnPzPgn" type="button" aria-label="Export PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg><span>PGN</span></button>
-        <button id="btnPzBest" type="button" aria-label="Best move by Stockfish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg><span>Best</span></button>
       </div>
       <div class="pn-row">
         <button id="btnPrev" type="button">‹ Prev</button>
@@ -4477,7 +4473,6 @@
         <div class="bot-btnrow" style="margin-top:8px">
           <button id="botSaveBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12a.5.5 0 0 1 .5.5v16.5l-6.5-4-6.5 4V4a.5.5 0 0 1 .5-.5z"/></svg><span>Save game</span></button>
           <button id="botPgnBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg><span>Export PGN</span></button>
-          <button id="botBestBtn" type="button" aria-label="Best move by Stockfish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg><span>Best move</span></button>
           <button id="botFlipBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v13"/><path d="m4 13 3 3 3-3"/><path d="M17 21V8"/><path d="m14 11 3-3 3 3"/></svg><span>Flip board</span></button>
         </div>
         <div class="bot-turn" id="botTurnText">Your move.</div>
@@ -4493,7 +4488,6 @@
         <button id="optNew" type="button">New game</button>
         <button id="optSave" type="button">Save game</button>
         <button id="optPgn" type="button">Export PGN</button>
-        <button id="optSfBest" type="button">Best move by Stockfish</button>
         <button id="optFlip" type="button">Flip board</button>
         <button id="optAutoHint" type="button" aria-pressed="true">Auto hint · On</button>
         <button id="optEngine" type="button" aria-pressed="true">Engine panel · Shown</button>
@@ -4518,8 +4512,6 @@
         <button id="optPzPrev" type="button">Previous puzzle</button>
         <button id="optPzNext" type="button">Next puzzle</button>
         <button id="optPzImportPgn" type="button">Import PGN</button>
-        <button id="optPzPgn" type="button">Export PGN</button>
-        <button id="optPzSfBest" type="button">Best move by Stockfish</button>
         <button id="optPzAutoHint" type="button" aria-pressed="true">Auto hint · On</button>
         <button id="optPzEngine" type="button" aria-pressed="true">Engine panel · Shown</button>
         <button id="optPzMarks" type="button" aria-pressed="true">Move signs · On</button>
@@ -7983,7 +7975,6 @@ function renderSquares(){
           // A match (or imported game) on screen: the sign belongs to
           // the game move just stepped to, judged by the engine.
           if (!viewerOnBranch && viewerPly >= 1) pmk = viewerMarks[viewerPly] || null;
-          else if (viewerOnBranch && viewerBranch && viewerBranch.marks) pmk = viewerBranch.marks[viewerPly - viewerBranch.atPly - 1] || null;
         } else {
           var mkIdx = pzBrowse >= 0 ? pzBrowse - 1 : playedSans.length - 1;
           pmk = mkIdx >= 0 ? pzMarks[mkIdx] : null;
@@ -9096,19 +9087,7 @@ $("btnHint").addEventListener("click", function(){
 });
 $("btnLike").addEventListener("click", function(){
   if (!cur){ setFeedback("think", "Load a puzzle first — then tap Like to keep the ones you love."); return; }
-  if (viewerMode && viewerGame){
-    var mid = matchBookmarkId();
-    if (isLiked(mid)){
-      savedStore.liked = savedStore.liked.filter(function(p){ return p.id !== mid; });
-      storeSaved(); syncLikeBtn();
-      setFeedback("think", "Taken out of Liked puzzles.");
-      return;
-    }
-    savedStore.liked.unshift(puzzleRecord(null));
-    storeSaved(); syncLikeBtn();
-    setFeedback("ok", "Liked \u2014 this exact position is saved in the Save tab, in Liked puzzles.");
-    return;
-  }
+  if (viewerMode){ setFeedback("think", "This game already lives in Save \u2192 Matches \u2014 no need to Like it."); return; }
   if (isLiked(cur.id)){
     savedStore.liked = savedStore.liked.filter(function(p){ return p.id !== cur.id; });
     storeSaved(); syncLikeBtn();
@@ -11102,62 +11081,6 @@ function greatMovesText(marks, sans){
                      : "No !! or ! moves yet — the engine marks a move !! when it is brilliant and ! when it is great.";
 }
 var engToken = { bot: 0, pz: 0 };
-var sfBestToken = { pz: 0, bot: 0 };
-function sfBestState(kind){
-  if (kind === "bot") return (botBrowse >= 0 && botSnaps[botBrowse]) ? botSnaps[botBrowse].state : botState;
-  if (pzBrowse >= 0 && pzSnaps[pzBrowse]) return pzSnaps[pzBrowse].state;
-  return state;
-}
-/* Options -> Best move by Stockfish, in every mode (puzzles, matches,
-   openings, Play vs bot / two people / analysis): Stockfish picks the
-   best move for the position on screen, the arrow and the two squares
-   show it on the board, and the coach says in simple words why that
-   move is best. When Stockfish has not loaded, the coach's own check
-   picks the move and the line says so honestly. */
-function showStockfishBest(kind){
-  var st = sfBestState(kind);
-  function say(line){ if (kind === "bot") botSay(line); else setFeedback("hint", line); }
-  if (!st){ say("No game on the board yet \u2014 open a puzzle or a game first."); return; }
-  if (!anyLegal(st, st.turn)){ say("The game is over in this position \u2014 there is no move to suggest."); return; }
-  var my = ++sfBestToken[kind];
-  var key = stateKey(st);
-  say("Stockfish is thinking\u2026");
-  var thinkEntry = null;
-  try { thinkEntry = currentCoachEntry(kind); } catch(e){}
-  function show(bestUci, cpW, engineName){
-    if (my !== sfBestToken[kind]) return;
-    var stNow = sfBestState(kind);
-    if (!stNow || stateKey(stNow) !== key) return;
-    var bm = null; try { bm = bestUci ? uciMove(stNow, bestUci) : null; } catch(e){}
-    if (!bm){ say("No best move found for this position."); return; }
-    var san = sanFor(stNow, bm);
-    var fact = ""; try { fact = moveFact(stNow, bm); } catch(e){}
-    var plan = ""; try { plan = movePlan(stNow, bm, true); } catch(e){}
-    var line = engineName + " best move: " + san;
-    if (fact) line += " \u2014 " + fact + ".";
-    if (plan) line += " " + plan;
-    if (cpW != null) line += " " + evalSentence(cpW);
-    if (kind === "bot"){ botHintSq = [bm.from, bm.to]; renderBotSquares(); }
-    else { hintSquares = [bm.from, bm.to]; renderBoard(); }
-    drawBestArrow(kind, bm.from, bm.to);
-    var elBest = $(kind === "bot" ? "botEngBest" : "pzEngBest");
-    if (elBest) elBest.textContent = (engineName === "Stockfish" ? "Best move: " : "Coach's suggestion: ") + san + " \u2014 the arrow on the board shows it.";
-    var replaced = false;
-    try {
-      var host = thinkEntry && (thinkEntry.querySelector(".ch-text") || thinkEntry);
-      if (host && host.textContent && host.textContent.indexOf("thinking") >= 0){ host.textContent = line; replaced = true; scrollCoachBubble(kind); }
-    } catch(e){}
-    if (!replaced) say(line);
-  }
-  if (sfState === "ready" && settings.sfOn){
-    sfEvalFen(stateToFEN(st)).then(function(r){
-      if (r) show(r.best, st.turn === "w" ? r.cp : -r.cp, "Stockfish");
-      else show(bestUciOf(st), heuristicEvalCp(st), "Coach check");
-    });
-  } else {
-    show(bestUciOf(st), heuristicEvalCp(st), "Coach check");
-  }
-}
 function runEnginePanel(kind){
   var st = kind === "bot" ? botState : state;
   var pre = kind === "bot" ? "bot" : "pz";
@@ -13265,56 +13188,21 @@ function botFlash(text){
   botSetTurn(text);
   setTimeout(function(){ if (!botOver && !botBusy) botSetTurn("Your move."); }, 1800);
 }
-function plyInfo(i, fen){
-  var parts = String(fen || START_FEN).split(" ");
-  var side = parts[1] || "w";
-  var full = parseInt(parts[5], 10) || 1;
-  var half = i + (side === "b" ? 1 : 0);
-  return { num: full + Math.floor(half / 2), white: half % 2 === 0 };
-}
-function sansMovetext(sans, fen){
-  var out = [];
-  for (var i = 0; i < sans.length; i++){
-    var t = plyInfo(i, fen);
-    out.push(((t.white || i === 0) ? t.num + (t.white ? ". " : "... ") : "") + sans[i]);
-  }
-  return out.join(" ");
-}
-function viewerMovetext(g, branch){
-  var fen = g.startFen || START_FEN;
-  var sans = g.sans || [];
-  if (!branch || !branch.sans || !branch.sans.length) return sansMovetext(sans, fen);
-  var out = [], forceNext = false;
-  for (var i = 0; i < sans.length; i++){
-    var t = plyInfo(i, fen);
-    out.push(((t.white || forceNext) ? t.num + (t.white ? ". " : "... ") : "") + sans[i]);
-    forceNext = false;
-    if (i === branch.atPly){
-      var v = [];
-      for (var j = 0; j < branch.sans.length; j++){
-        var tv = plyInfo(branch.atPly + j, fen);
-        v.push(((tv.white || j === 0) ? tv.num + (tv.white ? ". " : "... ") : "") + branch.sans[j]);
-      }
-      out.push("(" + v.join(" ") + ")");
-      forceNext = true;
-    }
-  }
-  return out.join(" ");
-}
 function buildPGN(rec){
   var d = new Date(rec.dateISO);
   function p2(n){ return (n < 10 ? "0" : "") + n; }
   var ds = isNaN(d.getTime()) ? "????.??.??" : d.getFullYear() + "." + p2(d.getMonth() + 1) + "." + p2(d.getDate());
-  function clean(x){ return String(x || "").replace(/"/g, ""); }
-  var coach = clean(rec.coachName || "Coach");
-  var ev = clean(rec.event || ("Chaturanga \u2014 You vs " + coach));
-  var white = clean(rec.white || "You");
-  var black = clean(rec.black || coach);
-  var result = rec.result || "*";
-  var h = '[Event "' + ev + '"]\n[Site "Chaturanga"]\n[Date "' + ds + '"]\n[White "' + white + '"]\n[Black "' + black + '"]\n[Result "' + result + '"]\n';
-  if (rec.fen && rec.fen !== START_FEN) h += '[SetUp "1"]\n[FEN "' + clean(rec.fen) + '"]\n';
-  var mt = rec.movetext || sansMovetext(rec.sans || [], rec.fen || START_FEN);
-  return h + "\n" + mt + " " + result + "\n";
+  var coach = String(rec.coachName || "Coach").replace(/"/g, "");
+  var mt = [];
+  for (var i = 0; i < rec.sans.length; i += 2)
+    mt.push((i / 2 + 1) + ". " + rec.sans[i] + (rec.sans[i + 1] ? " " + rec.sans[i + 1] : ""));
+  return '[Event "Chaturanga — You vs ' + coach + '"]\n'
+    + '[Site "Chaturanga"]\n'
+    + '[Date "' + ds + '"]\n'
+    + '[White "You"]\n'
+    + '[Black "' + coach + '"]\n'
+    + '[Result "' + (rec.result || "*") + '"]\n\n'
+    + mt.join(" ") + " " + (rec.result || "*") + "\n";
 }
 function exportPGN(rec, notify){
   var pgn = buildPGN(rec);
@@ -13330,54 +13218,11 @@ function exportPGN(rec, notify){
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
     a.href = url;
-    a.download = rec.fileName || ("chaturanga-game-" + savedDateText(rec.dateISO).replace(/ /g, "-") + ".pgn");
+    a.download = "chaturanga-game-" + savedDateText(rec.dateISO).replace(/ /g, "-") + ".pgn";
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
   } catch(e){}
   if (notify) notify();
-}
-function replayUciSans(fen, ucis){
-  var st; try { st = parseFEN(fen); } catch(e){ return []; }
-  var sans = [];
-  for (var i = 0; i < (ucis || []).length; i++){
-    var mv = uciMove(st, ucis[i]);
-    if (!mv) break;
-    sans.push(sanFor(st, mv));
-    st = applyMove(st, mv);
-  }
-  return sans;
-}
-function puzzlePGNRecord(p){
-  var ucis = (p.moves || []).map(function(m){ return typeof m === "string" ? m : m.uci; });
-  var youWhite = p.playerColor !== "b";
-  return { dateISO: new Date().toISOString(), event: p.titleText || "Chaturanga puzzle",
-    white: youWhite ? (p.youName || "You") : (p.oppName || "Opponent"),
-    black: youWhite ? (p.oppName || "Opponent") : (p.youName || "You"),
-    fen: p.fen, sans: replayUciSans(p.fen, ucis), result: "*", fileName: "chaturanga-puzzle.pgn" };
-}
-function viewerPGNRecord(g, branch){
-  var slug = String(g.title || "match").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "match";
-  return { dateISO: new Date().toISOString(), event: g.title || "Chaturanga match",
-    white: g.white || "White", black: g.black || "Black", fen: g.startFen || START_FEN,
-    movetext: viewerMovetext(g, branch), result: g.result || "*", fileName: slug + ".pgn" };
-}
-function exportCurrentPuzzlePGN(){
-  if (viewerMode && viewerGame){
-    exportPGN(viewerPGNRecord(viewerGame, viewerBranch), function(){ setFeedback("ok", "PGN copied \u2014 the .pgn file is downloading too."); });
-    return;
-  }
-  if (!cur){ setFeedback("think", "Load a puzzle first \u2014 then tap Export PGN."); return; }
-  exportPGN(puzzlePGNRecord(cur), function(){ setFeedback("ok", "PGN copied \u2014 the .pgn file is downloading too."); });
-}
-function exportSavedPuzzlePGN(p, b){
-  var done = function(){ if (b){ b.textContent = "Copied \u2713"; setTimeout(function(){ b.textContent = "PGN"; }, 1600); } };
-  if (p.isMatch){
-    var g = null; viewerGameList().forEach(function(x){ if (x.id === p.matchId) g = x; });
-    if (!g) return;
-    exportPGN(viewerPGNRecord(g, (p.branchSans && p.branchSans.length) ? { atPly: p.branchAt || 0, sans: p.branchSans } : null), done);
-    return;
-  }
-  exportPGN(puzzlePGNRecord(p), done);
 }
 function saveCurrentGame(note){
   if (!botStarted || !botSans.length){ botFlash("Play a move first — then tap Save."); return; }
@@ -13440,61 +13285,7 @@ function openSavedGame(rec){
     } else botSetTurn(botFreeMode() ? (botState.turn === "w" ? "White to move." : "Black to move.") : "Your move.");
   }
 }
-function matchBookmarkId(){
-  if (!viewerGame) return null;
-  var b = (viewerOnBranch && viewerBranch) ? viewerBranch.sans.slice(0, viewerPly - viewerBranch.atPly) : null;
-  return "match:" + viewerGame.id + ":" + viewerPly + (b && b.length ? ":b" + viewerBranch.atPly + ":" + b.join(".") : "");
-}
-function matchBookmarkRecord(note){
-  var b = (viewerOnBranch && viewerBranch) ? viewerBranch.sans.slice(0, viewerPly - viewerBranch.atPly) : null;
-  var pos = viewerPos();
-  return { id: matchBookmarkId(), dateISO: new Date().toISOString(),
-    note: (typeof note === "string" && note) ? note : null,
-    isMatch: true, matchId: viewerGame.id, matchPly: viewerPly,
-    branchAt: (b && b.length) ? viewerBranch.atPly : null,
-    branchSans: (b && b.length) ? b : null,
-    titleText: viewerGame.title, folder: "Saved matches",
-    fen: pos ? stateToFEN(pos.state) : (viewerGame.startFen || START_FEN),
-    startFen: viewerGame.startFen || START_FEN,
-    rating: 0, themes: [], moves: [], playerColor: "w",
-    youName: viewerGame.white || "White", oppName: viewerGame.black || "Black",
-    fromPack: null, daily: false, isOpening: false };
-}
-function matchBookmarkSub(p){
-  if (!p.matchPly) return "Match \u00b7 start of the game";
-  var num = Math.ceil(p.matchPly / 2);
-  return "Match \u00b7 position after move " + num + (p.matchPly % 2 === 1 ? " (White)" : " (Black)") + (p.branchSans && p.branchSans.length ? " \u00b7 your tried line" : "");
-}
-function openMatchBookmark(rec){
-  openViewerGameById(rec.matchId);
-  if (!viewerGame || viewerGame.id !== rec.matchId){ setFeedback("think", "That match is not in Matches any more \u2014 it may have been deleted."); return; }
-  if (rec.branchSans && rec.branchSans.length && viewerMainSnaps){
-    var at = Math.max(0, Math.min(viewerEnd(), rec.branchAt || 0));
-    var base = viewerMainSnaps[at];
-    if (!base){ viewerGoTo(rec.matchPly || 0); return; }
-    viewerBranch = { atPly: at, sans: [], snaps: [base], marks: {}, judging: {} };
-    viewerOnBranch = true;
-    viewerPly = at;
-    var st = base.state, capW = base.capW.slice(), capB = base.capB.slice();
-    for (var i = 0; i < rec.branchSans.length; i++){
-      var mv = null; try { mv = matchResolve(st, rec.branchSans[i]); } catch(e){}
-      if (!mv) break;
-      var mover = st.turn;
-      var cap = viewerCaptureCode(st, mv);
-      st = applyMove(st, mv);
-      if (cap){ if (mover === "w") capW.push(cap); else capB.push(cap); }
-      viewerBranch.sans.push(rec.branchSans[i]);
-      viewerBranch.snaps.push({ state: cloneState(st), capW: capW.slice(), capB: capB.slice(), last: { from: mv.from, to: mv.to } });
-      viewerPly++;
-    }
-    viewerSync(null);
-    viewerCoachLine();
-  } else {
-    viewerGoTo(rec.matchPly || 0);
-  }
-}
 function puzzleRecord(note){
-  if (viewerMode && viewerGame) return matchBookmarkRecord(note);
   var rec = {
     id: cur.id, dateISO: new Date().toISOString(),
     note: (typeof note === "string" && note) ? note : null,
@@ -13519,8 +13310,7 @@ function saveCurrentPuzzle(note){
   savedStore.puzzles = savedStore.puzzles.filter(function(p){ return p.id !== rec.id; });
   savedStore.puzzles.unshift(rec);
   storeSaved();
-  if (rec.isMatch) setFeedback("ok", "Match saved at this exact position" + (rec.note ? ", with your note" : "") + " — find it any time in the Save tab, in Saved matches.");
-  else setFeedback("ok", "Puzzle saved in the " + rec.folder + " folder" + (rec.note ? ", with your note" : "") + " — find it any time in the Save tab.");
+  setFeedback("ok", "Puzzle saved in the " + rec.folder + " folder" + (rec.note ? ", with your note" : "") + " — find it any time in the Save tab.");
 }
 /* ---- Liked puzzles: the heart (Like) button on the puzzle screen ----
    Liking a puzzle keeps a copy of it in the Save tab's own "Liked
@@ -13534,17 +13324,12 @@ function isLiked(id){
 }
 function syncLikeBtn(){
   var b = $("btnLike"); if (!b) return;
-  var on = (viewerMode && viewerGame) ? isLiked(matchBookmarkId()) : !!(cur && isLiked(cur.id));
+  var on = !!(cur && isLiked(cur.id));
   b.classList.toggle("liked", on);
   b.setAttribute("aria-pressed", on ? "true" : "false");
   var sp = b.querySelector("span"); if (sp) sp.textContent = on ? "Liked" : "Like";
 }
 function openSavedPuzzle(rec){
-  if (rec.isMatch){ openMatchBookmark(rec); return; }
-  if (!rec.moves || !rec.moves.length){
-    var vg = null; viewerGameList().forEach(function(x){ if (x.id === rec.id) vg = x; });
-    if (vg){ openViewerGame(vg); return; }
-  }
   var p = {
     id: rec.id, fen: rec.fen, rating: rec.rating || 0, plays: rec.plays || 0,
     fromPack: rec.fromPack || null, folder: rec.folder || null,
@@ -13627,14 +13412,13 @@ function renderSavedList(){
       + '<div class="save-folder-body">';
     h += items.map(function(p){
       var name = p.titleText || themeLabel(primaryTheme(p.themes || []));
-      var sub = p.isMatch ? matchBookmarkSub(p) : p.isOpening ? "Opening line · tap to play it again"
+      var sub = p.isOpening ? "Opening line · tap to play it again"
         : "Rating " + p.rating + ((p.themes && p.themes.length) ? " · " + p.themes.map(themeLabel).join(", ") : "");
       return '<div class="saved-item">'
         + '<button class="saved-main" type="button" data-open-puzzle="' + escAttr(p.id) + '"><span class="nm">' + escHtml(name) + '</span>'
         + '<span class="sub">' + escHtml(sub) + '</span>'
         + (p.note ? '<span class="saved-note"><b>Your note</b>' + escHtml(p.note) + '</span>' : '') + '</button>'
         + '<button class="saved-act" type="button" data-note-puzzle="' + escAttr(p.id) + '">Note</button>'
-        + '<button class="saved-act" type="button" data-pgn-puzzle="' + escAttr(p.id) + '">PGN</button>'
         + '<button class="saved-act del" type="button" data-del-puzzle="' + escAttr(p.id) + '">Delete</button></div>';
     }).join("");
     return h + '</div></div>';
@@ -13645,12 +13429,11 @@ function renderSavedList(){
   var lkOpen = saveFolderOpen["__liked"] === true;
   var lkItems = savedStore.liked.map(function(p){
     var name = p.titleText || themeLabel(primaryTheme(p.themes || []));
-    var sub = p.isMatch ? matchBookmarkSub(p) : p.isOpening ? "Opening line · tap to play it again"
+    var sub = p.isOpening ? "Opening line · tap to play it again"
       : "Rating " + p.rating + ((p.themes && p.themes.length) ? " · " + p.themes.map(themeLabel).join(", ") : "");
     return '<div class="saved-item">'
       + '<button class="saved-main" type="button" data-open-liked="' + escAttr(p.id) + '"><span class="nm">' + escHtml(name) + '</span>'
       + '<span class="sub">' + escHtml(sub) + '</span></button>'
-      + '<button class="saved-act" type="button" data-pgn-liked="' + escAttr(p.id) + '">PGN</button>'
       + '<button class="saved-act del" type="button" data-unlike="' + escAttr(p.id) + '">Unlike</button></div>';
   }).join("");
   if (lBox) lBox.innerHTML = noLiked ? "" : '<div class="save-folder' + (lkOpen ? "" : " closed") + '">'
@@ -13705,11 +13488,6 @@ function renderSavedList(){
   Array.prototype.forEach.call(pBox.querySelectorAll("[data-open-puzzle]"), function(b){
     b.addEventListener("click", function(){ var p = findPuzzle(b.getAttribute("data-open-puzzle")); if (p) openSavedPuzzle(p); });
   });
-  Array.prototype.forEach.call(pBox.querySelectorAll("[data-pgn-puzzle]"), function(b){
-    b.addEventListener("click", function(){
-      var p = findPuzzle(b.getAttribute("data-pgn-puzzle")); if (p) exportSavedPuzzlePGN(p, b);
-    });
-  });
   Array.prototype.forEach.call(pBox.querySelectorAll("[data-del-puzzle]"), function(b){
     b.addEventListener("click", function(){
       var id = b.getAttribute("data-del-puzzle");
@@ -13726,11 +13504,6 @@ function renderSavedList(){
     });
     Array.prototype.forEach.call(lBox.querySelectorAll("[data-open-liked]"), function(b){
       b.addEventListener("click", function(){ var p = findLiked(b.getAttribute("data-open-liked")); if (p) openSavedPuzzle(p); });
-    });
-    Array.prototype.forEach.call(lBox.querySelectorAll("[data-pgn-liked]"), function(b){
-      b.addEventListener("click", function(){
-        var p = findLiked(b.getAttribute("data-pgn-liked")); if (p) exportSavedPuzzlePGN(p, b);
-      });
     });
     Array.prototype.forEach.call(lBox.querySelectorAll("[data-unlike]"), function(b){
       b.addEventListener("click", function(){
@@ -13754,7 +13527,6 @@ function renderSavedList(){
       return '<div class="saved-item">'
         + '<button class="saved-main" type="button" data-open-match="' + escAttr(g.id) + '"><span class="nm">' + escHtml(g.title) + '</span>'
         + '<span class="sub">' + escHtml(g.imported ? ((g.sub || "") + " \u00b7 tap to watch the game") : (g.listSub || g.sub || "")) + '</span></button>'
-        + '<button class="saved-act" type="button" data-pgn-match="' + escAttr(g.id) + '">PGN</button>'
         + del + '</div>';
     }).join("");
     mBox.innerHTML = '<div class="save-folder' + (mtOpen ? "" : " closed") + '">'
@@ -13771,14 +13543,6 @@ function renderSavedList(){
     });
     Array.prototype.forEach.call(mBox.querySelectorAll("[data-open-match]"), function(b){
       b.addEventListener("click", function(){ openViewerGameById(b.getAttribute("data-open-match")); });
-    });
-    Array.prototype.forEach.call(mBox.querySelectorAll("[data-pgn-match]"), function(b){
-      b.addEventListener("click", function(){
-        var gid = b.getAttribute("data-pgn-match");
-        var gg = null; viewerGameList().forEach(function(x){ if (x.id === gid) gg = x; });
-        if (!gg) return;
-        exportPGN(viewerPGNRecord(gg, null), function(){ b.textContent = "Copied \u2713"; setTimeout(function(){ b.textContent = "PGN"; }, 1600); });
-      });
     });
     Array.prototype.forEach.call(mBox.querySelectorAll("[data-del-match]"), function(b){
       b.addEventListener("click", function(){
@@ -13856,7 +13620,12 @@ var MATCH_LIBRARY = [
     notes: {"1": "White grabs the center and opens lines for his Queen and Bishop.", "2": "Black fights for the d4 square and avoids a symmetrical game.", "3": "Develops the Knight and controls the center.", "4": "Develops the Knight and guards d4 and e5.", "5": "Develops the Bishop and puts pressure on Black's c6 Knight.", "6": "Opens a diagonal for Black's dark-squared Bishop and prepares ...d5.", "7": "White castles early to keep his King safe.", "8": "Develops the Knight so it can recapture on c6 if White trades.", "9": "Moves the Rook to the e-file to support the e4 pawn.", "10": "Attacks White's Bishop to force it to retreat or trade.", "11": "Retreats the Bishop to safety where it still guards the kingside.", "12": "Black strikes the center to challenge White's e4 pawn.", "13": "White trades pawns to open the e-file.", "14": "Black recaptures with the Knight to keep it active in the center.", "15": "White pushes in the center to open lines for his pieces.", "16": "Black pulls the Knight back to attack d4 and prepare to develop.", "17": "Develops the Bishop and adds a defender to the d4 pawn.", "18": "Black trades pawns to open the center.", "19": "White recaptures with the Knight, placing it on an active central square.", "20": "Develops the Bishop and connects Black's pieces.", "21": "White grabs space on the queenside and stops Black from playing ...b5.", "22": "Black trades Knights to reduce White's central control.", "23": "White recaptures with the Bishop, aiming it right at Black's kingside.", "24": "Places the Bishop on a strong diagonal pointing toward White's King.", "25": "Develops the last minor piece and controls the center.", "26": "Develops the Bishop so Black can castle.", "27": "Prepares to push b4 later and stops Black's pieces from using b4.", "28": "Black stops White from pushing b4 easily.", "29": "Moves the Queen up to connect the Rooks and prepare to swing to the kingside.", "30": "Black castles to put his King in safety.", "31": "Brings the last Rook to the open d-file.", "32": "Moves the Queen out of the d-file so Black's Rooks can connect.", "33": "Attacks Black's Queen to force it to move to a worse square.", "34": "Moves the Queen out of danger and attacks White's b2 pawn.", "35": "Brings the Queen to the kingside, eyeing the g7 pawn next to Black's King.", "36": "Brings the Rook to the d-file to challenge White's Rook.", "37": "White trades Rooks to clear the d-file.", "38": "Black recaptures with the Queen.", "39": "Attacks Black's Queen immediately to force it to move again.", "40": "Black moves the Queen back to safety and eyes the b2 pawn.", "41": "Attacks Black's Queen again, forcing it to leave the defense of the board.", "42": "Black moves the Queen to an active square, trying to attack White's pawns.", "43": "Steps up the Rook to threaten Nd5, which would trap or attack Black's Queen.", "44": "Black moves the Queen away from the Rook's line of fire.", "45": "Pushes the pawn to threaten b5, which would kick Black's c6 Bishop away.", "46": "Black takes the pawn to stop White from pushing b5 right away.", "47": "White recaptures and immediately threatens b5 again.", "48": "Black attacks White's Queen to try to break out of the pressure.", "49": "Moves the Queen to the center and attacks Black's undefended Knight on h5.", "50": "Black attacks White's Queen and Bishop to try to save his Knight.", "51": "White takes the free Knight.", "52": "Black takes White's Bishop in return.", "53": "White recaptures the Bishop.", "54": "Black takes White's Knight to keep material equal, but his King is now weaker.", "55": "White attacks Black's Rook on a8 and threatens to win it.", "56": "Black pulls the Rook back to defend the back rank.", "57": "Moves the Queen to protect the b4 pawn and keep Black's pieces tied down.", "58": "Attacks White's Rook on d4 to force it to move.", "59": "Drops the Rook back to safety while keeping control of the d-file.", "60": "Creates a breathing square for Black's King so he cannot get back-rank mated.", "61": "Attacks Black's Bishop to force it off the strong c6 square.", "62": "Moves the Bishop to the center where it stays active.", "63": "Moves the Queen into Black's camp to attack the e5 pawn and lock down the kingside.", "64": "Pushes the pawn to keep White from advancing on the kingside.", "65": "Fixes Black's pawns and gives White's King a safe breathing square.", "66": "Moves the Bishop back to guard the kingside.", "67": "Attacks Black's e5 pawn so White can win it.", "68": "Black attacks White's f1 Bishop to try to create counterplay.", "69": "White wins the e5 pawn.", "70": "Attacks White's Rook on d5 to push it back.", "71": "Moves the Rook to safety while defending the c4 pawn.", "72": "Brings the Rook to the open a-file to threaten ...Ra1.", "73": "Brings the Queen back to defend the back rank and the f1 Bishop.", "74": "Moves the King to a safer square.", "75": "Attacks Black's Queen to kick it out of White's camp.", "76": "Moves the Queen to safety and keeps it active.", "77": "Centralizes the Queen and attacks Black's b7 pawn.", "78": "Black offers a Rook trade to relieve the pressure.", "79": "White trades Rooks.", "80": "Black recaptures with the Queen.", "81": "Pushes the pawn forward so White's two queenside pawns can march together.", "82": "Black attacks the c5 pawn to try to stop it.", "83": "White takes the b7 pawn, leaving two unstoppable passed pawns.", "84": "Black pins White's f1 Bishop and threatens ...Bc4 to win it.", "85": "White ignores the Bishop threat and pushes his passed pawn toward promotion.", "86": "Black attacks the pinned f1 Bishop to win it.", "87": "White moves the Queen to guard the f3 square and support his pawns.", "88": "Black wins the Bishop with check.", "89": "White steps the King out of check safely.", "90": "Black moves the Queen back to try to stop White's b-pawn.", "91": "Pushes the pawn one square away from becoming a Queen.", "92": "Black tries to stop the pawns from advancing.", "93": "Pushes the second pawn forward so both pawns protect each other.", "94": "Black attacks White's Queen and tries to block the pawns.", "95": "Moves the Queen to safety while threatening Qb8 and promotion; Black resigns because he cannot stop the pawns."} },
   { id: "fedoseev-carlsen-2021", head: "Fedoseev vs Carlsen", listName: "Fedoseev vs Carlsen \u2014 World Cup 2021 \u00b7 0-1", listSub: "FIDE World Cup, Sochi 2021 \u00b7 41 moves \u00b7 Black won 0\u20131 \u00b7 tap to watch the game", sub: "FIDE World Cup \u00b7 2021 \u00b7 Vladimir Fedoseev played White, Magnus Carlsen played Black \u00b7 Black won 0\u20131", whiteShort: "Fedoseev", blackShort: "Carlsen", endText: "Fedoseev resigned \u00b7 Black wins 0\u20131",
     sans: ["d4", "Nf6", "c4", "g6", "h4", "Bg7", "Nc3", "d6", "e4", "Nc6", "d5", "Ne5", "Be2", "h5", "Bf4", "O-O", "Nf3", "Nxf3+", "gxf3", "c6", "Qd2", "cxd5", "cxd5", "Kh7", "a4", "Nd7", "a5", "f5", "Ra3", "Ne5", "Be3", "f4", "Bxf4", "Bd7", "Nd1", "Rxf4", "Qxf4", "Bh6", "Qg3", "Qf8", "Ne3", "Bf4", "Qg2", "Rc8", "Rc3", "Rxc3", "bxc3", "Qc8", "c4", "b5", "axb6", "axb6", "Qg1", "Qa8", "Kf1", "Qa2", "Ng2", "Qa1+", "Ne1", "Qb2", "Ng2", "Qc1+", "Ne1", "Qd2", "Qg2", "Kg7", "Rg1", "Kf8", "Qh1", "e6", "Rg3", "exd5", "exd5", "Bf5", "Rg1", "Kf7", "Rg3", "Nd7", "Rg5", "Bxg5", "hxg5", "Ne5"],
-    notes: {"1": "White takes control of the centre and opens a path for his Bishop.", "2": "Black develops his Knight and controls e4.", "3": "White takes more central space and strengthens his control of d5.", "4": "Black prepares to develop his Bishop to g7, where it will attack the centre from a distance.", "5": "White advances his h-pawn to threaten a kingside attack and potentially push it further towards Black's King.", "6": "Black develops his Bishop and places pressure on the long diagonal towards White's centre.", "7": "Develops the Knight and prepares to support the e4 pawn push.", "8": "Black controls e5 and opens a path for his c8 Bishop.", "9": "White builds a strong pawn centre with pawns on d4 and e4.", "10": "Develops the Knight and attacks White's d4 pawn.", "11": "White attacks the Knight on c6 and forces it to move.", "12": "Black moves the Knight to e5, where it occupies a strong central square.", "13": "Develops the Bishop and prepares to castle.", "14": "Black stops White from advancing his h-pawn to h5 and gaining more kingside space.", "15": "White develops his Bishop and attacks Black's Knight on e5.", "16": "Black castles to protect his King.", "17": "Develops the Knight and attacks Black's Knight on e5 again.", "18": "Black exchanges the Knight and gives check, forcing White to recapture.", "19": "White recaptures with the g-pawn, opening the g-file but weakening the pawns protecting his King.", "20": "Black attacks White's d5 pawn, trying to break down his central pawn structure.", "21": "White connects his Rooks and prepares to exchange Black's strong Bishop on g7.", "22": "Black captures the d5 pawn to open the c-file for his Rook.", "23": "White recaptures and keeps his pawn on d5, maintaining control of the centre.", "24": "Black moves his King away from the g-file and protects his g6 pawn.", "25": "White advances his a-pawn to gain queenside space and prevent Black from easily advancing b5.", "26": "Black moves his Knight away to prepare the ...f5 pawn break and a possible return to e5.", "27": "White pushes again to restrict Black's queenside pawns.", "28": "Black attacks White's central pawn structure, trying to break it open and create attacking chances.", "29": "White lifts his Rook to the third rank so it can defend the kingside or move across to another file.", "30": "Black brings his Knight back to e5, where it attacks important central squares.", "31": "White retreats his Bishop to protect important central squares and keep it away from Black's attacking pawns.", "32": "Black advances the pawn to attack White's Bishop on e3 and gain more space.", "33": "White captures the attacking pawn instead of allowing it to push further and restrict his Bishop.", "34": "Black develops his Bishop and prepares to use his Rook on the open c-file.", "35": "White moves his Knight away from the centre, hoping to bring it back through f2 or e3 to improve his defence.", "36": "Carlsen sacrifices his Rook for White's Bishop, removing an important defender and giving his pieces greater control over the dark squares.", "37": "White captures the Rook with his Queen.", "38": "Black attacks White's Queen with his Bishop, forcing it to move and giving Black time to improve his position.", "39": "White moves his Queen out of the Bishop's attack.", "40": "Black brings his Queen towards the kingside and supports his Bishop's attacking position.", "41": "White brings his Knight towards the centre, hoping to challenge Black's control of important squares.", "42": "Black attacks White's Queen again with his Bishop, forcing another retreat.", "43": "White moves his Queen away from the Bishop's attack, but it becomes passive and has fewer useful squares.", "44": "Black brings his Rook to the open c-file, preparing to control the file and invade White's camp.", "45": "White places his Rook on c3 to challenge Black's Rook and try to exchange the active pieces.", "46": "Black exchanges Rooks, removing White's defender and preparing to invade with his Queen.", "47": "White recaptures, but his queenside pawns are now doubled and easier to attack.", "48": "Black attacks the weak c3 pawn with his Queen and prepares to invade White's queenside.", "49": "White advances the c-pawn to c4, moving it out of the Queen's attack on the c-file.", "50": "Black attacks White's c4 pawn, trying to break open the queenside.", "51": "White captures Black's b-pawn en passant, removing the pawn that was attacking his queenside.", "52": "Black recaptures with the a-pawn, opening the a-file for his Queen.", "53": "White retreats his Queen to protect his position, but it becomes even less active.", "54": "Black brings his Queen onto the open a-file, preparing to enter White's position from the side.", "55": "White moves his King away from the back rank, trying to escape the pressure.", "56": "Black's Queen invades the second rank, attacking White's pawns and restricting his pieces.", "57": "White attacks Black's Bishop on f4, hoping to force it away and reduce Black's control of the board.", "58": "Black gives check, forcing White to move his Knight back to block the check.", "59": "White blocks the check with his Knight because his King cannot escape safely.", "60": "Black moves his Queen back to b2, continuing to attack White's position and restricting his pieces.", "61": "White attacks the Bishop again, trying to force it away from its powerful position.", "62": "Black gives another check, forcing White's Knight to block the same way again.", "63": "White blocks the check again because moving the King would leave him in danger.", "64": "Black places his Queen on d2, attacking important squares and making it extremely difficult for White to free his pieces.", "65": "White moves his Queen to make room for his Rook to reach the g-file.", "66": "Black moves his King forward, improving his position while White remains restricted.", "67": "White moves his Rook to the g-file, hoping to create some counterplay against Black's King.", "68": "Black moves his King to safety and keeps control of the position.", "69": "White retreats his Queen to h1, but it has very little influence on the game.", "70": "Black attacks White's d5 pawn and prepares to open the centre for his remaining Bishop.", "71": "White moves his Rook across, trying to create an escape route for his pieces.", "72": "Black captures the d5 pawn, opening the centre and creating a path for his Bishop.", "73": "White recaptures the pawn to maintain some central control.", "74": "Black develops his Bishop to f5, attacking important squares and increasing pressure on White's position.", "75": "White retreats his Rook, unable to find a useful way to escape Black's control.", "76": "Black brings his King closer to the centre while keeping it safe.", "77": "White moves his Rook back again, still unable to create any meaningful threats.", "78": "Black pulls his Knight back from e5 to stay flexible and open lines for his pieces.", "79": "White tries to activate his Rook one last time.", "80": "Black captures the Rook with his Bishop, finally winning the exchange.", "81": "White recaptures the Bishop with his h-pawn.", "82": "Black places his Knight on e5, strengthening his control of the board. White resigns because he has no realistic way to free his pieces or stop Black's threats."} }
+    notes: {"1": "White takes control of the centre and opens a path for his Bishop.", "2": "Black develops his Knight and controls e4.", "3": "White takes more central space and strengthens his control of d5.", "4": "Black prepares to develop his Bishop to g7, where it will attack the centre from a distance.", "5": "White advances his h-pawn to threaten a kingside attack and potentially push it further towards Black's King.", "6": "Black develops his Bishop and places pressure on the long diagonal towards White's centre.", "7": "Develops the Knight and prepares to support the e4 pawn push.", "8": "Black controls e5 and opens a path for his c8 Bishop.", "9": "White builds a strong pawn centre with pawns on d4 and e4.", "10": "Develops the Knight and attacks White's d4 pawn.", "11": "White attacks the Knight on c6 and forces it to move.", "12": "Black moves the Knight to e5, where it occupies a strong central square.", "13": "Develops the Bishop and prepares to castle.", "14": "Black stops White from advancing his h-pawn to h5 and gaining more kingside space.", "15": "White develops his Bishop and attacks Black's Knight on e5.", "16": "Black castles to protect his King.", "17": "Develops the Knight and attacks Black's Knight on e5 again.", "18": "Black exchanges the Knight and gives check, forcing White to recapture.", "19": "White recaptures with the g-pawn, opening the g-file but weakening the pawns protecting his King.", "20": "Black attacks White's d5 pawn, trying to break down his central pawn structure.", "21": "White connects his Rooks and prepares to exchange Black's strong Bishop on g7.", "22": "Black captures the d5 pawn to open the c-file for his Rook.", "23": "White recaptures and keeps his pawn on d5, maintaining control of the centre.", "24": "Black moves his King away from the g-file and protects his g6 pawn.", "25": "White advances his a-pawn to gain queenside space and prevent Black from easily advancing b5.", "26": "Black moves his Knight away to prepare the ...f5 pawn break and a possible return to e5.", "27": "White pushes again to restrict Black's queenside pawns.", "28": "Black attacks White's central pawn structure, trying to break it open and create attacking chances.", "29": "White lifts his Rook to the third rank so it can defend the kingside or move across to another file.", "30": "Black brings his Knight back to e5, where it attacks important central squares.", "31": "White retreats his Bishop to protect important central squares and keep it away from Black's attacking pawns.", "32": "Black advances the pawn to attack White's Bishop on e3 and gain more space.", "33": "White captures the attacking pawn instead of allowing it to push further and restrict his Bishop.", "34": "Black develops his Bishop and prepares to use his Rook on the open c-file.", "35": "White moves his Knight away from the centre, hoping to bring it back through f2 or e3 to improve his defence.", "36": "Carlsen sacrifices his Rook for White's Bishop, removing an important defender and giving his pieces greater control over the dark squares.", "37": "White captures the Rook with his Queen.", "38": "Black attacks White's Queen with his Bishop, forcing it to move and giving Black time to improve his position.", "39": "White moves his Queen out of the Bishop's attack.", "40": "Black brings his Queen towards the kingside and supports his Bishop's attacking position.", "41": "White brings his Knight towards the centre, hoping to challenge Black's control of important squares.", "42": "Black attacks White's Queen again with his Bishop, forcing another retreat.", "43": "White moves his Queen away from the Bishop's attack, but it becomes passive and has fewer useful squares.", "44": "Black brings his Rook to the open c-file, preparing to control the file and invade White's camp.", "45": "White places his Rook on c3 to challenge Black's Rook and try to exchange the active pieces.", "46": "Black exchanges Rooks, removing White's defender and preparing to invade with his Queen.", "47": "White recaptures, but his queenside pawns are now doubled and easier to attack.", "48": "Black attacks the weak c3 pawn with his Queen and prepares to invade White's queenside.", "49": "White advances the c-pawn to c4, moving it out of the Queen's attack on the c-file.", "50": "Black attacks White's c4 pawn, trying to break open the queenside.", "51": "White captures Black's b-pawn en passant, removing the pawn that was attacking his queenside.", "52": "Black recaptures with the a-pawn, opening the a-file for his Queen.", "53": "White retreats his Queen to protect his position, but it becomes even less active.", "54": "Black brings his Queen onto the open a-file, preparing to enter White's position from the side.", "55": "White moves his King away from the back rank, trying to escape the pressure.", "56": "Black's Queen invades the second rank, attacking White's pawns and restricting his pieces.", "57": "White attacks Black's Bishop on f4, hoping to force it away and reduce Black's control of the board.", "58": "Black gives check, forcing White to move his Knight back to block the check.", "59": "White blocks the check with his Knight because his King cannot escape safely.", "60": "Black moves his Queen back to b2, continuing to attack White's position and restricting his pieces.", "61": "White attacks the Bishop again, trying to force it away from its powerful position.", "62": "Black gives another check, forcing White's Knight to block the same way again.", "63": "White blocks the check again because moving the King would leave him in danger.", "64": "Black places his Queen on d2, attacking important squares and making it extremely difficult for White to free his pieces.", "65": "White moves his Queen to make room for his Rook to reach the g-file.", "66": "Black moves his King forward, improving his position while White remains restricted.", "67": "White moves his Rook to the g-file, hoping to create some counterplay against Black's King.", "68": "Black moves his King to safety and keeps control of the position.", "69": "White retreats his Queen to h1, but it has very little influence on the game.", "70": "Black attacks White's d5 pawn and prepares to open the centre for his remaining Bishop.", "71": "White moves his Rook across, trying to create an escape route for his pieces.", "72": "Black captures the d5 pawn, opening the centre and creating a path for his Bishop.", "73": "White recaptures the pawn to maintain some central control.", "74": "Black develops his Bishop to f5, attacking important squares and increasing pressure on White's position.", "75": "White retreats his Rook, unable to find a useful way to escape Black's control.", "76": "Black brings his King closer to the centre while keeping it safe.", "77": "White moves his Rook back again, still unable to create any meaningful threats.", "78": "Black pulls his Knight back from e5 to stay flexible and open lines for his pieces.", "79": "White tries to activate his Rook one last time.", "80": "Black captures the Rook with his Bishop, finally winning the exchange.", "81": "White recaptures the Bishop with his h-pawn.", "82": "Black places his Knight on e5, strengthening his control of the board. White resigns because he has no realistic way to free his pieces or stop Black's threats."} },
+  { id: "boxbox-technique-1", head: "boxbox technique #1", listName: "boxbox technique #1", listSub: "Fedoseev vs Carlsen \u00b7 FIDE World Cup 2021 \u00b7 41 moves \u00b7 Black won 0\u20131 \u00b7 tap to watch the game", sub: "FIDE World Cup \u00b7 2021 \u00b7 Vladimir Fedoseev played White, Magnus Carlsen played Black \u00b7 Black won 0\u20131", whiteShort: "Fedoseev", blackShort: "Carlsen", endText: "Fedoseev resigned \u00b7 Black wins 0\u20131",
+    sans: ["d4", "Nf6", "c4", "g6", "h4", "Bg7", "Nc3", "d6", "e4", "Nc6", "d5", "Ne5", "Be2", "h5", "Bf4", "O-O", "Nf3", "Nxf3+", "gxf3", "c6", "Qd2", "cxd5", "cxd5", "Kh7", "a4", "Nd7", "a5", "f5", "Ra3", "Ne5", "Be3", "f4", "Bxf4", "Bd7", "Nd1", "Rxf4", "Qxf4", "Bh6", "Qg3", "Qf8", "Ne3", "Bf4", "Qg2", "Rc8", "Rc3", "Rxc3", "bxc3", "Qc8", "c4", "b5", "axb6", "axb6", "Qg1", "Qa8", "Kf1", "Qa2", "Ng2", "Qa1+", "Ne1", "Qb2", "Ng2", "Qc1+", "Ne1", "Qd2", "Qg2", "Kg7", "Rg1", "Kf8", "Qh1", "e6", "Rg3", "exd5", "exd5", "Bf5", "Rg1", "Kf7", "Rg3", "Nd7", "Rg5", "Bxg5", "hxg5", "Ne5"],
+    ucis: ["d2d4", "g8f6", "c2c4", "g7g6", "h2h4", "f8g7", "b1c3", "d7d6", "e2e4", "b8c6", "d4d5", "c6e5", "f1e2", "h7h5", "c1f4", "e8g8", "g1f3", "e5f3", "g2f3", "c7c6", "d1d2", "c6d5", "c4d5", "g8h7", "a2a4", "f6d7", "a4a5", "f7f5", "a1a3", "d7e5", "f4e3", "f5f4", "e3f4", "c8d7", "c3d1", "f8f4", "d2f4", "g7h6", "f4g3", "d8f8", "d1e3", "h6f4", "g3g2", "a8c8", "a3c3", "c8c3", "b2c3", "f8c8", "c3c4", "b7b5", "a5b6", "a7b6", "g2g1", "c8a8", "e1f1", "a8a2", "e3g2", "a2a1", "g2e1", "a1b2", "e1g2", "b2c1", "g2e1", "c1d2", "g1g2", "h7g7", "h1g1", "g7f8", "g2h1", "e7e6", "g1g3", "e6d5", "e4d5", "d7f5", "g3g1", "f8f7", "g1g3", "e5d7", "g3g5", "f4g5", "h4g5", "d7e5"],
+    fens: ["rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1", "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2", "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2", "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3", "rnbqkb1r/pppppp1p/5np1/8/2PP3P/8/PP2PPP1/RNBQKBNR b KQkq - 0 3", "rnbqk2r/ppppppbp/5np1/8/2PP3P/8/PP2PPP1/RNBQKBNR w KQkq - 1 4", "rnbqk2r/ppppppbp/5np1/8/2PP3P/2N5/PP2PPP1/R1BQKBNR b KQkq - 2 4", "rnbqk2r/ppp1ppbp/3p1np1/8/2PP3P/2N5/PP2PPP1/R1BQKBNR w KQkq - 0 5", "rnbqk2r/ppp1ppbp/3p1np1/8/2PPP2P/2N5/PP3PP1/R1BQKBNR b KQkq - 0 5", "r1bqk2r/ppp1ppbp/2np1np1/8/2PPP2P/2N5/PP3PP1/R1BQKBNR w KQkq - 1 6", "r1bqk2r/ppp1ppbp/2np1np1/3P4/2P1P2P/2N5/PP3PP1/R1BQKBNR b KQkq - 0 6", "r1bqk2r/ppp1ppbp/3p1np1/3Pn3/2P1P2P/2N5/PP3PP1/R1BQKBNR w KQkq - 1 7", "r1bqk2r/ppp1ppbp/3p1np1/3Pn3/2P1P2P/2N5/PP2BPP1/R1BQK1NR b KQkq - 2 7", "r1bqk2r/ppp1ppb1/3p1np1/3Pn2p/2P1P2P/2N5/PP2BPP1/R1BQK1NR w KQkq - 0 8", "r1bqk2r/ppp1ppb1/3p1np1/3Pn2p/2P1PB1P/2N5/PP2BPP1/R2QK1NR b KQkq - 1 8", "r1bq1rk1/ppp1ppb1/3p1np1/3Pn2p/2P1PB1P/2N5/PP2BPP1/R2QK1NR w KQ - 2 9", "r1bq1rk1/ppp1ppb1/3p1np1/3Pn2p/2P1PB1P/2N2N2/PP2BPP1/R2QK2R b KQ - 3 9", "r1bq1rk1/ppp1ppb1/3p1np1/3P3p/2P1PB1P/2N2n2/PP2BPP1/R2QK2R w KQ - 0 10", "r1bq1rk1/ppp1ppb1/3p1np1/3P3p/2P1PB1P/2N2P2/PP2BP2/R2QK2R b KQ - 0 10", "r1bq1rk1/pp2ppb1/2pp1np1/3P3p/2P1PB1P/2N2P2/PP2BP2/R2QK2R w KQ - 0 11", "r1bq1rk1/pp2ppb1/2pp1np1/3P3p/2P1PB1P/2N2P2/PP1QBP2/R3K2R b KQ - 1 11", "r1bq1rk1/pp2ppb1/3p1np1/3p3p/2P1PB1P/2N2P2/PP1QBP2/R3K2R w KQ - 0 12", "r1bq1rk1/pp2ppb1/3p1np1/3P3p/4PB1P/2N2P2/PP1QBP2/R3K2R b KQ - 0 12", "r1bq1r2/pp2ppbk/3p1np1/3P3p/4PB1P/2N2P2/PP1QBP2/R3K2R w KQ - 1 13", "r1bq1r2/pp2ppbk/3p1np1/3P3p/P3PB1P/2N2P2/1P1QBP2/R3K2R b KQ - 0 13", "r1bq1r2/pp1nppbk/3p2p1/3P3p/P3PB1P/2N2P2/1P1QBP2/R3K2R w KQ - 1 14", "r1bq1r2/pp1nppbk/3p2p1/P2P3p/4PB1P/2N2P2/1P1QBP2/R3K2R b KQ - 0 14", "r1bq1r2/pp1np1bk/3p2p1/P2P1p1p/4PB1P/2N2P2/1P1QBP2/R3K2R w KQ - 0 15", "r1bq1r2/pp1np1bk/3p2p1/P2P1p1p/4PB1P/R1N2P2/1P1QBP2/4K2R b K - 1 15", "r1bq1r2/pp2p1bk/3p2p1/P2Pnp1p/4PB1P/R1N2P2/1P1QBP2/4K2R w K - 2 16", "r1bq1r2/pp2p1bk/3p2p1/P2Pnp1p/4P2P/R1N1BP2/1P1QBP2/4K2R b K - 3 16", "r1bq1r2/pp2p1bk/3p2p1/P2Pn2p/4Pp1P/R1N1BP2/1P1QBP2/4K2R w K - 0 17", "r1bq1r2/pp2p1bk/3p2p1/P2Pn2p/4PB1P/R1N2P2/1P1QBP2/4K2R b K - 0 17", "r2q1r2/pp1bp1bk/3p2p1/P2Pn2p/4PB1P/R1N2P2/1P1QBP2/4K2R w K - 1 18", "r2q1r2/pp1bp1bk/3p2p1/P2Pn2p/4PB1P/R4P2/1P1QBP2/3NK2R b K - 2 18", "r2q4/pp1bp1bk/3p2p1/P2Pn2p/4Pr1P/R4P2/1P1QBP2/3NK2R w K - 0 19", "r2q4/pp1bp1bk/3p2p1/P2Pn2p/4PQ1P/R4P2/1P2BP2/3NK2R b K - 0 19", "r2q4/pp1bp2k/3p2pb/P2Pn2p/4PQ1P/R4P2/1P2BP2/3NK2R w K - 1 20", "r2q4/pp1bp2k/3p2pb/P2Pn2p/4P2P/R4PQ1/1P2BP2/3NK2R b K - 2 20", "r4q2/pp1bp2k/3p2pb/P2Pn2p/4P2P/R4PQ1/1P2BP2/3NK2R w K - 3 21", "r4q2/pp1bp2k/3p2pb/P2Pn2p/4P2P/R3NPQ1/1P2BP2/4K2R b K - 4 21", "r4q2/pp1bp2k/3p2p1/P2Pn2p/4Pb1P/R3NPQ1/1P2BP2/4K2R w K - 5 22", "r4q2/pp1bp2k/3p2p1/P2Pn2p/4Pb1P/R3NP2/1P2BPQ1/4K2R b K - 6 22", "2r2q2/pp1bp2k/3p2p1/P2Pn2p/4Pb1P/R3NP2/1P2BPQ1/4K2R w K - 7 23", "2r2q2/pp1bp2k/3p2p1/P2Pn2p/4Pb1P/2R1NP2/1P2BPQ1/4K2R b K - 8 23", "5q2/pp1bp2k/3p2p1/P2Pn2p/4Pb1P/2r1NP2/1P2BPQ1/4K2R w K - 0 24", "5q2/pp1bp2k/3p2p1/P2Pn2p/4Pb1P/2P1NP2/4BPQ1/4K2R b K - 0 24", "2q5/pp1bp2k/3p2p1/P2Pn2p/4Pb1P/2P1NP2/4BPQ1/4K2R w K - 1 25", "2q5/pp1bp2k/3p2p1/P2Pn2p/2P1Pb1P/4NP2/4BPQ1/4K2R b K - 0 25", "2q5/p2bp2k/3p2p1/Pp1Pn2p/2P1Pb1P/4NP2/4BPQ1/4K2R w K b6 0 26", "2q5/p2bp2k/1P1p2p1/3Pn2p/2P1Pb1P/4NP2/4BPQ1/4K2R b K - 0 26", "2q5/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/4NP2/4BPQ1/4K2R w K - 0 27", "2q5/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/4NP2/4BP2/4K1QR b K - 1 27", "q7/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/4NP2/4BP2/4K1QR w K - 2 28", "q7/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/4NP2/4BP2/5KQR b - - 3 28", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/4NP2/q3BP2/5KQR w - - 4 29", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/q3BPN1/5KQR b - - 5 29", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/4BPN1/q4KQR w - - 6 30", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/4BP2/q3NKQR b - - 7 30", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/1q2BP2/4NKQR w - - 8 31", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/1q2BPN1/5KQR b - - 9 31", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/4BPN1/2q2KQR w - - 10 32", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/4BP2/2q1NKQR b - - 11 32", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/3qBP2/4NKQR w - - 12 33", "8/3bp2k/1p1p2p1/3Pn2p/2P1Pb1P/5P2/3qBPQ1/4NK1R b - - 13 33", "8/3bp1k1/1p1p2p1/3Pn2p/2P1Pb1P/5P2/3qBPQ1/4NK1R w - - 14 34", "8/3bp1k1/1p1p2p1/3Pn2p/2P1Pb1P/5P2/3qBPQ1/4NKR1 b - - 15 34", "5k2/3bp3/1p1p2p1/3Pn2p/2P1Pb1P/5P2/3qBPQ1/4NKR1 w - - 16 35", "5k2/3bp3/1p1p2p1/3Pn2p/2P1Pb1P/5P2/3qBP2/4NKRQ b - - 17 35", "5k2/3b4/1p1pp1p1/3Pn2p/2P1Pb1P/5P2/3qBP2/4NKRQ w - - 0 36", "5k2/3b4/1p1pp1p1/3Pn2p/2P1Pb1P/5PR1/3qBP2/4NK1Q b - - 1 36", "5k2/3b4/1p1p2p1/3pn2p/2P1Pb1P/5PR1/3qBP2/4NK1Q w - - 0 37", "5k2/3b4/1p1p2p1/3Pn2p/2P2b1P/5PR1/3qBP2/4NK1Q b - - 0 37", "5k2/8/1p1p2p1/3Pnb1p/2P2b1P/5PR1/3qBP2/4NK1Q w - - 1 38", "5k2/8/1p1p2p1/3Pnb1p/2P2b1P/5P2/3qBP2/4NKRQ b - - 2 38", "8/5k2/1p1p2p1/3Pnb1p/2P2b1P/5P2/3qBP2/4NKRQ w - - 3 39", "8/5k2/1p1p2p1/3Pnb1p/2P2b1P/5PR1/3qBP2/4NK1Q b - - 4 39", "8/3n1k2/1p1p2p1/3P1b1p/2P2b1P/5PR1/3qBP2/4NK1Q w - - 5 40", "8/3n1k2/1p1p2p1/3P1bRp/2P2b1P/5P2/3qBP2/4NK1Q b - - 6 40", "8/3n1k2/1p1p2p1/3P1bbp/2P4P/5P2/3qBP2/4NK1Q w - - 0 41", "8/3n1k2/1p1p2p1/3P1bPp/2P5/5P2/3qBP2/4NK1Q b - - 0 41", "8/5k2/1p1p2p1/3PnbPp/2P5/5P2/3qBP2/4NK1Q w - - 1 42"],
+    notes: {"1": "+1 center. Good start—always fight for the center box first.", "2": "+1 center. Always match your opponent in the center so they don't reach +2.", "3": "+1 pawn guard. Add support before you try to strike.", "4": "0 for now, setting up a +1 open diagonal. Patience pays off.", "5": "-1 edge push. Bad idea early—don't start a flank fight before your pieces are out.", "6": "+1 open diagonal. Aim your Bishops at the center box.", "7": "+1 attacker. Keep adding pieces to the center box.", "8": "+1 pawn guard. Solidify your box before attacking.", "9": "+2 center. When you own the center box, claim the space.", "10": "+1 attacker. Don't let your opponent sit comfortably—hit their center box.", "11": "-1 pawn kick on Black's Knight. Good practical move—kick enemy pieces out of active boxes.", "12": "+1 center. When kicked, jump forward into a stronger box, not backward.", "13": "+1 defender. Protect your kingside box before castling.", "14": "Stops White's kingside box from reaching +2. Always kill your opponent's +2 plan.", "15": "+1 attacker on e5. Don't strike yet—add another piece first.", "16": "Safety first. Never start a big fight while your King can fall for a -5 trap.", "17": "+2 on e5—now White can strike. Always wait for +2 before challenging.", "18": "Good trade. Don't sit in a box where your opponent just hit +2.", "19": "-1 king shelter. Risky recapture—only weaken your King's box if you have a clear attack.", "20": "+1 attacker on d5. Attack the base of a big center box.", "21": "+1 heavy piece. Connect your Rooks so no piece is left loose (-5).", "22": "+1 open c-file. Trade pawns when it opens a highway for your Rook.", "23": "Keeps the d5 box, but watch out for Black's open c-file.", "24": "+1 King guard on g6. Quiet defensive moves prevent -5 blunders later.", "25": "-1 edge push. Risky—don't waste turns on the edge if the center is about to explode.", "26": "Clears the f-pawn. Move pieces out of the way when preparing a +2 pawn strike.", "27": "Locks the queenside, but leaves the center box under-defended.", "28": "+2 strike! When your opponent wastes time on the edge (-1), strike the center immediately.", "29": "+1 defender along the 3rd rank. Creative way to add defense to weak boxes.", "30": "+2 (center + unkickable). Dream square—always look for squares where no enemy pawn can kick you.", "31": "+1 defender, but passive. Don't retreat unless forced.", "32": "-1 pawn kick on White's Bishop. Push pawns to kick defenders out of key boxes.", "33": "Takes the pawn, but weakens the dark squares. Be careful trading away your only defender of a color.", "34": "+1 development. Bring your last piece out before launching the final attack.", "35": "0 score retreat. Bad sign—if you're retreating to 0-score squares, you're losing the box math.", "36": "+2 strike! Don't fear sacrificing material if it deletes their only defender and gives you +2 forever.", "37": "Forced recapture.", "38": "+2 (open diagonal + attacks Queen). Always attack with tempo so they can't fix their box.", "39": "0 score retreat. White's Queen is being pushed out of the fight.", "40": "+1 attacker on the f-file. Keep piling pieces into the box you already own.", "41": "Tries to fight for the center, but it's too late.", "42": "+2 (unkickable + attacks Queen). Lock in your +2 squares and shove their Queen away.", "43": "0 score. Never let your Queen get trapped in a cramped, passive box like this.", "44": "+1 open c-file. Put your Rooks on open files—don't leave them sleeping.", "45": "White tries to fight for the c-file box.", "46": "Good trade. Remove their only defender so your Queen owns the box alone.", "47": "Weakens the queenside box. Avoid doubled isolated pawns if you can.", "48": "+2 (open c-file + targets weak c3). Aim straight at the weakest box on the board.", "49": "Saves the pawn, but leaves the queenside box full of holes.", "50": "+2 strike! Break open the box where you already have more attackers.", "51": "Forced to open lines.", "52": "+1 open a-file. Always recapture in a way that opens a lane for your Queen.", "53": "0 score. Bad idea—your Queen does nothing sitting on the back rank.", "54": "+2 (open a-file + invasion). The second a file opens, invade it.", "55": "0 score. When you're 0 or less in every box, you're just waiting to lose.", "56": "+2 invasion on the 2nd rank. Get your Queen behind enemy lines to paralyze them.", "57": "Tries to kick the f4 Bishop, but forgets the back-rank box.", "58": "Check! Use open lines to punish any attempt to break free.", "59": "0 score forced block. Notice how White's pieces have zero good squares.", "60": "Holds the +2 box. Don't rush—keep your opponent frozen.", "61": "Tries again—still doesn't work because the box math is against White.", "62": "Check again! Repeat forcing moves to keep total control.", "63": "Forced back to a 0-score square.", "64": "+2 (center + unkickable Queen). Total lockdown—don't trade when you own the whole board.", "65": "0 score shuffle. If you have no +1 moves left, your position is already lost.", "66": "Calm +1 King safety. When your opponent is paralyzed, take your time.", "67": "Tries to get a +1 threat on the g-file.", "68": "Steps out of the g-file box. Kill your opponent's last counterplay before finishing them.", "69": "-1 corner square. Never trap your own Queen in the corner.", "70": "+2 strike! Open a second box so your last piece can join the kill.", "71": "Desperation—White is losing the math in every box.", "72": "Opens the center box cleanly.", "73": "Forced recapture.", "74": "+2 (open diagonal + center). Bring every single piece into the attack.", "75": "0 score shuffle.", "76": "Zero -5 loose pieces. Stay solid even when completely winning.", "77": "0 score shuffle—total paralysis.", "78": "Flexible move—clears lines without giving up any box.", "79": "-5 blunder! Never play a desperation move that hangs a piece.", "80": "Takes the free Rook. Always punish -5 blunders cleanly.", "81": "Forced.", "82": "+2 unkickable center Knight. White resigns—never let yourself get squeezed to 0 active boxes."} }
 ];
 
 
@@ -13971,38 +13740,18 @@ function viewerMovesText(sans){
   var parts = [];
   for (var i = 0; i < sans.length; i++){
     if (i % 2 === 0) parts.push((Math.floor(i / 2) + 1) + ".");
-    var mk = null;
-    if (settings.showMarks !== false){
-      if (viewerOnBranch && viewerBranch && i >= viewerBranch.atPly) mk = (viewerBranch.marks || {})[i - viewerBranch.atPly] || null;
-      else mk = viewerMarks[i + 1] || null;
-    }
+    var mk = settings.showMarks !== false ? viewerMarks[i + 1] : null;
     parts.push(sans[i] + (mk && mk.glyph ? mk.glyph : ""));
   }
   return parts.join(" ");
-}
-function branchVerdictText(res){
-  var t = (res.glyph ? res.glyph + " " : "") + res.word + " \u2014 judged by " + (res.engine === "Stockfish" ? "Stockfish" : "the coach check") + ".";
-  if (res.bestSan && !res.isBest) t += " Best was " + res.bestSan + ".";
-  if (res.replySan && (res.cls === "inaccuracy" || res.cls === "mistake" || res.cls === "blunder"))
-    t += " Now " + (res.replyName || "the opponent") + " can play " + res.replySan + (res.replyFact ? " \u2014 " + res.replyFact : "") + ".";
-  return t;
-}
-function branchLineText(){
-  var bi = viewerPly - viewerBranch.atPly - 1;
-  var last = viewerBranch.sans[Math.max(0, bi)];
-  var gameMove = viewerGame.sans[viewerBranch.atPly];
-  var line = "You tried " + last + (gameMove ? " instead of the game move " + gameMove : "") + ".";
-  var mk = (viewerBranch.marks || {})[bi];
-  if (mk && settings.showMarks !== false) line += " " + branchVerdictText(mk);
-  else if (settings.showMarks !== false) line += " Stockfish is checking it\u2026";
-  line += " Tap Back to the main line to return to the game.";
-  return line;
 }
 function viewerCoachLine(){
   if (!viewerGame) return;
   var n = viewerEnd(), line;
   if (viewerOnBranch && viewerBranch){
-    line = branchLineText();
+    var bi = viewerPly - viewerBranch.atPly - 1;
+    var last = viewerBranch.sans[Math.max(0, bi)];
+    line = "You tried " + last + " instead of the game move — the game line is safe, tap Back to the main line.";
   } else if (viewerPly >= n){
     line = "Game over · " + (viewerGame.result || "") + " — " + viewerGame.title + ".";
   } else if (viewerPly === 0){
@@ -14028,8 +13777,8 @@ function viewerCoachLine(){
    board (renderSquares reads viewerMarks), as a glyph in the move
    strip (viewerMovesText), as a word in the coach line above, and in
    the engine panel's great-moves list. Judged once per ply per game —
-   stepping back and forth never re-judges. Branch moves (your own
-   tries) are judged the same way by viewerJudgeBranch below. */
+   stepping back and forth never re-judges. A branch move is the
+   viewer's own try, not the game, so branch positions are not judged. */
 function viewerJudgePly(ply){
   if (!viewerGame || !viewerMainSnaps || viewerOnBranch) return;
   if (ply < 1 || ply > viewerEnd()) return;
@@ -14067,41 +13816,6 @@ function viewerJudgePly(ply){
     try { runEnginePanel("pz"); } catch(e){}
   }, true, true);
 }
-function viewerJudgeBranch(){
-  if (!viewerGame || !viewerOnBranch || !viewerBranch) return;
-  if (!viewerBranch.marks) viewerBranch.marks = {};
-  if (!viewerBranch.judging) viewerBranch.judging = {};
-  var bi = viewerPly - viewerBranch.atPly - 1;
-  if (bi < 0) return;
-  if (viewerBranch.marks[bi] || viewerBranch.judging[bi]) return;
-  var before = viewerBranch.snaps[bi] && viewerBranch.snaps[bi].state;
-  var after = viewerBranch.snaps[bi + 1] && viewerBranch.snaps[bi + 1].state;
-  if (!before || !after) return;
-  var mv = null;
-  try { mv = matchResolve(before, viewerBranch.sans[bi]); } catch(e){}
-  if (!mv) return;
-  viewerBranch.judging[bi] = true;
-  var seq = viewerJudgeSeq, game = viewerGame, branch = viewerBranch;
-  judgeMoveCommon(before, mv, after, function(res){
-    delete branch.judging[bi];
-    if (seq !== viewerJudgeSeq || viewerGame !== game || !res) return;
-    branch.marks[bi] = res;
-    if (!viewerMode) return;
-    try { renderBoard(); } catch(e){}
-    try { renderPuzzleInfo(); } catch(e){}
-    if (viewerOnBranch && viewerBranch === branch && viewerPly === branch.atPly + bi + 1 && settings.showMarks !== false){
-      try {
-        var entry = currentCoachEntry("pz");
-        var host = entry && (entry.querySelector(".ch-text") || entry);
-        if (host && host.textContent && host.textContent.indexOf("You tried") >= 0){
-          host.textContent = branchLineText();
-          scrollCoachBubble("pz");
-        }
-      } catch(e){}
-    }
-    try { runEnginePanel("pz"); } catch(e){}
-  }, true, true);
-}
 function viewerSync(step){
   var pos = viewerPos();
   if (!pos) return;
@@ -14130,8 +13844,6 @@ function viewerSync(step){
   // strip and in the coach line) and the engine panel scores this
   // position and draws its best-move arrow.
   if (viewerMode && !viewerOnBranch && viewerPly >= 1){ try { viewerJudgePly(viewerPly); } catch(e){} }
-  if (viewerMode && viewerOnBranch){ try { viewerJudgeBranch(); } catch(e){} }
-  try { syncLikeBtn(); } catch(e){}
   if (viewerMode){ try { runEnginePanel("pz"); } catch(e){} }
 }
 function openViewerGame(g){
@@ -14271,7 +13983,7 @@ function viewerBranchMove(from, to, promoChoice){
     }
   }
   if (!viewerOnBranch){
-    viewerBranch = { atPly: viewerPly, sans: [], snaps: [viewerPos()], marks: {}, judging: {} };
+    viewerBranch = { atPly: viewerPly, sans: [], snaps: [viewerPos()] };
     viewerOnBranch = true;
   }
   var ns3 = applyMove(state, mv);
@@ -14453,7 +14165,7 @@ function importPGN(){
 var noteCtx = null;   // { kind:"game"|"puzzle", mode:"save"|"edit", id }
 function openNoteDialog(kind, mode, id, currentNote){
   noteCtx = { kind: kind, mode: mode, id: id || null };
-  $("noteTitle").textContent = mode === "edit" ? "Your note" : (kind === "game" ? "Save this game" : kind === "match" ? "Save this match position" : "Save this puzzle");
+  $("noteTitle").textContent = mode === "edit" ? "Your note" : (kind === "game" ? "Save this game" : "Save this puzzle");
   $("noteSub").textContent = mode === "edit"
     ? "Change the note, or clear the box and save to remove it."
     : "Optional — write anything you want to remember about it. Leave the box empty to save without a note.";
@@ -14521,7 +14233,6 @@ $("botSaveBtn").addEventListener("click", function(){
   if (botLoadedSaveId) savedStore.games.forEach(function(g){ if (g.id === botLoadedSaveId) existing = g.note; });
   openNoteDialog("game", "save", null, existing);
 });
-$("botBestBtn").addEventListener("click", function(){ showStockfishBest("bot"); });
 $("botPgnBtn").addEventListener("click", function(){
   if (!botStarted || !botSans.length){ botFlash("No moves yet — play a move first."); return; }
   var dISO = new Date().toISOString();
@@ -14529,14 +14240,11 @@ $("botPgnBtn").addEventListener("click", function(){
   exportPGN({ dateISO: dISO, coachName: currentCoach().name, sans: botSans.slice(), result: botResult },
     function(){ botFlash("PGN copied — the .pgn file is downloading too."); });
 });
-$("btnPzPgn").addEventListener("click", function(){ exportCurrentPuzzlePGN(); });
-$("btnPzBest").addEventListener("click", function(){ showStockfishBest("pz"); });
 $("btnSavePuzzle").addEventListener("click", function(){
   if (!cur){ setFeedback("think", "Load a puzzle first — then tap Save to keep it."); return; }
-  var saveId = (viewerMode && viewerGame) ? matchBookmarkId() : cur.id;
   var existing = null;
-  savedStore.puzzles.forEach(function(p){ if (p.id === saveId) existing = p.note; });
-  openNoteDialog((viewerMode && viewerGame) ? "match" : "puzzle", "save", null, existing);
+  savedStore.puzzles.forEach(function(p){ if (p.id === cur.id) existing = p.note; });
+  openNoteDialog("puzzle", "save", null, existing);
 });
 $("saveBackBtn").addEventListener("click", function(){ showView("home"); });
 
@@ -15138,8 +14846,6 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
   }
   optClick("optNew", "botNewBtn"); optClick("optSave", "botSaveBtn");
   optClick("optPgn", "botPgnBtn"); optClick("optFlip", "botFlipBtn");
-  var osb = el("optSfBest");
-  if (osb) osb.addEventListener("click", function(){ closeOptions(); showStockfishBest("bot"); });
   var os = el("optSettings");
   if (os) os.addEventListener("click", function(){ closeOptions(); try { showView("settings"); } catch(e){} });
   /* Puzzle Options sheet (everything the puzzle screen's Compact
@@ -15158,9 +14864,6 @@ setHomeTab("puzzles");  // the Puzzles tab is the default tab, and it shows the 
   pzOptClick("optPzSolution", "btnSolution"); pzOptClick("optPzFlip", "btnFlip");
   pzOptClick("optPzSave", "btnSavePuzzle"); pzOptClick("optPzPrev", "btnPrev");
   pzOptClick("optPzNext", "btnNavNext");
-  pzOptClick("optPzPgn", "btnPzPgn");
-  var opsb = el("optPzSfBest");
-  if (opsb) opsb.addEventListener("click", function(){ closePzOptions(); showStockfishBest("pz"); });
   var opi = el("optPzImportPgn");
   if (opi) opi.addEventListener("click", function(){ closePzOptions(); openPgnDialog(); });
   var pgc = el("pgnCancel"); if (pgc) pgc.addEventListener("click", closePgnDialog);
